@@ -1,0 +1,285 @@
+.middle{height: 100%;display: inline-block;vertical-align: middle;}
+    
+.popup{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 100;
+    display: none;    
+    white-space: nowrap;
+    text-align: center;
+    position: fixed;
+    top: 0px;
+    z-index: 2000;
+    direction: ltr;
+}
+
+.popupInner{
+    width: 540px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 0px 41px rgba(0,0,0,0.4);
+    display: inline-block;
+    vertical-align: middle;
+    white-space: normal;
+    text-align: left;
+    margin-top: -140px;
+}
+
+.rtl .popupInner{
+    text-align: right;
+}
+
+.popupInner.enlarge{
+    width: 700px;
+}
+
+.popupInner.enlarge .popupContent{
+    padding: 0px !important;
+}
+
+.popup.preloader .popupInner{
+    width: initial !important;
+}
+
+.popupHeader{
+    padding: 9px;
+    background: #555555;
+    color: #fff;
+    font-size: 14px;
+    border-top-right-radius: 7px;
+}
+
+.popup.preloader .popupHeader{
+    border-radius: 10px;
+    padding-left: 30px;
+    padding-right: 30px; 
+    text-align: center;
+}
+
+.popupContent{
+    font-size: 25px;
+    padding: 25px;
+}
+
+.popupContent img{
+    width: 100%;
+    max-height: 650px;
+}
+
+.popup.preloader .popupContent{
+    display: none !important;
+}
+.popupButtons{
+    padding: 10px;
+    border-top: 1px solid #ccc;
+}
+.popupButton{
+    float: right;
+    padding: 9px;
+    background: #ccc;
+    margin-left: 5px;
+    min-width: 100px;
+    text-align: center;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.05s;
+    padding-left: 0px;
+    padding-right: 0px;
+    font-size: 14px;
+}
+.rtl .popupButton{
+    margin-left: initial;
+    margin-right: 5px;
+    float: left;
+}
+.popupButton:hover{
+    background: #000;
+    color: #fff;
+    box-shadow: 0px 0px 10px rgba(0,0,0,0.5);
+}
+.popupLoading{
+    float: left;
+    padding:10px;
+}
+.rtl .popupLoading{
+    float: right;
+}
+.popupContentInput{
+    font-size: 25px;
+    padding: 25px;
+    box-shadow: inset 0px 1px 0px rgba(0,0,0,0.3);
+}
+.popupLabel{
+    padding-left: 3px;
+    font-size: 17px;
+}
+.rtl .popupLabel{
+    padding-left: initial;
+    padding-right: 3px;
+}
+.popupLabel.break{
+    float: none;
+}
+.popupLabelTitle{
+    background: #0C3250;
+    padding: 10px;
+    text-align: center;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border-top-right-radius: 50px;
+    margin-top: 20px;
+    color: #fff;
+}
+.popupLabelTitle:first-of-type{
+    margin-top: 0px !important;
+}
+.popupInput{
+    height: 32px;
+    margin-top: -2px;
+    text-indent: 5px;
+    font-size: 18px;
+    border: 1px solid #CFCFCF;
+    border-radius: 3px;
+    margin-bottom: 10px;
+}
+.rtl .popupInput{
+    direction: rtl;
+    text-align: right;
+}
+.popupInput.text{
+    width: 297px;
+}
+
+.popupInput.longtext{
+    width: 100%;
+    margin-top: 2px;
+}
+
+.popupInput.select{
+    width: 100%;
+    height: 34px;
+    margin-top: 2px;
+}
+
+.popup textarea{
+    width: 98.1%;
+    margin-top: 2px;
+    height: 250px;
+    padding: 5px;
+    font-size: 22px;
+    border: 1px solid #44A5E6;
+}
+
+.popup.transparent{
+    background: none;
+}
+
+.popup .popupRadioOption{
+    float: left;
+    padding: 5px;
+    font-size: 18px;
+    background: #DBDBDB;
+    margin-right: 6px;
+    border-radius: 3px;
+    cursor: pointer;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-top: 3px;
+    min-width: 100px;
+    text-align: center;
+}
+.rtl .popup .popupRadioOption{
+    float: right;
+    margin-left: 6px;
+    margin-right: initial;
+}
+
+.popup .popupRadioOption.selected{
+    background: #059210;
+    color: #fff;
+}
+
+.popup.list .popupContent{
+    padding: 0px;
+    height: 450px;
+    overflow-y: scroll;
+}
+
+.popup.list .popupContent div{
+    padding: 5px;
+    cursor: pointer;
+    box-sizing:border-box;
+    border-bottom: 1px solid #ddd;
+    padding-left: 10px;
+}
+.rtl .popup.list .popupContent div{
+    padding-left: initial;
+    padding-right: 10px;
+}
+.popup.list .popupContent div:hover{
+    background :#56BBFF;
+}
+
+.popup.list .popupContent div.selected{
+    background: #033B5A;
+    border-bottom: 1px solid #053352;
+    color: #fff;
+}
+.popup.list .popupContent div.selected:hover{
+    background: #033B5A;   
+}
+
+#popupListInput{
+    width: 300px;
+    height: 35px;
+    margin-top: 0px;
+    border: 1px solid #ccc;
+    margin-bottom: -10px;
+    text-indent: 5px;
+    font-size: 18px;
+}
+
+.popupListInput{
+
+}
+
+.popupUploadContainer{
+    width: 70%;
+    height: 40px;
+    background: #fff;
+    border: 1px solid #44A5E6;
+    margin: 0px;
+    line-height: 40px;
+    font-size: 20px;
+    padding-left: 5px;
+    color: #333;
+    border-radius: 3px;
+    margin-bottom: 10px;
+}
+.rtl .popupUploadContainer{
+    padding-left: initial
+    padding-right5px;
+}
+.popupUploadSelect{
+    width: 27%;
+    height: 42px;
+    background: #2972AC;
+    color: #fff;
+    font-size: 18px;
+    text-align: center;
+    line-height: 41px;
+    border-radius: 4px;
+}
+
+.popupUploadSelect:hover{
+    background: #000;
+    cursor: pointer;
+}
+
+.popupUploadProgress{}
+
+#dataFilePopup{
+    position:absolute;left:-10000px;top:-10000px;
+}
