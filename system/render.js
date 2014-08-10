@@ -1,283 +1,383 @@
 
 $.extend( true, editor, {
-	
+
 	render : function()
 	{
 		var focusedInputs = $("input:focus");
 		var inputHasFocus = false;
 		if (focusedInputs != null && focusedInputs.length > 0) { inputHasFocus = true; }
 
-		this.drawDebugger();
-		this.clearCanvas();
-		this.draw();
-		this.drawSelectedBox();
-		this.drawSelectionBox();
-		//this.drawPoint();
-		//this.drawTransformClone();
-		if( this.action == 'transform' ) this.drawActionPoints();
+		this.draw.Debugger();
+		this.draw.clearCanvas();
+		this.draw.objects();
+		this.draw.selectedBox();
+		this.draw.selectionBox();
 
-		//if (!inputHasFocus) this.drawSubMenu();
+		if( this.action == 'transform' ) this.draw.actionPoints();
 
 	},
 
-	drawDebugger : function()
-	{
-		if(!this.debug) return;
-		$('#x').html( this.mouseX );
-		$('#y').html( this.mouseY );
+	draw : {
 
-		$('#mouseDown').html( this.mouseDown );
-
-		$('#drag').html( this.drag );
-
-		$('#objects').empty();
-		this.forEachObjects(function( obj ){
-			$('#objects').append( obj.id + ' : ('+obj.startX+','+obj.startY+' - '+obj.endX+','+obj.endY+') <br/>');
-		});
-
-		$('#action').html(this.action);
-
-		var selectedObjects = '';
-		for(i in this.selectedObjects) selectedObjects += this.selectedObjects[i].id + ', ';
-		selectedObjects = selectedObjects.substring(0, selectedObjects.length - 2);
-		$('#selected').html(selectedObjects);
-
-		$('#movedX').html( this.movedX );
-		$('#movedY').html( this.movedY );
-
-	},
-
-	drawGrid : function()
-	{
-		this.gridCtx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-		if(this.grid.visible)
+		clearCanvas : function()
 		{
+			this.parent.ctx.clearRect(0, 0, this.parent.canvas.width, this.parent.canvas.height);
+		},
 
-			var gridSteps = this.canvas.width / this.grid.size,
-				size 	  = this.grid.size;
+		Debugger : function()
+		{
+			if(!this.debug) return;
+			$('#x').html( this.mouseX );
+			$('#y').html( this.mouseY );
 
-			this.gridCtx.beginPath();
+			$('#mouseDown').html( this.mouseDown );
 
-			for(var i = 0; i <= gridSteps; i++ )
+			$('#drag').html( this.drag );
+
+			$('#objects').empty();
+			this.forEachObjects(function( obj ){
+				$('#objects').append( obj.id + ' : ('+obj.startX+','+obj.startY+' - '+obj.endX+','+obj.endY+') <br/>');
+			});
+
+			$('#action').html(this.action);
+
+			var selectedObjects = '';
+			for(i in this.selectedObjects) selectedObjects += this.selectedObjects[i].id + ', ';
+			selectedObjects = selectedObjects.substring(0, selectedObjects.length - 2);
+			$('#selected').html(selectedObjects);
+
+			$('#movedX').html( this.movedX );
+			$('#movedY').html( this.movedY );
+
+		},
+
+		grid : function()
+		{
+			this.parent.gridCtx.clearRect(0, 0, this.parent.canvas.width, this.parent.canvas.height);
+
+			if(this.parent.grid.visible)
 			{
-				
-				this.gridCtx.moveTo( i * size, 0 );
-				this.gridCtx.lineTo( i * size, this.canvas.height );
-				this.gridCtx.moveTo( 0, i * size );
-				this.gridCtx.lineTo( this.canvas.width, i * size );
-			}
 
-			this.gridCtx.lineWidth   = this.grid.lineWidth;
-			this.gridCtx.strokeStyle = this.grid.strokeStyle;
-			this.gridCtx.stroke();
-		}	
-	},
+				var gridSteps = this.parent.canvas.width / this.parent.grid.size,
+					size 	  = this.parent.grid.size;
 
-	draw : function()
-	{
-		this.forEachObjects($.proxy(function( object )
+				this.parent.gridCtx.beginPath();
+
+				for(var i = 0; i <= gridSteps; i++ )
+				{
+					
+					this.parent.gridCtx.moveTo( i * size, 0 );
+					this.parent.gridCtx.lineTo( i * size, this.parent.canvas.height );
+					this.parent.gridCtx.moveTo( 0, i * size );
+					this.parent.gridCtx.lineTo( this.parent.canvas.width, i * size );
+				}
+
+				this.parent.gridCtx.lineWidth   = this.parent.grid.lineWidth;
+				this.parent.gridCtx.strokeStyle = this.parent.grid.strokeStyle;
+				this.parent.gridCtx.stroke();
+			}	
+		},
+
+		objects : function()
 		{
-			this.drawObject( object );	
-		},this));
-	},
-
-	drawObject : function( object, ctx ){
-
-		if(object.visible == false) return;
-
-		if(!ctx) ctx = this.ctx;
-
-		if( object.type == 'box' )
-		{
-			var x 			  = object.startX,
-				y 			  = object.startY,
-				width 		  = object.width,
-				height 		  = object.height,
-				radius    	  = object.radius,
-				lineWidth     = object.lineWidth,
-				strokeStyle   = object.strokeStyle,
-				fill          = object.fill,
-				rotate        = object.rotate;
-				shadowBlur    = object.shadowBlur;
-				shadowOffsetX = object.shadowOffsetX;
-				shadowOffsetY = object.shadowOffsetY;
-				shadowColor   = object.shadowColor;
-
-			object.endX = x + width;
-			object.endY = y + height;
-
-			ctx.shadowBlur    = shadowBlur;
-			ctx.shadowOffsetX = shadowOffsetX;
-			ctx.shadowOffsetY = shadowOffsetY;
-			ctx.shadowColor   = shadowColor;
-
-			ctx.save();
-			ctx.translate( x+(width/2),y+(height/2) );
-			x = 0 - (width/2);
-			y = 0 - (height/2);
-			ctx.rotate(rotate*Math.PI/180);
-
-			if( object.src ) 
+			this.parent.helpers.forEachObjects($.proxy(function( object )
 			{
-				image     = new Image();
-				image.src = object.src;
-				ctx.drawImage(image, x, y, width, height);
-			}
-			else this.rect( ctx, x, y, width, height, radius, rotate, lineWidth, strokeStyle, fill, true );
+				this.drawObject( object );	
+			},this));
+		},
 
-			ctx.restore();
+		drawObject : function( object, ctx ){
 
-		}
-		if( object.type == 'text' )
-		{
-			var isItalic = '', 
-				isBold   = '';
+			if(object.visible == false) return;
 
-			if(object.isBold)   isBold   = 'bold';
-			if(object.isItalic) isItalic = 'italic';
+			if(!ctx) ctx = this.parent.ctx;
 
-			ctx.lineWidth     = object.lineWidth;
-			ctx.strokeStyle   = object.strokeStyle;
-			ctx.fillStyle     = object.fillStyle;
-			ctx.font          = isItalic + ' ' + isBold + ' ' + object.fontSize + 'px ' + object.font;
-			ctx.shadowColor   = object.shadowColor;
-			ctx.shadowBlur    = object.shadowBlur;
-			ctx.shadowOffsetX = object.shadowOffsetX;
-			ctx.shadowOffsetY = object.shadowOffsetY;
-			ctx.textBaseline  = "top";
-
-			var x 	   = object.startX,
-				y 	   = object.startY,
-				width  = ctx.measureText(object.text).width,
-				height = Number(object.fontSize),
-				rotate = object.rotate;
-
-			ctx.save();
-			ctx.translate( x+(width/2),y+(height/2) );
-			x = 0 - (width/2);
-			y = 0 - (height/2);
-			ctx.rotate(rotate*Math.PI/180);
-
-			if(!object.lineWidth) ctx.fillText(object.text, x, y);
-			else
+			if( object.type == 'box' )
 			{
-				if(object.fillStyle) ctx.fillText(object.text, x, y);
-				ctx.strokeText(object.text, x, y);
+				var x 			  = object.startX,
+					y 			  = object.startY,
+					width 		  = object.width,
+					height 		  = object.height,
+					radius    	  = object.radius,
+					lineWidth     = object.lineWidth,
+					strokeStyle   = object.strokeStyle,
+					fill          = object.fill,
+					rotate        = object.rotate;
+					shadowBlur    = object.shadowBlur;
+					shadowOffsetX = object.shadowOffsetX;
+					shadowOffsetY = object.shadowOffsetY;
+					shadowColor   = object.shadowColor;
+
+				object.endX = x + width;
+				object.endY = y + height;
+
+				ctx.shadowBlur    = shadowBlur;
+				ctx.shadowOffsetX = shadowOffsetX;
+				ctx.shadowOffsetY = shadowOffsetY;
+				ctx.shadowColor   = shadowColor;
+
+				ctx.save();
+				ctx.translate( x+(width/2),y+(height/2) );
+				x = 0 - (width/2);
+				y = 0 - (height/2);
+				ctx.rotate(rotate*Math.PI/180);
+
+				if( object.src ) 
+				{
+					image     = new Image();
+					image.src = object.src;
+					ctx.drawImage(image, x, y, width, height);
+				}
+				else this.rect( ctx, x, y, width, height, radius, rotate, lineWidth, strokeStyle, fill, true );
+
+				ctx.restore();
+
+			}
+			if( object.type == 'text' )
+			{
+				var isItalic = '', 
+					isBold   = '';
+
+				if(object.isBold)   isBold   = 'bold';
+				if(object.isItalic) isItalic = 'italic';
+
+				ctx.lineWidth     = object.lineWidth;
+				ctx.strokeStyle   = object.strokeStyle;
+				ctx.fillStyle     = object.fillStyle;
+				ctx.font          = isItalic + ' ' + isBold + ' ' + object.fontSize + 'px ' + object.font;
+				ctx.shadowColor   = object.shadowColor;
+				ctx.shadowBlur    = object.shadowBlur;
+				ctx.shadowOffsetX = object.shadowOffsetX;
+				ctx.shadowOffsetY = object.shadowOffsetY;
+				ctx.textBaseline  = "top";
+
+				var x 	   = object.startX,
+					y 	   = object.startY,
+					width  = ctx.measureText(object.text).width,
+					height = Number(object.fontSize),
+					rotate = object.rotate;
+
+				ctx.save();
+				ctx.translate( x+(width/2),y+(height/2) );
+				x = 0 - (width/2);
+				y = 0 - (height/2);
+				ctx.rotate(rotate*Math.PI/180);
+
+				if(!object.lineWidth) ctx.fillText(object.text, x, y);
+				else
+				{
+					if(object.fillStyle) ctx.fillText(object.text, x, y);
+					ctx.strokeText(object.text, x, y);
+				}
+
+				object.width  = ctx.measureText(object.text).width;
+				object.height = Number(object.fontSize);
+				object.endX   = object.startX + object.width;
+				object.endY   = object.startY + Number(object.fontSize);
+
+				ctx.restore();
+
+				ctx.shadowColor   = 0;
+				ctx.shadowBlur    = 0;
+				ctx.shadowOffsetX = 0;
+				ctx.shadowOffsetY = 0;
+
+			}
+		},
+
+		rect : function( ctx, x, y, width, height, radius, rotate, lineWidth, strokeStyle, fill, stroke ) {
+
+			if (typeof stroke == "undefined" ) stroke = true;
+			if (typeof radius === "undefined") radius = 5;
+			ctx.beginPath();
+			ctx.moveTo(x + radius, y);
+			ctx.lineTo(x + width - radius, y);
+			ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+			ctx.lineTo(x + width, y + height - radius);
+			ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+			ctx.lineTo(x + radius, y + height);
+			ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+			ctx.lineTo(x, y + radius);
+			ctx.quadraticCurveTo(x, y, x + radius, y);
+			ctx.closePath();
+			ctx.lineWidth = lineWidth;
+			ctx.strokeStyle = strokeStyle;
+			if (stroke && lineWidth) ctx.stroke();
+			if (fill) { ctx.fillStyle = fill; ctx.fill(); }
+
+		},
+
+		selectedBox : function(){
+			for(i in this.selectedObjects)
+			{
+				if(this.selectedObjects[i].id == this.tempObject) return;
+				if(this.selectedObjects[i].type != 'text') return;
+				var o  = this.selectedObjects[i],
+					x  = o.startX - this.defaultText.selectFeather,
+					y  = o.endY + this.defaultText.selectFeather,
+					w  = o.width + (this.defaultText.selectFeather * 2),
+					h  = 0.1,
+					cx = o.width / 2,
+					cy = o.height / 2,
+					r  = o.rotate;
+				this.parent.ctx.save();
+				this.parent.ctx.translate( x + cx, y + cy );
+				x = 0 - cx; y = 0 - cy;
+				this.parent.ctx.rotate(r*Math.PI/180);
+				this.parent.ctx.beginPath();
+				this.parent.ctx.rect( x, y, w, h );
+				this.parent.ctx.lineWidth   = this.selectedBox.lineWidth;
+				this.parent.ctx.strokeStyle = this.selectedBox.strokeStyle;
+				this.parent.ctx.stroke();
+				this.parent.ctx.restore();
+			}
+		},
+
+		selectionBox : function(){
+			if(this.parent.selectionBox.endX != null)
+			{
+				this.parent.ctx.beginPath();
+				var x1 = this.parent.selectionBox.startX,
+					y1 = this.parent.selectionBox.startY,
+					x2 = this.parent.selectionBox.endX,
+					y2 = this.parent.selectionBox.endY;
+				this.parent.ctx.rect( x1, y1, (x2 - x1), (y2 - y1) );
+				this.parent.ctx.lineWidth   = this.parent.selectionBox.lineWidth;
+				this.parent.ctx.strokeStyle = this.parent.selectionBox.strokeStyle;
+				this.parent.ctx.stroke();	
+			}
+		},
+
+		actionPoints : function(){
+			for(i in this.selectedObjects)
+			{
+				object       = this.getObject( this.selectedObjects[i].id );
+				actionPoints = this.getActionPoints( object );
+				for(i in actionPoints){
+					this.parent.ctx.beginPath();
+					this.parent.ctx.arc(actionPoints[i].x, actionPoints[i].y, this.actionPointSize, 0, 2 * Math.PI, false);
+					this.parent.ctx.fillStyle = 'deepskyblue';
+					this.parent.ctx.fill();
+					this.parent.ctx.lineWidth = 1;
+					this.parent.ctx.strokeStyle = '#003300';
+					this.parent.ctx.stroke();
+				}
+			}
+		},
+
+		point : function(x,y){
+			if(this.debugPoint){
+				x = this.debugPoint.x;
+				y = this.debugPoint.y;
+				this.parent.ctx.beginPath();
+				this.parent.ctx.fillStyle="orange";
+				this.parent.ctx.arc(x, y, this.actionPointSize, 0, 2 * Math.PI, false);
+				this.parent.ctx.fill();
+			}
+		},
+
+		transformClone : function(){
+			tc = this.transformClone;
+			this.parent.ctx.beginPath();
+			this.parent.ctx.rect( tc.startX, tc.startY, tc.width, tc.height );
+			this.parent.ctx.lineWidth   = 1;
+			this.parent.ctx.strokeStyle = 'green';
+			this.parent.ctx.stroke();
+		},
+
+		ui : function(){
+
+			$('.toolbox.objects .body .objectsItem').remove();
+
+			this.parent.helpers.toggleObjectsOptions();
+			
+			for(i in this.parent.objects)
+			{
+				var object = this.parent.objects[i],
+					title  = "";
+				var objectsItem = $('#ceTemplates .objectsItem').clone();
+				objectsItem.attr('objectid',object.id);
+
+				title = object.type;
+				if(object.src) title = 'image';
+				title += ' ' + object.id;
+				if(object.type == 'text') title += ' - '+object.text;
+				title = title.capitalize();
+				objectsItem.find('.objectName').html( title );
+
+				if(this.parent.helpers.isObjectSelected(object.id))
+					objectsItem.addClass('selected');
+
+				object.visible ? '' : objectsItem.find('.objectVisible').addClass('invisible') ;
+				object.locked  ? objectsItem.find('.objectLock').removeClass('unlocked') : '' ;
+
+				$('.toolbox.objects .body').prepend( objectsItem );
 			}
 
-			object.width  = ctx.measureText(object.text).width;
-			object.height = Number(object.fontSize);
-			object.endX   = object.startX + object.width;
-			object.endY   = object.startY + Number(object.fontSize);
+			$('.sortable').multisortable({
+				items         : ".objectsItem",
+				selectedClass : "selected",
+				stop          : $.proxy(function(){ 
+					this.reOrderByUi();
+					this.parent.helpers.toggleObjectsOptions();
+				},this),
+				click         : $.proxy(function(){
+					this.reOrderByUi(); 
+					this.parent.helpers.toggleObjectsOptions();
+				},this)
+			});
 
-			ctx.restore();
+		},
 
-			ctx.shadowColor   = 0;
-			ctx.shadowBlur    = 0;
-			ctx.shadowOffsetX = 0;
-			ctx.shadowOffsetY = 0;
+		reOrderByUi : function( renderAllThumbs ){
 
-		}
-	},
+			var order       = [],
+				selecteds   = [],
+				tempObjects = [];
 
-	rect : function( ctx, x, y, width, height, radius, rotate, lineWidth, strokeStyle, fill, stroke ) {
+			this.parent.selecteds = [];
 
-		if (typeof stroke == "undefined" ) stroke = true;
-		if (typeof radius === "undefined") radius = 5;
-		ctx.beginPath();
-		ctx.moveTo(x + radius, y);
-		ctx.lineTo(x + width - radius, y);
-		ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
-		ctx.lineTo(x + width, y + height - radius);
-		ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-		ctx.lineTo(x + radius, y + height);
-		ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
-		ctx.lineTo(x, y + radius);
-		ctx.quadraticCurveTo(x, y, x + radius, y);
-		ctx.closePath();
-		ctx.lineWidth = lineWidth;
-		ctx.strokeStyle = strokeStyle;
-		if (stroke && lineWidth) ctx.stroke();
-		if (fill) { ctx.fillStyle = fill; ctx.fill(); }
+			$($('.toolbox.objects .body .objectsItem').get().reverse()).each(function(){
+				objectId = Number($(this).attr('objectid'));
+				order.push(objectId);
+				if( $(this).hasClass('selected') ) selecteds.push( objectId )
+			});
 
-	},
+			for(i in order)     tempObjects.push( this.parent.getObject( order[i] ) );
+			for(s in selecteds) this.parent.select( this.parent.getObject( selecteds[s] ) );
 
-	drawSelectedBox : function(){
-		for(i in this.selectedObjects)
-		{
-			if(this.selectedObjects[i].id == this.tempObject) return;
-			if(this.selectedObjects[i].type != 'text') return;
-			var o  = this.selectedObjects[i],
-				x  = o.startX - this.defaultText.selectFeather,
-				y  = o.endY + this.defaultText.selectFeather,
-				w  = o.width + (this.defaultText.selectFeather * 2),
-				h  = 0.1,
-				cx = o.width / 2,
-				cy = o.height / 2,
-				r  = o.rotate;
-			this.ctx.save();
-			this.ctx.translate( x + cx, y + cy );
-			x = 0 - cx; y = 0 - cy;
-			this.ctx.rotate(r*Math.PI/180);
-			this.ctx.beginPath();
-			this.ctx.rect( x, y, w, h );
-			this.ctx.lineWidth   = this.selectedBox.lineWidth;
-			this.ctx.strokeStyle = this.selectedBox.strokeStyle;
-			this.ctx.stroke();
-			this.ctx.restore();
-		}
-	},
+			this.parent.objects = tempObjects;
 
-	drawSelectionBox : function(){
-		if(this.selectionBox.endX != null)
-		{
-			this.ctx.beginPath();
-			var x1 = this.selectionBox.startX,
-				y1 = this.selectionBox.startY,
-				x2 = this.selectionBox.endX,
-				y2 = this.selectionBox.endY;
-			this.ctx.rect( x1, y1, (x2 - x1), (y2 - y1) );
-			this.ctx.lineWidth   = this.selectionBox.lineWidth;
-			this.ctx.strokeStyle = this.selectionBox.strokeStyle;
-			this.ctx.stroke();	
-		}
-	},
+			//this.renderThumbnails( renderAllThumbs );
 
-	drawActionPoints : function(){
-		for(i in this.selectedObjects)
-		{
-			object       = this.getObject( this.selectedObjects[i].id );
-			actionPoints = this.getActionPoints( object );
-			for(i in actionPoints){
-				this.ctx.beginPath();
-				this.ctx.arc(actionPoints[i].x, actionPoints[i].y, this.actionPointSize, 0, 2 * Math.PI, false);
-				this.ctx.fillStyle = 'deepskyblue';
-				this.ctx.fill();
-				this.ctx.lineWidth = 1;
-				this.ctx.strokeStyle = '#003300';
-				this.ctx.stroke();
+			this.parent.render();
+			this.toolbar();
+
+		},
+
+
+		toolbar : function(){
+
+			$('.toolbar').hide();
+
+			if(this.parent.selecteds.length && this.parent.action != 'move')
+			{
+				var flag = false;
+
+				if(this.parent.helpers.selectedIsText()) { this.parent.editText(); flag = true; }
+				if(this.parent.helpers.selectedIsBox())  { this.parent.editBox();  flag = true; }
+
+				if(this.parent.selecteds.length     && 
+				   this.parent.selecteds.length > 1 && 
+				   this.parent.action == 'select'   &&
+				   !flag) { $('.toolbar.selectMultiple').show(); flag = true; }
+
+				if(!flag) $('.toolbar.'+this.parent.action).show();
 			}
-		}
-	},
+			else $('.toolbar.'+this.parent.action).show();	
 
-	drawPoint : function(x,y){
-		if(this.debugPoint){
-			x = this.debugPoint.x;
-			y = this.debugPoint.y;
-			this.ctx.beginPath();
-			this.ctx.fillStyle="orange";
-			this.ctx.arc(x, y, this.actionPointSize, 0, 2 * Math.PI, false);
-			this.ctx.fill();
-		}
-	},
+		},
 
-	drawTransformClone : function(){
-		tc = this.transformClone;
-		this.ctx.beginPath();
-		this.ctx.rect( tc.startX, tc.startY, tc.width, tc.height );
-		this.ctx.lineWidth   = 1;
-		this.ctx.strokeStyle = 'green';
-		this.ctx.stroke();
-	}
+	}	
+	
 })

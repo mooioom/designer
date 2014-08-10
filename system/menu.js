@@ -5,47 +5,43 @@ $.extend( true, editor, {
 
 		init : function(){
 
-			this.parent = editor;
-
 			this.items = [
 
 				{
 					id    : 'file',
 					sub   : [
-						{ id : 'new',       action : editor.create    },
-						{ id : 'save',      action : editor.save      },
-						{ id : 'load',      action : editor.load      },
-						{ id : 'exportSvg', action : editor.svg       },
-						{ id : 'exportPng', action : editor.saveImg   }
+						{ id : 'new',       action : this.parent.create    },
+						{ id : 'save',      action : this.parent.save      },
+						{ id : 'load',      action : this.parent.load      },
+						{ id : 'exportSvg', action : this.parent.svg       },
+						{ id : 'exportPng', action : this.parent.saveImg   }
 					]
 				},
 				{
 					id    : 'edit',
 					sub   : [
-						{ id : 'undo'         , action : editor.undo, 		   shortcut : 'Ctrl + Z' },
-						{ id : 'redo'         , action : editor.redo, 		   shortcut : 'Ctrl + Y' },
-						{ id : 'sep' 															     },
-						{ id : 'copy'         , action : editor.copy, 		   shortcut : 'Ctrl + C' },
-						{ id : 'paste'	      , action : editor.paste, 		   shortcut : 'Ctrl + V' },
-						{ id : 'selectAll'    , action : editor.selectAll, 	   shortcut : 'Ctrl + A' },
-						{ id : 'delete'	  	  , action : editor.deleteCurrent, shortcut : 'Del'      },
-						{ id : 'sep' 														         },
-						{ id : 'bringToFront' , action : editor.bringToFront,  shortcut : 'Ctrl + F' },
-						{ id : 'sendToBack'   , action : editor.sendToBack,    shortcut : 'Ctrl + B' },
+						{ id : 'undo'         , action : this.parent.undo, 		    shortcut : 'Ctrl + Z' },
+						{ id : 'redo'         , action : this.parent.redo, 		    shortcut : 'Ctrl + Y' },
+						{ id : 'sep' 															          },
+						{ id : 'copy'         , action : this.parent.copy, 		    shortcut : 'Ctrl + C' },
+						{ id : 'paste'	      , action : this.parent.paste, 		shortcut : 'Ctrl + V' },
+						{ id : 'selectAll'    , action : this.parent.selectAll, 	shortcut : 'Ctrl + A' },
+						{ id : 'delete'	  	  , action : this.parent.deleteCurrent, shortcut : 'Del'      },
+						{ id : 'sep' 														              },
+						{ id : 'bringToFront' , action : this.parent.bringToFront,  shortcut : 'Ctrl + F' },
+						{ id : 'sendToBack'   , action : this.parent.sendToBack,    shortcut : 'Ctrl + B' },
 					]
 				},
 				{
 					id    : 'view',
 					sub   : [
-						{ id : 'grid',      action : this.toolbox('grid'),      shortcut : 'Ctrl + G' },
-						{ id : 'objects',   action : this.toolbox('objects'),   shortcut : 'Ctrl + O' },
-						{ id : 'resources', action : this.toolbox('resources'), shortcut : 'Ctrl + R' }
+						{ id : 'grid',      action : this.parent.toolbox, args : ['grid'],      shortcut : 'Ctrl + G' },
+						{ id : 'objects',   action : this.parent.toolbox, args : ['objects'],   shortcut : 'Ctrl + O' },
+						{ id : 'resources', action : this.parent.toolbox, args : ['resources'], shortcut : 'Ctrl + R' }
 					]
 				}
 
 			];
-
-			console.log('menuInit',this,this.parent);
 
 			this.render();
 			this.events();
@@ -99,10 +95,14 @@ $.extend( true, editor, {
 		initEventForItem : function( item ){
 			if(!item.action) return;
 			$('.mainMenu #'+item.id).unbind('click').click( $.proxy( item.action, this.parent ) );
-		},
-
-		toolbox : function(){
-
+			if(item.shortcut)
+			{
+				this.parent.events.keyboardEvents.push({
+					action   : item.action,
+					shortcut : item.shortcut,
+					args     : item.args
+				});
+			}
 		}
 
 	}

@@ -21,9 +21,12 @@
 		<script type="text/javascript" src="system/base.js"></script>
 		<script type="text/javascript" src="system/init.js"></script>
 		<script type="text/javascript" src="system/menu.js"></script>
+		<script type="text/javascript" src="system/toolbar.js"></script>
+		<script type="text/javascript" src="system/toolbox.js"></script>
 		<script type="text/javascript" src="system/events.js"></script>
 		<script type="text/javascript" src="system/render.js"></script>
 		<script type="text/javascript" src="system/file.js"></script>
+		<script type="text/javascript" src="system/history.js"></script>
 		<script type="text/javascript" src="system/functions.js"></script>
 		<script type="text/javascript" src="system/actions.js"></script>
 		<script type="text/javascript" src="system/helpers.js"></script>
@@ -41,7 +44,7 @@
 
 		<div class="mainMenu"></div>
 
-		<div class="subMenu box">
+		<div class="toolbar box">
 			<div class="item"><%=Resources.Strings.Box %></div>
 			<div class="sep"></div>
 			<div class="item">X <input type="text" class="startX" /> &nbsp;Y <input type="text" class="startY" /></div>
@@ -59,7 +62,7 @@
 			<div class="clear"></div>
 		</div>
 
-		<div class="subMenu text hidden">
+		<div class="toolbar text hidden">
 			<div class="item"><%=Resources.Strings.Text %></div>
 			<div class="sep"></div>
 			<div class="item">X <input type="text" class="startX" /> &nbsp;Y <input type="text" class="startY" /></div>
@@ -95,38 +98,38 @@
 			<div class="clear"></div>
 		</div>
 
-		<div class="subMenu select hidden">
+		<div class="toolbar select hidden">
 			<div class="item"><%=Resources.Strings.Select %></div>
 			<div class="sep"></div>
 			<div class="item"><%=Resources.Strings.ClickOrDragToSelect%></div>
 			<div class="clear"></div>
 		</div>
 
-		<div class="subMenu selectMultiple hidden">
+		<div class="toolbar selectMultiple hidden">
 			<div class="item"><%=Resources.Strings.Select %></div>
 			<div class="sep"></div>
 			<div class="item"><%=Resources.Strings.MultipleSelected %></div>
 			<div class="sep"></div>
 			<div class="item">
-				<div class="subMenuButton align alignRight"   type="Right"></div>
-				<div class="subMenuButton align alignLeft"    type="Left"></div>
-				<div class="subMenuButton align alignBottom"  type="Bottom"></div>
-				<div class="subMenuButton align alignTop"     type="Top"></div>
-				<div class="subMenuButton align alignMiddleV" type="MiddleV"></div>
-				<div class="subMenuButton align alignMiddleH" type="MiddleH"></div>
-				<div class="subMenuButton align alignCenter"  type="Center"></div>
+				<div class="toolbarButton align alignRight"   type="Right"></div>
+				<div class="toolbarButton align alignLeft"    type="Left"></div>
+				<div class="toolbarButton align alignBottom"  type="Bottom"></div>
+				<div class="toolbarButton align alignTop"     type="Top"></div>
+				<div class="toolbarButton align alignMiddleV" type="MiddleV"></div>
+				<div class="toolbarButton align alignMiddleH" type="MiddleH"></div>
+				<div class="toolbarButton align alignCenter"  type="Center"></div>
 			</div>
 			<div class="clear"></div>
 		</div>
 
-		<div class="subMenu move hidden">
+		<div class="toolbar move hidden">
 			<div class="item"><%=Resources.Strings.Move %></div>
 			<div class="sep"></div>
 			<div class="item"><input type="checkbox" id="selectAndMove" /> <%=Resources.Strings.SelectAndMove %></div>
 			<div class="clear"></div>
 		</div>
 
-		<div class="subMenu transform hidden">
+		<div class="toolbar transform hidden">
 			<div class="item"><%=Resources.Strings.Transform %></div>
 			<div class="sep"></div>
 			<div class="item"><%=Resources.Strings.ClickToTransform%></div>

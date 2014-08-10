@@ -57,7 +57,7 @@ $.extend( true, editor, {
 		currentObject        = 0;
 		this.render();
 		this.drawExternalUi();
-		this.drawSubMenu();
+		this.drawtoolbar();
 	},
 
 	save : function()

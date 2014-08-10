@@ -6,36 +6,36 @@ $.extend( true, editor, {
 		select : 
 		{
 			mouseDown : function(){
-				if(!this.ctrlIsPressed) this.selectedObjects = [];
-				this.tempObject          = null;
-				this.selectionBox.startX = this.mouseX;
-				this.selectionBox.startY = this.mouseY;
+				if(!this.ctrlIsPressed) this.parent.selecteds = [];
+				this.parent.temp                = null;
+				this.parent.selectionBox.startX = this.parent.events.mouseX;
+				this.parent.selectionBox.startY = this.parent.events.mouseY;
 			},
 			mouseUp : function(){
-				this.selectionBox.startX = null;
-				this.selectionBox.startY = null;
-				this.selectionBox.endX   = null;
-				this.selectionBox.endY   = null;
-				if(!this.drag) this.clickSelect();
+				this.parent.selectionBox.startX = null;
+				this.parent.selectionBox.startY = null;
+				this.parent.selectionBox.endX   = null;
+				this.parent.selectionBox.endY   = null;
+				if(!this.parent.events.drag) this.parent.helpers.clickSelect();
 			},
 			mouseMove : function(){
-				if(this.drag)
+				if(this.parent.events.drag)
 				{
-					this.selectedObjects = [];
+					this.parent.selecteds = [];
 
-					this.selectionBox.endX = this.mouseX;
-					this.selectionBox.endY = this.mouseY;
+					this.parent.selectionBox.endX = this.parent.events.mouseX;
+					this.parent.selectionBox.endY = this.parent.events.mouseY;
 
 					var found  = false;
 
-					this.forEachObjects( $.proxy(function( o ){
-						if( this.isObjectSelected(o.id) ) return;
-						if( o.locked                    ) return;
-						if( !o.visible                  ) return;
-						if(this.collision( o, this.selectionBox ))
+					this.parent.helpers.forEachObjects( $.proxy(function( o ){
+						if( this.parent.helpers.isObjectSelected(o.id) ) return;
+						if( o.locked                                   ) return;
+						if( !o.visible                                 ) return;
+						if(this.parent.helpers.collision( o, this.parent.selectionBox ))
 						{
 							found = true;
-							this.select(o);
+							this.parent.select(o);
 						}
 					},this));
 				}
@@ -45,40 +45,40 @@ $.extend( true, editor, {
 		move : 
 		{
 			mouseDown : function(){
-				this.saveHistory();
-				if(!this.selectedObjects.length || this.selectAndMove) this.clickSelect();
-				if(this.altIsPressed)
+				this.parent.history.save();
+				if(!this.parent.selecteds.length || this.parent.selectAndMove) this.parent.helpers.clickSelect();
+				if(this.parent.events.altIsPressed)
 				{
-					this.copy();
-					this.paste( true );
+					this.parent.copy();
+					this.parent.paste( true );
 				}
-				this.startMoveX = this.mouseX;
-				this.startMoveY = this.mouseY;
-				for(i in this.selectedObjects)
-					this.tempSelecteds.push({
-						startX : this.selectedObjects[i].startX,
-						startY : this.selectedObjects[i].startY,
-						endX   : this.selectedObjects[i].endX,
-						endY   : this.selectedObjects[i].endY,
+				this.parent.events.startMoveX = this.parent.events.mouseX;
+				this.parent.events.startMoveY = this.parent.events.mouseY;
+				for(i in this.parent.selecteds)
+					this.parent.temps.push({
+						startX : this.parent.selecteds[i].startX,
+						startY : this.parent.selecteds[i].startY,
+						endX   : this.parent.selecteds[i].endX,
+						endY   : this.parent.selecteds[i].endY,
 					});
 			},
 			mouseUp : function(){
-				this.tempSelecteds = [];
+				this.parent.temps = [];
 			},
 			mouseMove : function(){
-				if(this.drag)
+				if(this.parent.events.drag)
 				{
-					this.movedX = this.mouseX - this.startMoveX;
-					this.movedY = this.mouseY - this.startMoveY;
-					for(i in this.selectedObjects)
+					this.parent.events.movedX = this.parent.events.mouseX - this.parent.events.startMoveX;
+					this.parent.events.movedY = this.parent.events.mouseY - this.parent.events.startMoveY;
+					for(i in this.parent.selecteds)
 					{
-						var o = this.selectedObjects[i];
+						var o = this.parent.selecteds[i];
 						if( o.locked   ) return;
 						if( !o.visible ) return;
-						o.startX = this.getClosestSnapCoords( this.tempSelecteds[i].startX + this.movedX );
-						o.endX   = this.getClosestSnapCoords( this.tempSelecteds[i].endX   + this.movedX );
-						o.startY = this.getClosestSnapCoords( this.tempSelecteds[i].startY + this.movedY );
-						o.endY   = this.getClosestSnapCoords( this.tempSelecteds[i].endY   + this.movedY );
+						o.startX = this.parent.helpers.getClosestSnapCoords( this.parent.temps[i].startX + this.parent.events.movedX );
+						o.endX   = this.parent.helpers.getClosestSnapCoords( this.parent.temps[i].endX   + this.parent.events.movedX );
+						o.startY = this.parent.helpers.getClosestSnapCoords( this.parent.temps[i].startY + this.parent.events.movedY );
+						o.endY   = this.parent.helpers.getClosestSnapCoords( this.parent.temps[i].endY   + this.parent.events.movedY );
 					}	
 				}
 			}
@@ -87,8 +87,8 @@ $.extend( true, editor, {
 		transform : 
 		{
 			mouseDown : function(){
-				this.startMoveX = this.mouseX;
-				this.startMoveY = this.mouseY;
+				this.parent.eventsstartMoveX = this.mouseX;
+				this.parent.eventsstartMoveY = this.mouseY;
 				this.onResize = this.isCursorOnResize();
 				if( this.isCursorOnRotate() ) this.onRotate = true;
 			},
@@ -142,21 +142,21 @@ $.extend( true, editor, {
 		{
 			mouseDown : function()
 			{
-				this.saveHistory();
-				this.selectedObjects = [];
-				newObject 			 = this.createObject();
-				this.tempObject 	 = this.currentObject;
-				this.select( newObject );
-				this.objects.push( newObject );
+				this.parent.history.save();
+				this.parent.selecteds = [];
+				newObject 			  = this.parent.create.object();
+				this.parent.temp 	  = this.parent.current;
+				this.parent.select( newObject );
+				this.parent.objects.push( newObject );
 			},
 			mouseMove : function()
 			{
-				if(this.drag)
+				if(this.parent.events.drag)
 				{
-					var tempObject = this.getObject( this.tempObject ),
+					var tempObject = this.parent.getObject( this.parent.temp ),
 						point      = {
-							x : this.getClosestSnapCoords( this.mouseX ),
-							y : this.getClosestSnapCoords( this.mouseY )
+							x : this.parent.helpers.getClosestSnapCoords( this.parent.events.mouseX ),
+							y : this.parent.helpers.getClosestSnapCoords( this.parent.events.mouseY )
 						}
 					tempObject.endX   = point.x;
 					tempObject.endY   = point.y;
@@ -166,15 +166,15 @@ $.extend( true, editor, {
 			},
 			mouseUp : function()
 			{
-				var tempObject = this.getObject( this.tempObject );
+				var tempObject = this.parent.getObject( this.parent.temp );
 				if(tempObject.startX == tempObject.endX && 
 				   tempObject.startY == tempObject.endY)
 				{
-					this.deleteObject( tempObject.id );
+					this.parent.deleteObject( tempObject.id );
 					tempObject = null;
 				}
 				else {
-					this.currentObject++;
+					this.parent.current ++;
 				}
 			}
 		},
@@ -182,28 +182,28 @@ $.extend( true, editor, {
 		text : 
 		{
 			mouseDown : function(){
-				this.saveHistory();
-				this.selectedObjects = [];
-				newObject       = this.createObject();
-				this.tempObject = this.currentObject;
-				this.objects.push( newObject );
+				this.parent.history.save();
+				this.parent.selecteds = [];
+				newObject       = this.parent.create.object();
+				this.tempObject = this.parent.current;
+				this.parent.objects.push( newObject );
 			},
 			mouseMove : function(){
-				if(this.drag)
+				if(this.parent.events.drag)
 				{
-					var tempObject  = this.getObject( this.tempObject ),
-						point      = {
-							x : this.getClosestSnapCoords( this.mouseX ),
-							y : this.getClosestSnapCoords( this.mouseY )
+					var tempObject  = this.parent.getObject( this.parent.temp ),
+						point = {
+							x : this.parent.helpers.getClosestSnapCoords( this.parent.events.mouseX ),
+							y : this.parent.helpers.getClosestSnapCoords( this.parent.events.mouseY )
 						}
 				}
 			},
 			mouseUp : function(){
-				if(this.tempObject == null) return;
-				var tempObject = this.getObject( this.tempObject );
-				this.select(tempObject);
-				this.tempObject = null;
-				this.currentObject++;
+				if(this.parent.temp == null) return;
+				var tempObject = this.parent.getObject( this.parent.temp );
+				this.parent.select(tempObject);
+				this.parent.temp = null;
+				this.parent.current++;
 			}
 		},
 

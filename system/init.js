@@ -1,5 +1,41 @@
 
 $.extend( true, editor, {
+
+	debug : false,
+
+	canvas : null,
+	ctx    : null,
+
+	current   : 0,
+
+	objects   : [],
+	resources : [],
+	images    : [],
+	clipboard : [],
+	selecteds : [],
+	temps     : [],
+	temp      : null,
+
+	action : "box", // select, move, rotate, scale, box, line, colorpick etc...
+
+	selectAndMove : false,
+
+	selectionBox :
+	{
+		startX 		: null,
+		startY 		: null,
+		endX   		: null,
+		endY   		: null,
+		lineWidth 	: 1,
+		strokeStyle : '#000'
+	},
+
+	selectedBox :
+	{
+		lineWidth 	: 1,
+		strokeStyle : 'grey',
+		feather 	: 0
+	},
 	
 	init : function( data )
 	{
@@ -7,7 +43,7 @@ $.extend( true, editor, {
 
 		for(var i in this.defaults) this[i] = this.defaults[i];
 
-		this.menu.init();
+		this.context( this );
 
 		$('.stage').empty();
 		$('.stage').append('<canvas id="canvas"></canvas>');
@@ -22,7 +58,7 @@ $.extend( true, editor, {
 		$('#canvas, #gridCanvas').attr( 'width',  this.width );
 		$('#canvas, #gridCanvas').attr( 'height', this.height );
 
-		this.positionCanvas();
+		this.helpers.positionCanvas();
 
 		$('.stage').show();
 
@@ -34,63 +70,47 @@ $.extend( true, editor, {
 
 		this.helperCanvas = document.getElementById("helperCanvas");
 
-		this.initCanvas();
-		this.events();
-		this.drawGrid();
+		this.menu.init();
+		this.toolbar.init();
+		this.toolbox.init();
+		this.events.init();
+		this.draw.grid();
 		this.render();
 
-	},
-
-	initCanvas : function(){
-
-		$( "#canvas" ).droppable({
-			drop: $.proxy(function( event, ui )
-			{
-
-				if(!$(event.toElement).hasClass('dropItem')) return;
-
-				var src = event.toElement.src,
-					img = new Image();
-				
-				img.src = src;
-				w       = img.width;
-				h       = img.height;
-
-				this.getResources();
-
-				var point    = {x:event.clientX,y:event.clientY},
-				    position = this.getPositionOnCanvas( point );
-
-				this.saveHistory();
-
-				this.selectedObjects = [];
-				this.createBox( position.x, position.y, w, h );
-				this.selectedObjects[0].src = src;
-
-				$('.tools .move').click();
-
-				this.render();
-				this.drawExternalUi();
-				this.drawSubMenu();
-
-			},this)
-	    });
-
-		this.getResources();
+		this.spectrum('fill');
+		this.spectrum('strokeStyle');
+		this.spectrum('fillStyle');
+		this.spectrum('shadowColor');
 
 	},
 
-	positionCanvas : function(){
+	context : function( item )
+	{
+		// create parent context for all child objects
+		for(var i in item) if(item[i] && Object.prototype.toString.call(item[i]).search('Object') != -1) {
+			if(i != 'parent' && i != 'root') this.context( item[i] );
+			item[i].parent = item;
+			item[i].root   = this;
+		}
+	},
 
-		var stageW  = Number($('.stage').width()),
-			stageH  = Number($('.stage').height()),
-			marginW = (stageW - this.width) / 2,
-			marginH = (stageH - this.height) / 2;
+	spectrum : function( el ){
 
-		if(marginH > 50 || marginH < 0) marginH = 50;
-
-		$('#canvas, #gridCanvas').css('left',marginW + 'px');
-		$('#canvas, #gridCanvas').css('top', marginH + 'px');
+		var s = function( color ){
+			if(!editor.selecteds.length) return;
+	    	str = color ? color.toRgbString() : ""; 
+	    	editor.selecteds[0][el] = str;
+	    	$("."+el).val( str );
+	    	editor.render();
+		}
+		$("." + el).spectrum({
+		    allowEmpty : true,
+		    showAlpha  : true,
+		    move   : function( color ){ s( color ) },
+		    change : function( color ){ s( color ) }
+		}).on("dragstart.spectrum", function(e, color) {
+			editor.history.save();
+		});
 
 	},
 

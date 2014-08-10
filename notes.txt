@@ -1,0 +1,30 @@
+TODO : 
+
+- save currentObject identifier
+- point to resources (do not draw src each time)
+- resources delete
+- scale
+- dynamic properties (text / button)
+- save file name
+- resources drag into object but do not replace image
+- update transform, shadow, text according to selected object
+- select align target
+- canvas size
+- zoom
+
+BUGS :
+
+- exporting svg streched images showing original dimentions
+- shadow offset in svg is not correct because of rotation
+- dragging an image into the canvas when big image is not correct
+- debug replaces text in view menu (objects)
+- after canvas resize - image drop is wrong coordinates
+- after canvas resize - clicking on layers renders wrong
+
+FEATURES :
+
+- grid before / after canvas ( change z-index and capture click on gridCanvas instead )
+
+CHANGELOG : 
+
+3/8/14 - Editor is now modular

@@ -209,7 +209,7 @@ input[type='range'] {
 	display: block;
 }
 
-.subMenu{
+.toolbar{
     background: #E9E9E9;
     padding: 0px;
     font-size: 12px;
@@ -227,7 +227,7 @@ input[type='range'] {
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#e5e5e5',GradientType=0 ); /* IE6-9 */
 
 }
-.subMenu .link{
+.toolbar .link{
 	background-image: url(../images/link.png);
 	width: 18px;
 	height: 15px;
@@ -239,14 +239,14 @@ input[type='range'] {
 	cursor: pointer;
 	opacity: 0.9;
 }
-.rtl .subMenu .link{
+.rtl .toolbar .link{
 	margin-left: initial;
 	margin-right: 1px;
 }
-.subMenu .link.unlinked{
+.toolbar .link.unlinked{
 	opacity: 0.2;
 }
-.subMenu .item{
+.toolbar .item{
 	float: left;
 	padding-left: 7px;
 	padding-right: 7px;
@@ -254,40 +254,40 @@ input[type='range'] {
 	padding-top: 2px;
 	padding-bottom: 2px;
 }
-.rtl .subMenu .item{
+.rtl .toolbar .item{
 	float: right;
 }
-.subMenu .sep{
+.toolbar .sep{
 	width: 1px;
 	height: 28px;
 	background: #ccc;
 	border-right: 1px solid #fff;
 	float: left;
 }
-.rtl .subMenu .sep{
+.rtl .toolbar .sep{
 	float: right;
 	border-left: 1px solid #fff;
 	border-right: initial;
 }
-.subMenu input{
+.toolbar input{
 	width: 36px;
 	font-size: 11px;
 	text-indent: 3px;
 	border: 1px solid #ccc;
 }
-.subMenu input[type="checkbox"] {
+.toolbar input[type="checkbox"] {
 	margin: 0px;
 	padding: 0px;
 	position: relative;
 	top: 3px;
 	width: 18px;
 }
-.subMenu select{
+.toolbar select{
 	height: 20px;
 	position: relative;
 	top: 1px;
 }
-.subMenuButton{
+.toolbarButton{
     width: 22px;
     height: 20px;
     float: left;
@@ -299,22 +299,22 @@ input[type='range'] {
     border-radius: 2px;
     top: 2px;
 }
-.rtl .subMenuButton{
+.rtl .toolbarButton{
 	float: right;
 	margin-left: initial;
 	margin-right: 3px;
 }
-.subMenuButton:hover{
+.toolbarButton:hover{
 	background-color: #fff;
 }
 
-.subMenuButton.alignRight{   background-image: url(../images/alignRight.png);}
-.subMenuButton.alignLeft{    background-image: url(../images/alignLeft.png);}
-.subMenuButton.alignBottom{  background-image: url(../images/alignBottom.png);}
-.subMenuButton.alignTop{     background-image: url(../images/alignTop.png);}
-.subMenuButton.alignMiddleV{ background-image: url(../images/alignMiddleV.png);}
-.subMenuButton.alignMiddleH{ background-image: url(../images/alignMiddleH.png);}
-.subMenuButton.alignCenter{  background-image: url(../images/alignCenter.png);}
+.toolbarButton.alignRight{   background-image: url(../images/alignRight.png);}
+.toolbarButton.alignLeft{    background-image: url(../images/alignLeft.png);}
+.toolbarButton.alignBottom{  background-image: url(../images/alignBottom.png);}
+.toolbarButton.alignTop{     background-image: url(../images/alignTop.png);}
+.toolbarButton.alignMiddleV{ background-image: url(../images/alignMiddleV.png);}
+.toolbarButton.alignMiddleH{ background-image: url(../images/alignMiddleH.png);}
+.toolbarButton.alignCenter{  background-image: url(../images/alignCenter.png);}
 
 .smallButton{
 	padding-left: 10px;
