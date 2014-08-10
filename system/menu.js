@@ -10,11 +10,11 @@ $.extend( true, editor, {
 				{
 					id    : 'file',
 					sub   : [
-						{ id : 'new',       action : this.parent.create    },
-						{ id : 'save',      action : this.parent.save      },
-						{ id : 'load',      action : this.parent.load      },
-						{ id : 'exportSvg', action : this.parent.svg       },
-						{ id : 'exportPng', action : this.parent.saveImg   }
+						{ id : 'new',       action : this.parent.file.create    },
+						{ id : 'save',      action : this.parent.file.save      },
+						{ id : 'load',      action : this.parent.file.load      },
+						{ id : 'exportSvg', action : this.parent.file.svg       },
+						{ id : 'exportPng', action : this.parent.file.saveImg   }
 					]
 				},
 				{

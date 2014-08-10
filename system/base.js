@@ -49,7 +49,7 @@ $.extend( true, editor, {
 
 		},
 
-		resizeLinked : true,
+		resizeLinked    : true,
 		actionPointSize : 5,
 
 		onResize : false,

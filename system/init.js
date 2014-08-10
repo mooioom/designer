@@ -73,6 +73,7 @@ $.extend( true, editor, {
 		this.menu.init();
 		this.toolbar.init();
 		this.toolbox.init();
+		this.file.init();
 		this.events.init();
 		this.draw.grid();
 		this.render();
@@ -96,21 +97,22 @@ $.extend( true, editor, {
 
 	spectrum : function( el ){
 
-		var s = function( color ){
-			if(!editor.selecteds.length) return;
+		var s = $.proxy(function( color ){
+			if(!this.selecteds.length) return;
 	    	str = color ? color.toRgbString() : ""; 
-	    	editor.selecteds[0][el] = str;
+	    	this.selecteds[0][el] = str;
 	    	$("."+el).val( str );
-	    	editor.render();
-		}
+	    	this.render();
+		},this);
+
 		$("." + el).spectrum({
 		    allowEmpty : true,
 		    showAlpha  : true,
 		    move   : function( color ){ s( color ) },
 		    change : function( color ){ s( color ) }
-		}).on("dragstart.spectrum", function(e, color) {
-			editor.history.save();
-		});
+		}).on("dragstart.spectrum", $.proxy(function(e, color) {
+			this.history.save();
+		},this));
 
 	},
 
