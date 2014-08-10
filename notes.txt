@@ -28,3 +28,4 @@ FEATURES :
 CHANGELOG : 
 
 3/8/14 - Editor is now modular
+12
