@@ -88,7 +88,7 @@ $.extend( true, editor, {
 				shadowBlur    : 0,
 				shadowOffsetX : 0,
 				shadowOffsetY : 0,
-				selectFeather : 4
+				feather       : 4
 			}
 
 		},

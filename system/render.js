@@ -42,7 +42,7 @@ $.extend( true, editor, {
 			$('#action').html(this.action);
 
 			var selectedObjects = '';
-			for(i in this.selectedObjects) selectedObjects += this.selectedObjects[i].id + ', ';
+			for(i in this.parent.selecteds) selectedObjects += this.parent.selecteds[i].id + ', ';
 			selectedObjects = selectedObjects.substring(0, selectedObjects.length - 2);
 			$('#selected').html(selectedObjects);
 
@@ -208,14 +208,14 @@ $.extend( true, editor, {
 		},
 
 		selectedBox : function(){
-			for(i in this.selectedObjects)
+			for(i in this.parent.selecteds)
 			{
-				if(this.selectedObjects[i].id == this.tempObject) return;
-				if(this.selectedObjects[i].type != 'text') return;
-				var o  = this.selectedObjects[i],
-					x  = o.startX - this.defaultText.selectFeather,
-					y  = o.endY + this.defaultText.selectFeather,
-					w  = o.width + (this.defaultText.selectFeather * 2),
+				if(this.parent.selecteds[i].id == this.tempObject) return;
+				if(this.parent.selecteds[i].type != 'text') return;
+				var o  = this.parent.selecteds[i],
+					x  = o.startX - this.parent.defaults.text.feather,
+					y  = o.endY   + this.parent.defaults.text.feather,
+					w  = o.width  + this.parent.defaults.text.feather * 2,
 					h  = 0.1,
 					cx = o.width / 2,
 					cy = o.height / 2,
@@ -249,9 +249,9 @@ $.extend( true, editor, {
 		},
 
 		actionPoints : function(){
-			for(i in this.selectedObjects)
+			for(i in this.parent.selecteds)
 			{
-				object       = this.getObject( this.selectedObjects[i].id );
+				object       = this.getObject( this.parent.selecteds[i].id );
 				actionPoints = this.getActionPoints( object );
 				for(i in actionPoints){
 					this.parent.ctx.beginPath();
@@ -343,8 +343,8 @@ $.extend( true, editor, {
 				if( $(this).hasClass('selected') ) selecteds.push( objectId )
 			});
 
-			for(i in order)     tempObjects.push( this.parent.getObject( order[i] ) );
-			for(s in selecteds) this.parent.select( this.parent.getObject( selecteds[s] ) );
+			for(i in order)     tempObjects.push( this.parent.functions.getObject( order[i] ) );
+			for(s in selecteds) this.parent.functions.select( this.parent.functions.getObject( selecteds[s] ) );
 
 			this.parent.objects = tempObjects;
 
@@ -364,8 +364,8 @@ $.extend( true, editor, {
 			{
 				var flag = false;
 
-				if(this.parent.helpers.selectedIsText()) { this.parent.editText(); flag = true; }
-				if(this.parent.helpers.selectedIsBox())  { this.parent.editBox();  flag = true; }
+				if(this.parent.helpers.selectedIsText()) { this.parent.functions.editText(); flag = true; }
+				if(this.parent.helpers.selectedIsBox())  { this.parent.functions.editBox();  flag = true; }
 
 				if(this.parent.selecteds.length     && 
 				   this.parent.selecteds.length > 1 && 

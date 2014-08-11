@@ -70,13 +70,13 @@ $.extend( true, editor, {
 
 			reader.onload = ($.proxy(function(theFile) {
 				return $.proxy(function(e) {
-					this.resources.push({
+					this.parent.resources.push({
 						src       : e.target.result,
 						name      : theFile.name,
 						size      : theFile.size,
 						type      : theFile.type
 					});
-					this.getResources();
+					this.parent.getResources();
 				},this);
 			},this))(file);
 			// Read in the image file as a data URL.
@@ -90,7 +90,7 @@ $.extend( true, editor, {
 			console.log( e );
 			// if( e.keyCode == 46 ) {
 			// 	p = true;
-			// 	this.deleteCurrent(); // delete
+			// 	this.delete(); // delete
 			// 	this.render();
 			// }
 			// if( e.ctrlKey  )    {p = true; this.ctrlIsPressed   = true;}
@@ -181,13 +181,13 @@ $.extend( true, editor, {
 					if(!$(event.toElement).hasClass('dropItem')) return;
 
 					var src      = event.toElement.src,
-						img      = new Image(),
-						w        = img.width,
-						h        = img.height,
 						point    = { x:event.clientX, y:event.clientY },
 					    position = this.parent.helpers.getPositionOnCanvas( point );
 
+					img     = new Image();
 					img.src = src;
+					w       = img.width;
+					h       = img.height;
 
 					this.parent.getResources();
 					this.parent.history.save();

@@ -19,14 +19,14 @@ $.extend( true, editor, {
 				    reader.readAsText(file, "UTF-8");
 				    reader.onload = $.proxy(function (evt)
 				    {
-				        loadObj = JSON.parse(evt.target.result);		        
-				        this.reset();
+				        loadObj = JSON.parse(evt.target.result);	        
+				        this.parent.reset();
 				        this.parent.objects   = loadObj.objects;
 				        this.parent.resources = loadObj.resources;
 				        this.parent.current   = this.parent.helpers.getLastId() + 1;
 				        this.parent.render();
 				        this.parent.draw.ui();
-						this.parent.draw.subMenu();
+						this.parent.draw.toolbar();
 						this.parent.draw.reOrderByUi( true );
 						this.parent.getResources();
 				    },this)
@@ -67,7 +67,7 @@ $.extend( true, editor, {
 					var w,h;
 					a = ret['canvasSize'];
 					editor.name = ret['projectName'];
-					this.reset();
+					this.parent.reset();
 					if(a == 'full') { w = $('.stage').width(); h = $('.stage').height(); }
 					else{ b=a.split('h');c=b[0];d=c.split('w');h=Number(b[1]);w=Number(d[1]); }
 					editor.init({
@@ -106,13 +106,13 @@ $.extend( true, editor, {
 
 		svg : function()
 		{
-			svg = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="'+this.width+'px" height="'+this.height+'px">';
+			svg = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="'+this.parent.width+'px" height="'+this.parent.height+'px">';
 
 			var counter = 0;
 			
-			this.helpers.forEachObjects( $.proxy(function( o )
+			this.parent.helpers.forEachObjects( $.proxy(function( o )
 			{
-				var absCoords = this.helpers.getAbsCoords(o.startX,o.startY,o.width,o.height),
+				var absCoords = this.parent.helpers.getAbsCoords(o.startX,o.startY,o.width,o.height),
 					x = absCoords.x,y = absCoords.y,w = absCoords.w,h = absCoords.h,cx = x + (w/2),cy = y + (h/2),
 					sx = o.shadowOffsetX, sy = o.shadowOffsetY, sb = o.shadowBlur, sc = o.shadowColor;
 

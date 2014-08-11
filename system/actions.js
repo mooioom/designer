@@ -12,10 +12,7 @@ $.extend( true, editor, {
 				this.parent.selectionBox.startY = this.parent.events.mouseY;
 			},
 			mouseUp : function(){
-				this.parent.selectionBox.startX = null;
-				this.parent.selectionBox.startY = null;
-				this.parent.selectionBox.endX   = null;
-				this.parent.selectionBox.endY   = null;
+				this.parent.selectionBox = {};
 				if(!this.parent.events.drag) this.parent.helpers.clickSelect();
 			},
 			mouseMove : function(){
@@ -35,7 +32,7 @@ $.extend( true, editor, {
 						if(this.parent.helpers.collision( o, this.parent.selectionBox ))
 						{
 							found = true;
-							this.parent.select(o);
+							this.parent.functions.select(o);
 						}
 					},this));
 				}
@@ -146,14 +143,14 @@ $.extend( true, editor, {
 				this.parent.selecteds = [];
 				newObject 			  = this.parent.create.object();
 				this.parent.temp 	  = this.parent.current;
-				this.parent.select( newObject );
+				this.parent.functions.select( newObject );
 				this.parent.objects.push( newObject );
 			},
 			mouseMove : function()
 			{
 				if(this.parent.events.drag)
 				{
-					var tempObject = this.parent.getObject( this.parent.temp ),
+					var tempObject = this.parent.functions.getObject( this.parent.temp ),
 						point      = {
 							x : this.parent.helpers.getClosestSnapCoords( this.parent.events.mouseX ),
 							y : this.parent.helpers.getClosestSnapCoords( this.parent.events.mouseY )
@@ -166,11 +163,11 @@ $.extend( true, editor, {
 			},
 			mouseUp : function()
 			{
-				var tempObject = this.parent.getObject( this.parent.temp );
+				var tempObject = this.parent.functions.getObject( this.parent.temp );
 				if(tempObject.startX == tempObject.endX && 
 				   tempObject.startY == tempObject.endY)
 				{
-					this.parent.deleteObject( tempObject.id );
+					this.parent.functions.deleteObject( tempObject.id );
 					tempObject = null;
 				}
 				else {
@@ -184,14 +181,14 @@ $.extend( true, editor, {
 			mouseDown : function(){
 				this.parent.history.save();
 				this.parent.selecteds = [];
-				newObject       = this.parent.create.object();
-				this.tempObject = this.parent.current;
+				newObject        = this.parent.create.object();
+				this.parent.temp = this.parent.current;
 				this.parent.objects.push( newObject );
 			},
 			mouseMove : function(){
 				if(this.parent.events.drag)
 				{
-					var tempObject  = this.parent.getObject( this.parent.temp ),
+					var tempObject  = this.parent.functions.getObject( this.parent.temp ),
 						point = {
 							x : this.parent.helpers.getClosestSnapCoords( this.parent.events.mouseX ),
 							y : this.parent.helpers.getClosestSnapCoords( this.parent.events.mouseY )
@@ -200,8 +197,8 @@ $.extend( true, editor, {
 			},
 			mouseUp : function(){
 				if(this.parent.temp == null) return;
-				var tempObject = this.parent.getObject( this.parent.temp );
-				this.parent.select(tempObject);
+				var tempObject = this.parent.functions.getObject( this.parent.temp );
+				this.parent.functions.select(tempObject);
 				this.parent.temp = null;
 				this.parent.current++;
 			}

@@ -160,7 +160,7 @@ $.extend( true, editor, {
 
 		getPositionOnCanvas : function( globalPoint )
 		{
-			return { x: globalPoint.x, y: globalPoint.y - $('#canvas').offset().top };
+			return { x: globalPoint.x - $('#canvas').offset().left, y: globalPoint.y - $('#canvas').offset().top };
 		},
 
 		getObjectInPoint : function( point )

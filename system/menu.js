@@ -20,16 +20,16 @@ $.extend( true, editor, {
 				{
 					id    : 'edit',
 					sub   : [
-						{ id : 'undo'         , action : this.parent.undo, 		    shortcut : 'Ctrl + Z' },
-						{ id : 'redo'         , action : this.parent.redo, 		    shortcut : 'Ctrl + Y' },
-						{ id : 'sep' 															          },
-						{ id : 'copy'         , action : this.parent.copy, 		    shortcut : 'Ctrl + C' },
-						{ id : 'paste'	      , action : this.parent.paste, 		shortcut : 'Ctrl + V' },
-						{ id : 'selectAll'    , action : this.parent.selectAll, 	shortcut : 'Ctrl + A' },
-						{ id : 'delete'	  	  , action : this.parent.deleteCurrent, shortcut : 'Del'      },
-						{ id : 'sep' 														              },
-						{ id : 'bringToFront' , action : this.parent.bringToFront,  shortcut : 'Ctrl + F' },
-						{ id : 'sendToBack'   , action : this.parent.sendToBack,    shortcut : 'Ctrl + B' },
+						{ id : 'undo'         , action : this.parent.functions.undo, 		 shortcut : 'Ctrl + Z' },
+						{ id : 'redo'         , action : this.parent.functions.redo, 		 shortcut : 'Ctrl + Y' },
+						{ id : 'sep' 															                   },
+						{ id : 'copy'         , action : this.parent.functions.copy, 		 shortcut : 'Ctrl + C' },
+						{ id : 'paste'	      , action : this.parent.functions.paste, 		 shortcut : 'Ctrl + V' },
+						{ id : 'selectAll'    , action : this.parent.functions.selectAll, 	 shortcut : 'Ctrl + A' },
+						{ id : 'delete'	  	  , action : this.parent.functions.delete,       shortcut : 'Del'      },
+						{ id : 'sep' 														                       },
+						{ id : 'bringToFront' , action : this.parent.functions.bringToFront, shortcut : 'Ctrl + F' },
+						{ id : 'sendToBack'   , action : this.parent.functions.sendToBack,   shortcut : 'Ctrl + B' },
 					]
 				},
 				{
@@ -94,7 +94,7 @@ $.extend( true, editor, {
 
 		initEventForItem : function( item ){
 			if(!item.action) return;
-			$('.mainMenu #'+item.id).unbind('click').click( $.proxy( item.action, this.parent ) );
+			$('.mainMenu #'+item.id).unbind('click').click( $.proxy( item.action, this ) );
 			if(item.shortcut)
 			{
 				this.parent.events.keyboardEvents.push({

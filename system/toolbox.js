@@ -19,7 +19,7 @@ $.extend( true, editor, {
 				editor.render();
 			});
 
-			$('.toolbox.objects .toolboxMenu .delete').click( function(){ editor.deleteCurrent(); });
+			$('.toolbox.objects .toolboxMenu .delete').click( function(){ editor.delete(); });
 			$('.toolbox.objects .toolboxMenu .add').click( function() { 
 				editor.create.box(0,0,editor.width,editor.height);
 				editor.render(); 
@@ -62,11 +62,7 @@ $.extend( true, editor, {
 			$('.toolboxMenuItem.transform').click(function(){ $('.toolbox.transform').show(); });
 
 			//text
-			$('.toolbox.text #text').bind('keyup change keydown',function(){ editor.changeText( 	$(this).val() ); });
-			$('.toolbox.text #font').bind('change',function(){ 				 editor.changeFont( 	$(this).val() ); });
-			$('.toolbox.text #size').bind('keyup change keydown',function(){ editor.changeFontSize( $(this).val() ); });
-			$('.toolbox.text #bold'  ).bind('change',function(){ 			 editor.changeBold( 	$(this).prop('checked') ); });
-			$('.toolbox.text #italic').bind('change',function(){ 			 editor.changeItalic( 	$(this).prop('checked') ); });
+			$('.toolbox.text #text').bind('keyup change keydown',function(){ editor.changeText( $(this).val() ); });
 			
 		},
 
