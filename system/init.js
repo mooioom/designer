@@ -1,41 +1,5 @@
 
 $.extend( true, editor, {
-
-	debug : false,
-
-	canvas : null,
-	ctx    : null,
-
-	current   : 0,
-
-	objects   : [],
-	resources : [],
-	images    : [],
-	clipboard : [],
-	selecteds : [],
-	temps     : [],
-	temp      : null,
-
-	action : "box", // select, move, rotate, scale, box, line, colorpick etc...
-
-	selectAndMove : false,
-
-	selectionBox :
-	{
-		startX 		: null,
-		startY 		: null,
-		endX   		: null,
-		endY   		: null,
-		lineWidth 	: 1,
-		strokeStyle : '#000'
-	},
-
-	selectedBox :
-	{
-		lineWidth 	: 1,
-		strokeStyle : 'grey',
-		feather 	: 0
-	},
 	
 	init : function( data )
 	{

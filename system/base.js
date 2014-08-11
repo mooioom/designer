@@ -3,6 +3,50 @@ var editor = editor || {};
 
 $.extend( true, editor, {
 
+	debug : false,
+
+	canvas : null,
+	ctx    : null,
+
+	current   : 0,
+
+	objects   : [],
+	resources : [],
+	images    : [],
+	clipboard : [],
+	selecteds : [],
+	temps     : [],
+	temp      : null,
+
+	action : "box", // select, move, rotate, scale, box, line, colorpick etc...
+
+	selectAndMove : false,
+
+	selectionBox :
+	{
+		startX 		: null,
+		startY 		: null,
+		endX   		: null,
+		endY   		: null,
+		lineWidth 	: 1,
+		strokeStyle : '#000'
+	},
+
+	selectedBox :
+	{
+		lineWidth 	: 1,
+		strokeStyle : 'grey',
+		feather 	: 0
+	},
+
+	resizeLinked    : true,
+
+	onResize : false,
+	onRotate : false,
+
+	rotateStartAngle : 0,
+	transformClone   : {},
+
 	defaults : {
 
 		name   : "",
@@ -49,14 +93,7 @@ $.extend( true, editor, {
 
 		},
 
-		resizeLinked    : true,
-		actionPointSize : 5,
-
-		onResize : false,
-		onRotate : false,
-
-		rotateStartAngle : 0,
-		transformClone   : {}
+		actionPointSize : 5
 
 	}
 
