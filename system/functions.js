@@ -86,8 +86,8 @@ $.extend( true, editor, {
 		this.selecteds = [];
 		for(o in this.objects) this.select( this.objects[o] );
 		this.render();
-		this.drawExternalUi();
-		this.drawtoolbar();
+		this.draw.ui();
+		this.draw.toolbar();
 	},
 
 	unselect : function( t )
@@ -166,8 +166,9 @@ $.extend( true, editor, {
 		$('.toolbox.text').css('top', ( textPositionTop ) + 'px' );
 
 		$('.toolbar.text').show();
-		this.updateUi( text );
 
+		this.toolbox.update( text );
+		this.toolbar.update( text );
 	},
 
 	changeText     : function( newText )     { if(!this.helpers.selectedIsText()) return; this.selecteds[0].text     = newText; this.render(); },
@@ -181,32 +182,8 @@ $.extend( true, editor, {
 		var box = this.selecteds[0];
 		$('.toolbox.text').hide();
 		$('.toolbar.box').show();
-		this.updateUi( box );
-	},
-
-	updateUi : function( o )
-	{
-
-		$('.toolbar.'+o.type+' .startX').val(      o.startX 	 );
-		$('.toolbar.'+o.type+' .startY').val( 	   o.startY 	 );
-		$('.toolbar.'+o.type+' .width').val( 	   o.width 		 );
-		$('.toolbar.'+o.type+' .height').val( 	   o.height 	 );
-		$('.toolbar.'+o.type+' .lineWidth').val(   o.lineWidth 	 );
-		$('.toolbar.'+o.type+' .strokeStyle').val( o.strokeStyle );
-		$('.toolbar.'+o.type+' .radius').val( 	   o.radius 	 );
-		$('.toolbar.'+o.type+' .fill').val( 	   o.fill 		 );
-		$('.toolbar.'+o.type+' .opacity').val();
-
-		$(".toolbar .fill").spectrum("set", 	   o.fill        );
-		$(".toolbar .fillStyle").spectrum("set",   o.fillStyle   );
-		$(".toolbar .strokeStyle").spectrum("set", o.strokeStyle );
-
-		$('.toolbox.transform .rotate').val( o.rotate );
-		$('.toolbox.shadow .shadowBlur').val(    o.shadowBlur    );
-		$('.toolbox.shadow .shadowOffsetX').val( o.shadowOffsetX );
-		$('.toolbox.shadow .shadowOffsetY').val( o.shadowOffsetY );
-		$(".toolbox.shadow .shadowColor").spectrum("set", o.shadowColor);
-
+		this.toolbox.update( box );
+		this.toolbar.update( box );
 	},
 
 	align : function( to ){
@@ -223,9 +200,9 @@ $.extend( true, editor, {
 		if(to == 'middleH'){ v1 = 'y'      ; v2 = 'startY' ; v3 = 'height'; vc = true; };
 
 		if(!vc) v = t[v1];
-		else    v = this.getCenter( t )[v1];
+		else    v = this.helpers.getCenter( t )[v1];
 
-		this.parent.helpers.forEachObjects($.proxy(function( o ){
+		this.helpers.forEachObjects($.proxy(function( o ){
 			if( o.id == t.id || !this.helpers.isObjectSelected(t.id) ) return;
 			if     ( v3 && !vc ) o[v2] = v - o[v3];
 			else if( v3 && vc  ) o[v2] = v - ( o[v3] / 2 );

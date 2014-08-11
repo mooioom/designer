@@ -32,6 +32,24 @@ $.extend( true, editor, {
 				editor['align'+type]();
 			});
 			
+		},
+
+		update : function( o ){
+
+			$('.toolbar.'+o.type+' .startX').val(      o.startX 	 );
+			$('.toolbar.'+o.type+' .startY').val( 	   o.startY 	 );
+			$('.toolbar.'+o.type+' .width').val( 	   o.width 		 );
+			$('.toolbar.'+o.type+' .height').val( 	   o.height 	 );
+			$('.toolbar.'+o.type+' .lineWidth').val(   o.lineWidth 	 );
+			$('.toolbar.'+o.type+' .strokeStyle').val( o.strokeStyle );
+			$('.toolbar.'+o.type+' .radius').val( 	   o.radius 	 );
+			$('.toolbar.'+o.type+' .fill').val( 	   o.fill 		 );
+			$('.toolbar.'+o.type+' .opacity').val();
+
+			$(".toolbar .fill").spectrum("set", 	   o.fill        );
+			$(".toolbar .fillStyle").spectrum("set",   o.fillStyle   );
+			$(".toolbar .strokeStyle").spectrum("set", o.strokeStyle );
+
 		}
 
 	}

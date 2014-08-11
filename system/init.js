@@ -3,7 +3,7 @@ $.extend( true, editor, {
 	
 	init : function( data )
 	{
-		console.log('Editor');
+		console.log('Editor', data);
 
 		for(var i in this.defaults) this[i] = this.defaults[i];
 
@@ -97,5 +97,14 @@ $.extend( true, editor, {
 		if(!this.resources.length) 
 			$('.toolbox.resources .body').append('<div class="resourceItem noResources">' + getString('NoResources') + '</div>');
 
+	},
+
+	reset : function(){
+		this.objects   = [];
+		this.selecteds = [];
+		this.current   = 0;
+		this.render();
+		this.draw.ui();
+		this.draw.toolbar();
 	}
 })

@@ -64,23 +64,28 @@ $.extend( true, editor, {
 						]
 					}
 				],
-				action     : function( ret ){
+				action     : $.proxy(function( ret ){
 
 					a = ret['canvasSize'];
 					editor.name = ret['projectName'];
-					if(a == 'full'){
-						new editor({
-							w : $('.stage').width(),
-							h : $('.stage').height(),
-							name : ret['name']
+					this.reset();
+					if(a == 'full')
+					{
+						editor.init({
+							width  : $('.stage').width(),
+							height : $('.stage').height(),
+							name   : ret['projectName']
 						})
-					}else{ b=a.split('h');c=b[0];d=c.split('w');h=Number(b[1]);w=Number(d[1]); new editor({
-							w : w,
-							h : h,
-							name : ret['name']
-					})}
+					}else{ 
+						b=a.split('h');c=b[0];d=c.split('w');h=Number(b[1]);w=Number(d[1]); 
+						editor.init({
+							width  : w,
+							height : h,
+							name   : ret['projectName']
+						})
+					}
 					newCanvas.close();
-				}
+				},this)
 			});
 		},
 
@@ -90,15 +95,6 @@ $.extend( true, editor, {
 			this.parent.canvas.removeEventListener('mousedown');
 			this.parent.canvas.removeEventListener('mouseup');
 
-		},
-		
-		reset : function(){
-			this.parent.objects   = [];
-			this.parent.selecteds = [];
-			this.parent.current   = 0;
-			this.parent.render();
-			this.parent.draw.ui();
-			this.parent.draw.toolbar();
 		},
 
 		save : function()
@@ -111,26 +107,21 @@ $.extend( true, editor, {
 			saveAs(blob, "untitled.eld");
 		},
 
-		load : function(){
-			$("#files").click();
-		},
+		load : function(){ $("#files").click(); },
 
-		saveImg : function(){
-			// var dataURL = this.canvas.toDataURL();
-			// var blob = new Blob([ dataURL ], {type: ""});
-			// saveAs(blob, "image.png");
+		savePng : function(){
 			canvas.toBlob(function(blob) { saveAs(blob, "image.png"); }, "image/png");
 		},
 
 		svg : function()
 		{
-			svg = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">';
+			svg = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="'+this.width+'px" height="'+this.height+'px">';
 
 			var counter = 0;
 			
-			this.parent.helpers.forEachObjects( $.proxy(function( o )
+			this.helpers.forEachObjects( $.proxy(function( o )
 			{
-				var absCoords = this.getAbsCoords(o.startX,o.startY,o.width,o.height),
+				var absCoords = this.helpers.getAbsCoords(o.startX,o.startY,o.width,o.height),
 					x = absCoords.x,y = absCoords.y,w = absCoords.w,h = absCoords.h,cx = x + (w/2),cy = y + (h/2),
 					sx = o.shadowOffsetX, sy = o.shadowOffsetY, sb = o.shadowBlur, sc = o.shadowColor;
 
@@ -211,7 +202,7 @@ $.extend( true, editor, {
 			},this));
 
 			svg+='</svg>'
-			//console.log('svg',svg);
+
 			var blob = new Blob([svg], {type: "text/plain;charset=utf-8"});
 			saveAs(blob, "untitled.svg");
 		}

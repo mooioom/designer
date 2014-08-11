@@ -14,7 +14,7 @@ $.extend( true, editor, {
 						{ id : 'save',      action : this.parent.file.save      },
 						{ id : 'load',      action : this.parent.file.load      },
 						{ id : 'exportSvg', action : this.parent.file.svg       },
-						{ id : 'exportPng', action : this.parent.file.saveImg   }
+						{ id : 'exportPng', action : this.parent.file.savePng   }
 					]
 				},
 				{

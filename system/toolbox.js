@@ -68,6 +68,16 @@ $.extend( true, editor, {
 			$('.toolbox.text #bold'  ).bind('change',function(){ 			 editor.changeBold( 	$(this).prop('checked') ); });
 			$('.toolbox.text #italic').bind('change',function(){ 			 editor.changeItalic( 	$(this).prop('checked') ); });
 			
+		},
+
+		update : function( o ){
+
+			$('.toolbox.transform .rotate').val( o.rotate );
+			$('.toolbox.shadow .shadowBlur').val(    o.shadowBlur    );
+			$('.toolbox.shadow .shadowOffsetX').val( o.shadowOffsetX );
+			$('.toolbox.shadow .shadowOffsetY').val( o.shadowOffsetY );
+			$(".toolbox.shadow .shadowColor").spectrum("set", o.shadowColor);
+			
 		}
 
 	}
