@@ -27,7 +27,7 @@ $.extend( true, editor, {
 				if( !o.visible ) return;
 				selectedsIndex = this.isObjectSelected( o.id );
 				if(selectedsIndex) this.parent.selecteds.splice(selectedsIndex,1);
-				else this.parent.select(o);
+				else this.parent.functions.select(o);
 			}
 		},
 

@@ -11,6 +11,7 @@ TODO :
 - select align target
 - canvas size
 - zoom
+- save toolboxes position, hidden / shown etc.
 
 BUGS :
 
