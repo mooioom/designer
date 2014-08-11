@@ -19,8 +19,7 @@ $.extend( true, editor, {
 				    reader.readAsText(file, "UTF-8");
 				    reader.onload = $.proxy(function (evt)
 				    {
-				        loadObj = JSON.parse(evt.target.result);
-				        debugger;			        
+				        loadObj = JSON.parse(evt.target.result);		        
 				        this.reset();
 				        this.parent.objects   = loadObj.objects;
 				        this.parent.resources = loadObj.resources;
@@ -64,26 +63,18 @@ $.extend( true, editor, {
 						]
 					}
 				],
-				action     : $.proxy(function( ret ){
-
+				action : $.proxy(function( ret ){
+					var w,h;
 					a = ret['canvasSize'];
 					editor.name = ret['projectName'];
 					this.reset();
-					if(a == 'full')
-					{
-						editor.init({
-							width  : $('.stage').width(),
-							height : $('.stage').height(),
-							name   : ret['projectName']
-						})
-					}else{ 
-						b=a.split('h');c=b[0];d=c.split('w');h=Number(b[1]);w=Number(d[1]); 
-						editor.init({
-							width  : w,
-							height : h,
-							name   : ret['projectName']
-						})
-					}
+					if(a == 'full') { w = $('.stage').width(); h = $('.stage').height(); }
+					else{ b=a.split('h');c=b[0];d=c.split('w');h=Number(b[1]);w=Number(d[1]); }
+					editor.init({
+						width  : w,
+						height : h,
+						name   : ret['projectName']
+					})
 					newCanvas.close();
 				},this)
 			});

@@ -1,0 +1,5 @@
+Copyright (C) 2014 Eldad Levi - All Rights Reserved
+----------------------------------------------------
+You may not copy, distribute and / or modify this code without permission from the author.
+This relates to all files / folders and subfolders of this 'editor' project
+for further information contact Eldad Levi - mooioom2@gmail.com
