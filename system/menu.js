@@ -10,34 +10,34 @@ $.extend( true, editor, {
 				{
 					id    : 'file',
 					sub   : [
-						{ id : 'new',       action : this.parent.file.create    },
-						{ id : 'save',      action : this.parent.file.save      },
-						{ id : 'load',      action : this.parent.file.load      },
-						{ id : 'exportSvg', action : this.parent.file.svg       },
-						{ id : 'exportPng', action : this.parent.file.savePng   }
+						{ id : 'new',       action : this.parent.file.create,  scope : this.parent.file },
+						{ id : 'save',      action : this.parent.file.save,    scope : this.parent.file },
+						{ id : 'load',      action : this.parent.file.load,    scope : this.parent.file },
+						{ id : 'exportSvg', action : this.parent.file.svg,     scope : this.parent.file },
+						{ id : 'exportPng', action : this.parent.file.savePng, scope : this.parent.file }
 					]
 				},
 				{
 					id    : 'edit',
 					sub   : [
-						{ id : 'undo'         , action : this.parent.functions.undo, 		 shortcut : 'Ctrl + Z' },
-						{ id : 'redo'         , action : this.parent.functions.redo, 		 shortcut : 'Ctrl + Y' },
-						{ id : 'sep' 															                   },
-						{ id : 'copy'         , action : this.parent.functions.copy, 		 shortcut : 'Ctrl + C' },
-						{ id : 'paste'	      , action : this.parent.functions.paste, 		 shortcut : 'Ctrl + V' },
-						{ id : 'selectAll'    , action : this.parent.functions.selectAll, 	 shortcut : 'Ctrl + A' },
-						{ id : 'delete'	  	  , action : this.parent.functions.delete,       shortcut : 'Del'      },
-						{ id : 'sep' 														                       },
-						{ id : 'bringToFront' , action : this.parent.functions.bringToFront, shortcut : 'Ctrl + F' },
-						{ id : 'sendToBack'   , action : this.parent.functions.sendToBack,   shortcut : 'Ctrl + B' },
+						{ id : 'undo'         , action : this.parent.history.undo,           scope : this.parent.history,   shortcut : 'Ctrl + Z' },
+						{ id : 'redo'         , action : this.parent.history.redo,           scope : this.parent.history,   shortcut : 'Ctrl + Y' },
+						{ id : 'sep' 															                                                    },
+						{ id : 'copy'         , action : this.parent.functions.copy,         scope : this.parent.functions, shortcut : 'Ctrl + C' },
+						{ id : 'paste'	      , action : this.parent.functions.paste,        scope : this.parent.functions, shortcut : 'Ctrl + V' },
+						{ id : 'selectAll'    , action : this.parent.functions.selectAll,    scope : this.parent.functions, shortcut : 'Ctrl + A' },
+						{ id : 'delete'	  	  , action : this.parent.functions.delete,       scope : this.parent.functions, shortcut : 'Del'      },
+						{ id : 'sep' 														                                                        },
+						{ id : 'bringToFront' , action : this.parent.functions.bringToFront, scope : this.parent.functions, shortcut : 'Ctrl + F' },
+						{ id : 'sendToBack'   , action : this.parent.functions.sendToBack,   scope : this.parent.functions, shortcut : 'Ctrl + B' },
 					]
 				},
 				{
 					id    : 'view',
 					sub   : [
-						{ id : 'grid',      action : this.parent.toolbox, args : ['grid'],      shortcut : 'Ctrl + G' },
-						{ id : 'objects',   action : this.parent.toolbox, args : ['objects'],   shortcut : 'Ctrl + O' },
-						{ id : 'resources', action : this.parent.toolbox, args : ['resources'], shortcut : 'Ctrl + R' }
+						{ id : 'grid',      action : this.parent.toolbox.toggle, args : 'grid',      scope : this.parent.toolbox, shortcut : 'Ctrl + G' },
+						{ id : 'objects',   action : this.parent.toolbox.toggle, args : 'objects',   scope : this.parent.toolbox, shortcut : 'Ctrl + O' },
+						{ id : 'resources', action : this.parent.toolbox.toggle, args : 'resources', scope : this.parent.toolbox, shortcut : 'Ctrl + R' }
 					]
 				}
 
@@ -94,7 +94,7 @@ $.extend( true, editor, {
 
 		initEventForItem : function( item ){
 			if(!item.action) return;
-			$('.mainMenu #'+item.id).unbind('click').click( $.proxy( item.action, this ) );
+			$('.mainMenu #'+item.id).unbind('click').click( $.proxy(item.action,item.scope,item.args) );
 			if(item.shortcut)
 			{
 				this.parent.events.keyboardEvents.push({

@@ -27,8 +27,6 @@ $.extend( true, editor, {
 
 		undo : function()
 		{
-			console.log('undo');
-
 			if( this.index == 0 ) return;
 
 			var index 	       = this.index - 1,

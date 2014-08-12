@@ -74,6 +74,14 @@ $.extend( true, editor, {
 			$('.toolbox.shadow .shadowOffsetY').val( o.shadowOffsetY );
 			$(".toolbox.shadow .shadowColor").spectrum("set", o.shadowColor);
 			
+		},
+
+		toggle : function( item ){
+
+			console.log('toggle')
+
+			$('.toolbox.'+item).toggle();
+
 		}
 
 	}
