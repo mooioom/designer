@@ -3,8 +3,9 @@ $.extend( true, editor, {
 
 	events : {
 
-		pressedKeys    : [],
+		pressed        : [],
 		keyboardEvents : [],
+		clickEvents    : [],
 
 		ctrlIsPressed  : false,
 		altIsPressed   : false,
@@ -26,10 +27,10 @@ $.extend( true, editor, {
 
 			this.droppable();
 
-			this.keyboardEvents.push({ action : editor.move, shortcut : 'left',  args : ['left'] });
-			this.keyboardEvents.push({ action : editor.move, shortcut : 'up',    args : ['up'] });
-			this.keyboardEvents.push({ action : editor.move, shortcut : 'right', args : ['right'] });
-			this.keyboardEvents.push({ action : editor.move, shortcut : 'down',  args : ['down'] });
+			this.keyboardEvents.push({ action : this.parent.functions.move, scope : this.parent.functions, shortcut : 'left',  args : ['left'] });
+			this.keyboardEvents.push({ action : this.parent.functions.move, scope : this.parent.functions, shortcut : 'up',    args : ['up'] });
+			this.keyboardEvents.push({ action : this.parent.functions.move, scope : this.parent.functions, shortcut : 'right', args : ['right'] });
+			this.keyboardEvents.push({ action : this.parent.functions.move, scope : this.parent.functions, shortcut : 'down',  args : ['down'] });
 
 			this.parent.canvas.addEventListener("mousemove",$.proxy(this.mousemove,this),false);
 			this.parent.canvas.addEventListener("mousedown",$.proxy(this.mousedown,this),false);
@@ -48,6 +49,11 @@ $.extend( true, editor, {
 			$(window).resize( $.proxy(this.positionCanvas,this));
 
 			$('.tools .button').click( $.proxy(this.toolButton,this) );
+
+			for(i in this.clickEvents){
+				var clickEvent = this.clickEvents[i];
+				$(clickEvent.selector).click( $.proxy( clickEvent.action, clickEvent.scope, clickEvent.args ) );
+			}
 
 		},
 
@@ -87,7 +93,25 @@ $.extend( true, editor, {
 		{
 			if($("input:focus, textarea:focus").length) return;
 			var p = false;
-			console.log( e );
+			
+			keyCode = e.keyCode;
+
+			this.addToPressed( e.keyCode );
+
+			for(i in this.keyboardEvents)
+			{
+				var found 		  = [],
+					keyboardEvent = this.keyboardEvents[i],
+					keys 		  = keyboardEvent.shortcut.split('+');
+
+				for(i in keys) if( this.isPressed(keys[i]) ) found.push( true );
+				if(found.length && found.length == keys.length)
+				{
+					p = true;
+					console.log('all found');
+				}
+			}
+
 			// if( e.keyCode == 46 ) {
 			// 	p = true;
 			// 	this.delete(); // delete
@@ -120,9 +144,7 @@ $.extend( true, editor, {
 		{
 			if($("input:focus, textarea:focus").length) return;
 			var p = false;
-			if(this.ctrlIsPressed) {p = true; this.ctrlIsPressed  = false;}
-			if(this.altIsPressed)  {p = true; this.altIsPressed   = false;}
-			if(this.shiftIsPressed){p = true; this.shiftIsPressed = false;}
+			this.clearPressed( e.keyCode );
 			if(p) e.preventDefault(); e.stopPropagation();
 		},
 
@@ -159,7 +181,39 @@ $.extend( true, editor, {
 
 		addToPressed : function( keyCode )
 		{
+			var flag = false;
+			for(i in this.pressed) if(this.pressed[i] == keyCode) flag = true;
+			if(!flag) this.pressed.push(keyCode);
+		},
 
+		isPressed : function( keyCode )
+		{
+			if( String(keyCode).search('shift')       == 0 ) keyCode = 16;
+			if( String(keyCode).search('ctrl')        == 0 ) keyCode = 17;
+			if( String(keyCode).search('alt')         == 0 ) keyCode = 18;
+			if( String(keyCode).search('backspace')   == 0 ) keyCode =  8;
+			if( String(keyCode).search('tab')	      == 0 ) keyCode =  9;
+			if( String(keyCode).search('enter')	      == 0 ) keyCode = 13;
+			if( String(keyCode).search('pause')	      == 0 ) keyCode = 19;
+			if( String(keyCode).search('caps lock')   == 0 ) keyCode = 20;
+			if( String(keyCode).search('escape')	  == 0 ) keyCode = 27;
+			if( String(keyCode).search('page up')     == 0 ) keyCode = 33;
+			if( String(keyCode).search('page down')   == 0 ) keyCode = 34;
+			if( String(keyCode).search('end')	      == 0 ) keyCode = 35;
+			if( String(keyCode).search('home')	      == 0 ) keyCode = 36;
+			if( String(keyCode).search('left arrow')  == 0 ) keyCode = 37;
+			if( String(keyCode).search('up arrow')	  == 0 ) keyCode = 38;
+			if( String(keyCode).search('right arrow') == 0 ) keyCode = 39;
+			if( String(keyCode).search('down arrow')  == 0 ) keyCode = 40;
+			if( String(keyCode).search('insert')	  == 0 ) keyCode = 45;
+			if( String(keyCode).search('delete')	  == 0 ) keyCode = 46;
+			console.log( this.pressed)
+			for(i in this.pressed) if(this.pressed[i] == keyCode) return true;
+		},
+
+		clearPressed : function( keyCode )
+		{
+			for(i in this.pressed) if(this.pressed[i] == keyCode) this.pressed.splice(i,1);
 		},
 
 		toolButton : function( e ){

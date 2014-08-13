@@ -85,22 +85,28 @@ $.extend( true, editor, {
 			for(i in this.items)
 			{
 				item = this.items[i];
-				this.initEventForItem( item );
+				this.addEvent( item );
 				if(item.sub && item.sub.length)
-					for(x in item.sub) this.initEventForItem( item.sub[x] ); 
+					for(x in item.sub) this.addEvent( item.sub[x] ); 
 			}
 
 		},
 
-		initEventForItem : function( item ){
+		addEvent : function( item ){
 			if(!item.action) return;
-			$('.mainMenu #'+item.id).unbind('click').click( $.proxy(item.action,item.scope,item.args) );
+			this.parent.events.clickEvents.push({
+				selector : '.mainMenu #'+item.id,
+				action   : item.action,
+				args     : item.args,
+				scope    : item.scope
+			})
 			if(item.shortcut)
 			{
 				this.parent.events.keyboardEvents.push({
 					action   : item.action,
-					shortcut : item.shortcut,
-					args     : item.args
+					shortcut : item.shortcut.toLowerCase(),
+					args     : item.args,
+					scope    : item.scope
 				});
 			}
 		}
