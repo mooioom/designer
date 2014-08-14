@@ -37,8 +37,10 @@ $.extend( true, editor, {
 		this.menu.init();
 		this.toolbar.init();
 		this.toolbox.init();
+		
 		this.file.init();
 		this.events.init();
+
 		this.draw.grid();
 		this.render();
 

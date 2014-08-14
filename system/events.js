@@ -42,7 +42,7 @@ $.extend( true, editor, {
 					 .bind('dragover',  $.proxy(this.ignoreDrag,this))
 					 .bind('drop',      $.proxy(this.drop,this));
 
-			$(window).resize( $.proxy(this.positionCanvas,this));
+			$(window).resize( $.proxy(this.parent.helpers.positionCanvas,this));
 
 			$('.tools .button').click( $.proxy(this.toolButton,this) );
 
@@ -228,6 +228,7 @@ $.extend( true, editor, {
 					this.parent.history.save();
 
 					this.parent.selecteds = [];
+
 					this.parent.create.box( position.x, position.y, w, h );
 					this.parent.selecteds[0].src = src;
 

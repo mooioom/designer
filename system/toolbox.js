@@ -5,7 +5,10 @@ $.extend( true, editor, {
 
 		init : function(){
 
-			$('.toolbox').draggable({ start : function(){ $(this).css('right','initial'); }});
+			$('.toolbox').draggable({ 
+				start       : function(){ $(this).css('right','initial'); },
+				containment : "window"
+			});
 			$('.toolbox .close').click(function(){ $(this).parent().hide(); });
 
 			$(document).on('click', '.toolbox.objects .objectVisible', function () {
@@ -62,7 +65,7 @@ $.extend( true, editor, {
 			$('.toolboxMenuItem.transform').click(function(){ $('.toolbox.transform').show(); });
 
 			//text
-			$('.toolbox.text #text').bind('keyup change keydown',function(){ editor.changeText( $(this).val() ); });
+			$('.toolbox.text #text').bind('keyup change keydown',function(){ editor.functions.changeText( $(this).val() ); });
 			
 		},
 
@@ -77,8 +80,6 @@ $.extend( true, editor, {
 		},
 
 		toggle : function( item ){
-
-			console.log('toggle')
 
 			$('.toolbox.'+item).toggle();
 
