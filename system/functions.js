@@ -127,13 +127,14 @@ $.extend( true, editor, {
 			if(!vc) v = t[v1];
 			else    v = this.parent.helpers.getCenter( t )[v1];
 
-			this.parent.helpers.forEachObjects($.proxy(function( o ){
-				if( o.id == t.id || !this.parent.helpers.isObjectSelected(t.id) ) return;
+			for(i in this.parent.selecteds)
+			{
+				o = this.parent.selecteds[i];
+				if( o.id == t.id ) continue;
 				if     ( v3 && !vc ) o[v2] = v - o[v3];
 				else if( v3 && vc  ) o[v2] = v - ( o[v3] / 2 );
 				else                 o[v2] = v;
-			},this));
-
+			}
 			this.parent.render();
 		},
 

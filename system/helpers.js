@@ -261,7 +261,6 @@ $.extend( true, editor, {
 					 { while(point++) if(point % this.parent.grid.size == 0) return point; }
 				else if( point % this.parent.grid.size == 0 )                return point;
 				else { while(point--) if(point % this.parent.grid.size == 0) return point; }
-				
 			}
 			else return point;
 		},
