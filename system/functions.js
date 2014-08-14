@@ -10,7 +10,7 @@ $.extend( true, editor, {
 
 		selectAll : function(){
 			this.parent.selecteds = [];
-			for(o in this.parents.objects) this.select( this.parent.objects[o] );
+			for(o in this.parent.objects) this.select( this.parent.objects[o] );
 			this.parent.render();
 			this.parent.draw.ui();
 			this.parent.draw.toolbar();
