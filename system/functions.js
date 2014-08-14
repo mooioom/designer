@@ -27,8 +27,6 @@ $.extend( true, editor, {
 
 		delete : function(){
 
-			debugger;
-
 			this.parent.history.save();
 
 			for(i in this.parent.selecteds)
@@ -64,17 +62,20 @@ $.extend( true, editor, {
 			this.parent.clipboard = jQuery.extend(true, {}, this.parent.selecteds);
 		},
 
-		paste : function( selectNewItems ){
+		paste : function(){
 			this.parent.history.save();
-			if( selectNewItems ) this.parent.selecteds = [];
+			this.parent.selecteds = [];
 			for(i in this.parent.clipboard)
 			{
 				var o = jQuery.extend(true, {}, this.parent.clipboard[i]);
-				o.id  = this.current;
+				o.id  = this.parent.current;
 				this.parent.objects.push( o );
 				this.parent.current ++;
-				if( selectNewItems ) this.select( o );
+				this.select( o );
 			}
+			this.parent.render();
+			this.parent.draw.toolbar();
+			this.parent.draw.ui();
 		},
 
 		editText : function(){
@@ -170,7 +171,7 @@ $.extend( true, editor, {
 				var o = this.parent.selecteds[i],
 					d;
 
-				if( this.parent.events.ctrlIsPressed ) d = 1;
+				if( this.parent.events.ctrlIsPressed() ) d = 1;
 				else d = this.parent.grid.size;
 
 				switch( direction )

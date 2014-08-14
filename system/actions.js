@@ -6,7 +6,7 @@ $.extend( true, editor, {
 		select : 
 		{
 			mouseDown : function(){
-				if(!this.ctrlIsPressed) this.parent.selecteds = [];
+				if( !this.parent.events.ctrlIsPressed() ) this.parent.selecteds = [];
 				this.parent.temp                = null;
 				this.parent.selectionBox.startX = this.parent.events.mouseX;
 				this.parent.selectionBox.startY = this.parent.events.mouseY;

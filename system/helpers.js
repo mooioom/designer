@@ -255,7 +255,7 @@ $.extend( true, editor, {
 		},
 
 		getClosestSnapCoords : function( point ){
-			if(this.parent.grid.snap && !this.parent.events.ctrlIsPressed) {
+			if(this.parent.grid.snap && !this.parent.events.ctrlIsPressed()) {
 				if(point % this.parent.grid.size > Math.round(this.parent.grid.size / 2) ) 
 					 { while(point++) if(point % this.parent.grid.size == 0) return point; }
 				else if( point % this.parent.grid.size == 0 )                return point;
@@ -267,7 +267,7 @@ $.extend( true, editor, {
 
 		updateSelectedObjProp : function( prop, val, isString){
 			if(!this.parent.selecteds.length) return;
-			var o = this.parent.getObject( this.parent.selecteds[0].id );
+			var o = this.parent.functions.getObject( this.parent.selecteds[0].id );
 			if(!o) return;
 			if(!isString) val = Number(val);
 			if(this.parent.resizeLinked){

@@ -7,10 +7,6 @@ $.extend( true, editor, {
 		keyboardEvents : [],
 		clickEvents    : [],
 
-		ctrlIsPressed  : false,
-		altIsPressed   : false,
-		shiftIsPressed : false,
-
 		mouseX : 0,
 		mouseY : 0,
 
@@ -27,10 +23,10 @@ $.extend( true, editor, {
 
 			this.droppable();
 
-			this.keyboardEvents.push({ action : this.parent.functions.move, scope : this.parent.functions, shortcut : 'left',  args : ['left'] });
-			this.keyboardEvents.push({ action : this.parent.functions.move, scope : this.parent.functions, shortcut : 'up',    args : ['up'] });
-			this.keyboardEvents.push({ action : this.parent.functions.move, scope : this.parent.functions, shortcut : 'right', args : ['right'] });
-			this.keyboardEvents.push({ action : this.parent.functions.move, scope : this.parent.functions, shortcut : 'down',  args : ['down'] });
+			this.keyboardEvents.push({ action : this.parent.functions.move, scope : this.parent.functions, shortcut : 'left',  args : 'left'  });
+			this.keyboardEvents.push({ action : this.parent.functions.move, scope : this.parent.functions, shortcut : 'up',    args : 'up'    });
+			this.keyboardEvents.push({ action : this.parent.functions.move, scope : this.parent.functions, shortcut : 'right', args : 'right' });
+			this.keyboardEvents.push({ action : this.parent.functions.move, scope : this.parent.functions, shortcut : 'down',  args : 'down'  });
 
 			this.parent.canvas.addEventListener("mousemove",$.proxy(this.mousemove,this),false);
 			this.parent.canvas.addEventListener("mousedown",$.proxy(this.mousedown,this),false);
@@ -89,65 +85,6 @@ $.extend( true, editor, {
 			reader.readAsDataURL(file);
 		},
 
-		keyDown : function( e )
-		{
-			if($("input:focus, textarea:focus").length) return;
-			var p = false;
-			
-			keyCode = e.keyCode;
-
-			this.addToPressed( e.keyCode );
-
-			for(i in this.keyboardEvents)
-			{
-				var found 		  = [],
-					keyboardEvent = this.keyboardEvents[i],
-					keys 		  = keyboardEvent.shortcut.split('+');
-
-				for(i in keys) if( this.isPressed(keys[i]) ) found.push( true );
-				if(found.length && found.length == keys.length)
-				{
-					p = true;
-					console.log('all found');
-				}
-			}
-
-			// if( e.keyCode == 46 ) {
-			// 	p = true;
-			// 	this.delete(); // delete
-			// 	this.render();
-			// }
-			// if( e.ctrlKey  )    {p = true; this.ctrlIsPressed   = true;}
-			// if( e.altKey   )    {p = true; this.altIsPressed    = true;}
-			// if( e.shiftKey )    {p = true; this.shiftIsPressed  = true;}
-			// if(e.keyCode == 37) {p = true; this.move('left');}      		      // left
-			// if(e.keyCode == 38) {p = true; this.move('up');}      			      // up
-			// if(e.keyCode == 39) {p = true; this.move('right');}      		      // right
-			// if(e.keyCode == 40) {p = true; this.move('down');}     			      // down
-			// if(this.ctrlIsPressed)
-			// {
-				// if(e.keyCode == 90) {p = true; this.undo();}      			 	  // ctrl + z 
-				// if(e.keyCode == 89) {p = true; this.redo();}      			 	  // ctrl + y 
-				// if(e.keyCode == 67) {p = true; this.copy();}      			 	  // ctrl + c 
-				// if(e.keyCode == 86) {p = true; this.paste();}     			 	  // ctrl + v
-				// if(e.keyCode == 65) {p = true; this.selectAll();} 			 	  // ctrl + a
-				// if(e.keyCode == 66) {p = true; this.sendToBack();} 			 	  // ctrl + b
-				// if(e.keyCode == 70) {p = true; this.bringToFront();} 			  // ctrl + f
-				// if(e.keyCode == 71) {p = true; $('.toolbox.grid').toggle();} 	  // ctrl + g
-				// if(e.keyCode == 79) {p = true; $('.toolbox.objects').toggle();}   // ctrl + o
-				// if(e.keyCode == 82) {p = true; $('.toolbox.resources').toggle();} // ctrl + r
-			//}
-			if(p) e.preventDefault(); e.stopPropagation();
-		},
-
-		keyUp : function( e )
-		{
-			if($("input:focus, textarea:focus").length) return;
-			var p = false;
-			this.clearPressed( e.keyCode );
-			if(p) e.preventDefault(); e.stopPropagation();
-		},
-
 		mousedown : function( e )
 		{
 			this.parent.helpers.getMousePosition( e );
@@ -179,15 +116,52 @@ $.extend( true, editor, {
 			this.parent.render();
 		},
 
+
+		keyDown : function( e )
+		{
+			if($("input:focus, textarea:focus").length) return;
+			var p = false;
+			
+			keyCode = e.keyCode;
+
+			if(!this.addToPressed( e.keyCode )) return;
+
+			for(i in this.keyboardEvents)
+			{
+				var found 		  = [],
+					keyboardEvent = this.keyboardEvents[i],
+					keys 		  = keyboardEvent.shortcut.split('+');
+
+				for(i in keys) if( this.isPressed(keys[i]) ) found.push( true );
+				if(found.length && found.length == keys.length)
+				{
+					p = true;
+					$.proxy(keyboardEvent.action,keyboardEvent.scope,keyboardEvent.args)();
+				}
+			}
+
+			if(p) e.preventDefault(); e.stopPropagation();
+		},
+
+		keyUp : function( e )
+		{
+			if($("input:focus, textarea:focus").length) return;
+			var p = false;
+			this.clearPressed( e.keyCode );
+			if(p) e.preventDefault(); e.stopPropagation();
+		},
+
 		addToPressed : function( keyCode )
 		{
-			var flag = false;
-			for(i in this.pressed) if(this.pressed[i] == keyCode) flag = true;
-			if(!flag) this.pressed.push(keyCode);
+			var flag = true;
+			for(i in this.pressed) if(this.pressed[i] == keyCode) flag = false;
+			if(flag) this.pressed.push(keyCode);
+			return flag;
 		},
 
 		isPressed : function( keyCode )
 		{
+			keyCode = keyCode.replace(' ','');
 			if( String(keyCode).search('shift')       == 0 ) keyCode = 16;
 			if( String(keyCode).search('ctrl')        == 0 ) keyCode = 17;
 			if( String(keyCode).search('alt')         == 0 ) keyCode = 18;
@@ -201,19 +175,26 @@ $.extend( true, editor, {
 			if( String(keyCode).search('page down')   == 0 ) keyCode = 34;
 			if( String(keyCode).search('end')	      == 0 ) keyCode = 35;
 			if( String(keyCode).search('home')	      == 0 ) keyCode = 36;
-			if( String(keyCode).search('left arrow')  == 0 ) keyCode = 37;
-			if( String(keyCode).search('up arrow')	  == 0 ) keyCode = 38;
-			if( String(keyCode).search('right arrow') == 0 ) keyCode = 39;
-			if( String(keyCode).search('down arrow')  == 0 ) keyCode = 40;
+			if( String(keyCode).search('left')        == 0 ) keyCode = 37;
+			if( String(keyCode).search('up')	      == 0 ) keyCode = 38;
+			if( String(keyCode).search('right')       == 0 ) keyCode = 39;
+			if( String(keyCode).search('down')        == 0 ) keyCode = 40;
 			if( String(keyCode).search('insert')	  == 0 ) keyCode = 45;
-			if( String(keyCode).search('delete')	  == 0 ) keyCode = 46;
-			console.log( this.pressed)
-			for(i in this.pressed) if(this.pressed[i] == keyCode) return true;
+			if( String(keyCode).search('del')	      == 0 ) keyCode = 46;
+			for(i in this.pressed) {
+				if(typeof keyCode == 'string' && String.fromCharCode(this.pressed[i]).toLowerCase() == keyCode) return true;
+				else if(this.pressed[i] == keyCode) return true;
+			}
 		},
 
 		clearPressed : function( keyCode )
 		{
 			for(i in this.pressed) if(this.pressed[i] == keyCode) this.pressed.splice(i,1);
+		},
+
+		ctrlIsPressed : function()
+		{
+			for(i in this.pressed) if(this.pressed[i] == 17) return true;
 		},
 
 		toolButton : function( e ){
