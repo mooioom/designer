@@ -289,6 +289,9 @@
 			<string resource="grid"            value="<%=Resources.Strings.Grid2 %>"></string>
 			<string resource="objects"         value="<%=Resources.Strings.Objects %>"></string>
 			<string resource="resources"       value="<%=Resources.Strings.Resources %>"></string>
+
+			<!-- Template Editor -->
+			<string resource="dynamicField"    value="<%=Resources.Strings.Field %>"></string>
 		</div>
 
 	</body>

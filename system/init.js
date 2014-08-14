@@ -37,7 +37,7 @@ $.extend( true, editor, {
 		this.menu.init();
 		this.toolbar.init();
 		this.toolbox.init();
-		
+
 		this.file.init();
 		this.events.init();
 
@@ -48,6 +48,8 @@ $.extend( true, editor, {
 		this.spectrum('strokeStyle');
 		this.spectrum('fillStyle');
 		this.spectrum('shadowColor');
+
+		if(data.app) this.load( data.app );
 
 	},
 
@@ -108,5 +110,11 @@ $.extend( true, editor, {
 		this.render();
 		this.draw.ui();
 		this.draw.toolbar();
+	},
+
+	load : function( app ){
+
+		$.getScript( "apps/"+app+".js" );
+
 	}
 })

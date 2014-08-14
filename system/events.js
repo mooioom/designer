@@ -192,10 +192,8 @@ $.extend( true, editor, {
 			for(i in this.pressed) if(this.pressed[i] == keyCode) this.pressed.splice(i,1);
 		},
 
-		ctrlIsPressed : function()
-		{
-			for(i in this.pressed) if(this.pressed[i] == 17) return true;
-		},
+		ctrlIsPressed : function() { if( this.isPressed('17') ) return true; },
+		altIsPressed  : function() { if( this.isPressed('18') ) return true; },
 
 		toolButton : function( e ){
 			$('.tools .button').removeClass('active');

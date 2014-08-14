@@ -17,6 +17,13 @@ $.extend( true, editor, {
 
 	},
 
+	redraw : function(){
+		this.render(); 
+		this.draw.ui();
+		this.draw.toolbar();
+		this.draw.reOrderByUi( true );
+	},
+
 	draw : {
 
 		clearCanvas : function()

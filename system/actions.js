@@ -44,10 +44,10 @@ $.extend( true, editor, {
 			mouseDown : function(){
 				this.parent.history.save();
 				if(!this.parent.selecteds.length || this.parent.selectAndMove) this.parent.helpers.clickSelect();
-				if(this.parent.events.altIsPressed)
+				if(this.parent.events.altIsPressed())
 				{
-					this.parent.copy();
-					this.parent.paste( true );
+					this.parent.functions.copy();
+					this.parent.functions.paste( true );
 				}
 				this.parent.events.startMoveX = this.parent.events.mouseX;
 				this.parent.events.startMoveY = this.parent.events.mouseY;

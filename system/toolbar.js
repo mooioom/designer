@@ -29,7 +29,7 @@ $.extend( true, editor, {
 
 			$('.toolbarButton.align').click(function(){
 				var type = $(this).attr('type');
-				editor['align'+type]();
+				editor.functions['align'+type]();
 			});
 			
 		},
