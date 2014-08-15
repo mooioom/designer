@@ -96,7 +96,21 @@ $.extend( true, editor, {
 			$('.resourceName',template).html(resource.name);
 			$('.toolbox.resources .body').append(template);
 		};
-		$('.resourceItem').draggable({ revert: "invalid", revertDuration:10 });
+
+		$('.resourceItem .resourceDisplay').draggable({ revert: "invalid", revertDuration:10 })
+		$('.resourceItem').click(function(){ 
+			$(this).toggleClass('selected');
+			if($('.resourceItem.selected').length) $('.toolbox.resources .delete').removeClass('disabled');
+			else $('.toolbox.resources .delete').addClass('disabled'); 
+		});
+
+		$('.toolbox.resources .delete').unbind('click').bind('click',function(){
+			$('.resourceItem.selected').each(function(){
+				idx = $(this).index();
+				editor.resources.splice(idx,1);
+			})
+			editor.getResources();
+		})
 
 		if(!this.resources.length) 
 			$('.toolbox.resources .body').append('<div class="resourceItem noResources">' + getString('NoResources') + '</div>');

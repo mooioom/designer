@@ -164,6 +164,7 @@ $.extend( true, editor, {
 			mouseUp : function()
 			{
 				var tempObject = this.parent.functions.getObject( this.parent.temp );
+				if(!tempObject) return;
 				if(tempObject.startX == tempObject.endX && 
 				   tempObject.startY == tempObject.endY)
 				{

@@ -246,7 +246,7 @@ $.extend( true, editor, {
 					newObject.radius      = this.parent.defaults.box.radius;
 					break;
 				case 'text' :
-					newObject.lineWidth     = this.parent.defaults.text.lineWidth;;
+					newObject.lineWidth     = this.parent.defaults.text.lineWidth;
 					newObject.strokeStyle   = this.parent.defaults.text.strokeStyle;
 					newObject.fillStyle     = this.parent.defaults.text.color;
 					newObject.radius        = this.parent.defaults.text.radius;

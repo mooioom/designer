@@ -587,11 +587,15 @@ input[type='range'] {
 
 .resourceItem{
 	padding: 3px;
-    cursor: pointer;
+	cursor: pointer;
 	background: #E2E2E2;
-	margin-bottom: 1px;
-	border-radius: 10px;
+	margin-bottom: 0px;
 	width: 218px;
+	border-bottom: 1px solid #ccc;
+}
+.resourceItem.selected{
+	background: #fff;
+	border-radius: 0px;
 }
 .resourceDisplay{
 	width: 110px;

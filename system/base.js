@@ -79,6 +79,7 @@ $.extend( true, editor, {
 				font          : 'Arial',
 				fontSize      : 30,
 				lineHeight    : 32,
+				lineWidth     : 0,
 				isItalic      : false,
 				isBold        : false,
 				stroke        : false,

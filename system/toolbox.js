@@ -9,9 +9,11 @@ $.extend( true, editor, {
 				start       : function(){ $(this).css('right','initial'); },
 				containment : "window"
 			});
+
 			$('.toolbox .close').click(function(){ $(this).parent().hide(); });
 
 			$(document).on('click', '.toolbox.objects .objectVisible', function () {
+				console.log('click');
 				$(this).toggleClass('invisible');
 				editor.selecteds[0].visible = !$(this).hasClass('invisible');
 				editor.render();
@@ -22,7 +24,7 @@ $.extend( true, editor, {
 				editor.render();
 			});
 
-			$('.toolbox.objects .toolboxMenu .delete').click( function(){ editor.delete(); });
+			$('.toolbox.objects .toolboxMenu .delete').click( function(){ editor.functions.delete(); });
 			$('.toolbox.objects .toolboxMenu .add').click( function() { 
 				editor.create.box(0,0,editor.width,editor.height);
 				editor.render(); 
