@@ -7,6 +7,10 @@ $.extend( true, editor, {
 		keyboardEvents : [],
 		clickEvents    : [],
 
+		ctrl  : false,
+		alt   : false,
+		shift : false,
+
 		mouseX : 0,
 		mouseY : 0,
 
@@ -35,8 +39,8 @@ $.extend( true, editor, {
 			$(document).unbind('keydown')
 					   .unbind('keyup');
 
-			$(document).keydown( $.proxy(this.keyDown,this) )
-					   .keyup(   $.proxy(this.keyUp,this)   );
+			$(document).bind('keydown', $.proxy(this.keyDown,this) )
+					   .bind('keyup',   $.proxy(this.keyUp,this)   );
 
 			$('body').bind('dragenter', $.proxy(this.ignoreDrag,this))
 					 .bind('dragover',  $.proxy(this.ignoreDrag,this))
@@ -124,7 +128,9 @@ $.extend( true, editor, {
 			
 			keyCode = e.keyCode;
 
-			if(!this.addToPressed( e.keyCode )) return;
+			if(!this.addToPressed( keyCode )) return;
+
+			this.setSpecialKeys( keyCode, true );
 
 			for(i in this.keyboardEvents)
 			{
@@ -147,7 +153,9 @@ $.extend( true, editor, {
 		{
 			if($("input:focus, textarea:focus").length) return;
 			var p = false;
-			this.clearPressed( e.keyCode );
+			keyCode = e.keyCode;
+			this.setSpecialKeys( keyCode, false );
+			this.clearPressed( keyCode );
 			if(p) e.preventDefault(); e.stopPropagation();
 		},
 
@@ -181,6 +189,7 @@ $.extend( true, editor, {
 			if( String(keyCode).search('down')        == 0 ) keyCode = 40;
 			if( String(keyCode).search('insert')	  == 0 ) keyCode = 45;
 			if( String(keyCode).search('del')	      == 0 ) keyCode = 46;
+
 			for(i in this.pressed) {
 				if(typeof keyCode == 'string' && String.fromCharCode(this.pressed[i]).toLowerCase() == keyCode) return true;
 				else if(this.pressed[i] == keyCode) return true;
@@ -192,8 +201,11 @@ $.extend( true, editor, {
 			for(i in this.pressed) if(this.pressed[i] == keyCode) this.pressed.splice(i,1);
 		},
 
-		ctrlIsPressed : function() { if( this.isPressed('17') ) return true; },
-		altIsPressed  : function() { if( this.isPressed('18') ) return true; },
+		setSpecialKeys : function( keyCode, on ){
+			if(keyCode == 16) this.shift = on;
+			if(keyCode == 17) this.ctrl  = on;
+			if(keyCode == 18) this.alt   = on;
+		},
 
 		toolButton : function( e ){
 			$('.tools .button').removeClass('active');

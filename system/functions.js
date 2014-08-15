@@ -171,7 +171,7 @@ $.extend( true, editor, {
 				var o = this.parent.selecteds[i],
 					d;
 
-				if( this.parent.events.ctrlIsPressed() ) d = 1;
+				if( this.parent.events.ctrl ) d = 1;
 				else d = this.parent.grid.size;
 
 				switch( direction )

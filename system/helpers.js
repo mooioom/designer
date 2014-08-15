@@ -19,7 +19,7 @@ $.extend( true, editor, {
 
 		clickSelect : function()
 		{
-			if(!this.parent.events.ctrlIsPressed) this.parent.selecteds = [];
+			if(!this.parent.events.ctrl) this.parent.selecteds = [];
 			o = this.getObjectInPoint( { x : this.parent.events.mouseX, y : this.parent.events.mouseY } );
 			if(o) 
 			{
@@ -256,7 +256,7 @@ $.extend( true, editor, {
 
 		getClosestSnapCoords : function( point ){
 			point = Math.round(point);
-			if(this.parent.grid.snap && !this.parent.events.ctrlIsPressed()) {
+			if(this.parent.grid.snap && !this.parent.events.ctrl) {
 				if(point % this.parent.grid.size > Math.round(this.parent.grid.size / 2) ) 
 					 { while(point++) if(point % this.parent.grid.size == 0) return point; }
 				else if( point % this.parent.grid.size == 0 )                return point;

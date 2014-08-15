@@ -6,7 +6,7 @@ $.extend( true, editor, {
 		select : 
 		{
 			mouseDown : function(){
-				if( !this.parent.events.ctrlIsPressed() ) this.parent.selecteds = [];
+				if( !this.parent.events.ctrl ) this.parent.selecteds = [];
 				this.parent.temp                = null;
 				this.parent.selectionBox.startX = this.parent.events.mouseX;
 				this.parent.selectionBox.startY = this.parent.events.mouseY;
@@ -44,7 +44,7 @@ $.extend( true, editor, {
 			mouseDown : function(){
 				this.parent.history.save();
 				if(!this.parent.selecteds.length || this.parent.selectAndMove) this.parent.helpers.clickSelect();
-				if(this.parent.events.altIsPressed())
+				if(this.parent.events.alt)
 				{
 					this.parent.functions.copy();
 					this.parent.functions.paste( true );
