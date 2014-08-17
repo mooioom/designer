@@ -52,7 +52,7 @@ $.extend( true, editor, {
 
 			for(i in this.clickEvents){
 				var clickEvent = this.clickEvents[i];
-				$(clickEvent.selector).click( $.proxy( clickEvent.action, clickEvent.scope, clickEvent.args ) );
+				$(clickEvent.selector).unbind('click').bind('click', $.proxy( clickEvent.action, clickEvent.scope, clickEvent.args ) );
 			}
 
 		},

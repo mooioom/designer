@@ -1,0 +1,23 @@
+.toolbox.templates .item.header{
+	background-color: #FFFFFF;
+	color: #444;
+	padding: 5px;
+}
+
+.toolbox.templates .item .isActive{
+	width: 18px;
+	height: 18px;
+	background: #ccc;
+	border-radius: 18px;
+	cursor: pointer;
+	margin-top: 5px;
+	margin-left: 1px;
+}
+
+.toolbox.templates .item .isActive.active{
+	background-color:green;
+}
+
+.toolbox.templates .item .type{
+	color: #A5A5A5;
+}

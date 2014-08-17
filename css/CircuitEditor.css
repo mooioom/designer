@@ -415,11 +415,11 @@ input[type='range'] {
 .toolbox .body{
 }
 
-.toolbox .item{
+.toolbox .body .item{
 	border-bottom: 1px solid #D3D3D3;
 	padding: 7px;
 }
-.toolbox .item .title{
+.toolbox .body .item .title{
 
 }
 
@@ -461,31 +461,30 @@ input[type='range'] {
 	-webkit-filter: invert(100%);
 }
 
-.toolboxMenu{
+.toolbox .menu{
 	border-top: 1px solid #ccc;
     background: #CECECE;
     padding: 3px;
 }
-.toolboxMenuItem{
+.toolbox .menu .item{
 	padding-left: 5px;
     padding-right: 5px;
     cursor: pointer;
-    
-	background: #BABCBD;
+	background-color: #BABCBD;
     color: #fff;
     padding-top: 2px;
     padding-bottom: 2px;
     border-radius: 2px;
 }
-.toolboxMenuItem.left{
+.toolbox .menu .item.left{
 	margin-left: 2px;
 }
 
-.toolbox .toolboxMenu .toolboxMenuItem:hover{
+.toolbox .menu .item:hover{
 	background-color: #0A6CFF;
 }
 
-.toolbox .toolboxMenu .toolboxMenuItem.right{
+.toolbox .menu .item.right{
 	margin-left: 1px;
 }
 

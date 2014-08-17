@@ -16,8 +16,8 @@ $(document).ready(function()
 		editor.init({
 			name   : getString("UntitledProject"),
 		    width  : 980,
-			height : 253
-			//app    : 'templateEditor'
+			height : 253,
+			app    : 'templateEditor'
 		});
 
 	},20);

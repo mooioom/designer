@@ -130,6 +130,12 @@ $.extend( true, editor, {
 
 	load : function( app ){
 
+		$("<link/>", {
+		   rel: "stylesheet",
+		   type: "text/css",
+		   href: "apps/"+app+".css"
+		}).appendTo("head");
+
 		$.getScript( "apps/"+app+".js" );
 
 	}

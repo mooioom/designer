@@ -165,12 +165,12 @@
 			<div class="header"><%=Resources.Strings.Objects %></div>
 			<div class="close">X</div>
 			<div class="body sortable"></div>
-			<div class="toolboxMenu">
-				<div class="toolboxMenuItem left shadow disabled"><%=Resources.Strings.Shadow %></div>
-				<div class="toolboxMenuItem left transform disabled"><%=Resources.Strings.Transform %></div>
-				<div class="toolboxMenuItem left fx disabled">Fx</div>
-				<div class="toolboxMenuItem right add">+</div>
-				<div class="toolboxMenuItem right delete disabled"></div>
+			<div class="menu">
+				<div class="item left shadow disabled"><%=Resources.Strings.Shadow %></div>
+				<div class="item left transform disabled"><%=Resources.Strings.Transform %></div>
+				<div class="item left fx disabled">Fx</div>
+				<div class="item right add">+</div>
+				<div class="item right delete disabled"></div>
 				<div class="clear"></div>
 			</div>
 		</div>
@@ -179,8 +179,8 @@
 			<div class="header"><%=Resources.Strings.Resources %></div>
 			<div class="close">X</div>
 			<div class="body"></div>
-			<div class="toolboxMenu">
-				<div class="toolboxMenuItem right delete disabled"></div>
+			<div class="menu">
+				<div class="item right delete disabled"></div>
 				<div class="clear"></div>
 			</div>
 		</div>
@@ -292,6 +292,12 @@
 
 			<!-- Template Editor -->
 			<string resource="dynamicField"    value="<%=Resources.Strings.Field %>"></string>
+			<string resource="templates"       value="<%=Resources.Strings.Templates %>"></string>
+			<string resource="header"          value="<%=Resources.Strings.Header %>"></string>
+			<string resource="footer"          value="<%=Resources.Strings.Footer %>"></string>
+			<string resource="title"           value="<%=Resources.Strings.Title %>"></string>
+			<string resource="type"            value="<%=Resources.Strings.Type %>"></string>
+			<string resource="active"          value="<%=Resources.Strings.Active %>"></string>
 		</div>
 
 	</body>

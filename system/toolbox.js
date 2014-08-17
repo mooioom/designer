@@ -10,22 +10,24 @@ $.extend( true, editor, {
 				containment : "window"
 			});
 
-			$('.toolbox .close').click(function(){ $(this).parent().hide(); });
+			$(document).on('click', '.toolbox .close', function () {
+				$(this).parent().hide();
+			});
 
 			$(document).on('click', '.toolbox.objects .objectVisible', function () {
-				console.log('click');
 				$(this).toggleClass('invisible');
 				editor.selecteds[0].visible = !$(this).hasClass('invisible');
 				editor.render();
 			});
+			
 			$(document).on('click', '.toolbox.objects .objectLock', function () {
 				$(this).toggleClass('unlocked');
 				editor.selecteds[0].locked = !$(this).hasClass('unlocked');
 				editor.render();
 			});
 
-			$('.toolbox.objects .toolboxMenu .delete').click( function(){ editor.functions.delete(); });
-			$('.toolbox.objects .toolboxMenu .add').click( function() { 
+			$('.toolbox.objects .menu .delete').click( function(){ editor.functions.delete(); });
+			$('.toolbox.objects .menu .add').click( function() { 
 				editor.create.box(0,0,editor.width,editor.height);
 				editor.render(); 
 				editor.draw.ui();
@@ -63,8 +65,8 @@ $.extend( true, editor, {
 				editor.draw.grid();
 			});
 
-			$('.toolboxMenuItem.shadow').click(function(){ $('.toolbox.shadow').show(); });
-			$('.toolboxMenuItem.transform').click(function(){ $('.toolbox.transform').show(); });
+			$('.toolbox .menu .item.shadow').click(function(){ $('.toolbox.shadow').show(); });
+			$('.toolbox .menu .item.transform').click(function(){ $('.toolbox.transform').show(); });
 
 			//text
 			$('.toolbox.text #text').bind('keyup change keydown',function(){ editor.functions.changeText( $(this).val() ); });

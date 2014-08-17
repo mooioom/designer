@@ -285,14 +285,14 @@ $.extend( true, editor, {
 		toggleObjectsOptions : function(){
 
 			if(this.parent.selecteds && this.parent.selecteds.length) {
-				$('.toolbox.objects .toolboxMenu .shadow').removeClass('disabled');
-				$('.toolbox.objects .toolboxMenu .transform').removeClass('disabled');
-				$('.toolbox.objects .toolboxMenu .delete').removeClass('disabled');
+				$('.toolbox.objects .menu .shadow').removeClass('disabled');
+				$('.toolbox.objects .menu .transform').removeClass('disabled');
+				$('.toolbox.objects .menu .delete').removeClass('disabled');
 			}
 			else {
-				$('.toolbox.objects .toolboxMenu .shadow').addClass('disabled');
-				$('.toolbox.objects .toolboxMenu .transform').addClass('disabled');
-				$('.toolbox.objects .toolboxMenu .delete').addClass('disabled');
+				$('.toolbox.objects .menu .shadow').addClass('disabled');
+				$('.toolbox.objects .menu .transform').addClass('disabled');
+				$('.toolbox.objects .menu .delete').addClass('disabled');
 			}
 
 		}
