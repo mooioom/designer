@@ -110,7 +110,9 @@ $.extend( true, editor, {
 				editor.resources.splice(idx,1);
 			})
 			editor.getResources();
-		})
+		});
+
+		if(!$('.resourceItem.selected').length) $('.toolbox.resources .delete').addClass('disabled');
 
 		if(!this.resources.length) 
 			$('.toolbox.resources .body').append('<div class="resourceItem noResources">' + getString('NoResources') + '</div>');
