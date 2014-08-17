@@ -123,7 +123,7 @@ $.extend( true, editor, {
 
 		keyDown : function( e )
 		{
-			if($("input:focus, textarea:focus").length) return;
+			if($("input:focus, textarea:focus, select:focus").length) return;
 			var p = false;
 			
 			keyCode = e.keyCode;
@@ -151,7 +151,7 @@ $.extend( true, editor, {
 
 		keyUp : function( e )
 		{
-			if($("input:focus, textarea:focus").length) return;
+			if($("input:focus, textarea:focus, select:focus").length) return;
 			var p = false;
 			keyCode = e.keyCode;
 			this.setSpecialKeys( keyCode, false );
