@@ -42,8 +42,8 @@ $('#dynamicFields').change(function(){
 
 // get templates - << API
 
-toolbox = function( data ){ return this.init( data) }
-toolbox.prototype = {
+editor.toolbox = function( data ){ return this.init( data) }
+editor.toolbox.prototype = {
 
 	name      : "",
 	title     : "",
@@ -70,6 +70,8 @@ toolbox.prototype = {
 		this.postLoad();
 
 		this.el = $('.toolbox.'+this.name);
+		this.el.css('right','initial');
+		this.el.css('left','initial');
 		this.el.css('left',this.left+'px');
 		this.el.css('top',this.top+'px');
 
@@ -110,7 +112,7 @@ toolbox.prototype = {
 
 }
 
-editor.toolboxes.push(new toolbox({
+editor.toolboxes.push(new editor.toolbox({
 
 	name  : 'templates',
 	title : getString('templates'),

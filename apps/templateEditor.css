@@ -12,10 +12,11 @@
 	cursor: pointer;
 	margin-top: 5px;
 	margin-left: 1px;
+	border: 1px solid #949494;
 }
 
 .toolbox.templates .item .isActive.active{
-	background-color:green;
+	background-color: rgb(224, 255, 60);
 }
 
 .toolbox.templates .item .type{

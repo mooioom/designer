@@ -20,6 +20,7 @@
 		<script type="text/javascript" src="system/menu.js"></script>
 		<script type="text/javascript" src="system/toolbar.js"></script>
 		<script type="text/javascript" src="system/toolbox.js"></script>
+		<script type="text/javascript" src="system/ui.js"></script>
 		<script type="text/javascript" src="system/events.js"></script>
 		<script type="text/javascript" src="system/render.js"></script>
 		<script type="text/javascript" src="system/file.js"></script>
@@ -162,12 +163,12 @@
 			<div class="header">Objects</div>
 			<div class="close">X</div>
 			<div class="body sortable"></div>
-			<div class="toolboxMenu">
-				<div class="toolboxMenuItem left shadow disabled">Shadow</div>
-				<div class="toolboxMenuItem left transform disabled">Transform</div>
-				<div class="toolboxMenuItem left fx disabled">Fx</div>
-				<div class="toolboxMenuItem right add">+</div>
-				<div class="toolboxMenuItem right delete disabled"></div>
+			<div class="menu">
+				<div class="item left shadow disabled">Shadow</div>
+				<div class="item left transform disabled">Transform</div>
+				<div class="item left fx disabled">Fx</div>
+				<div class="item right add">+</div>
+				<div class="item right delete disabled"></div>
 				<div class="clear"></div>
 			</div>
 		</div>
@@ -176,8 +177,8 @@
 			<div class="header">Resources</div>
 			<div class="close">X</div>
 			<div class="body"></div>
-			<div class="toolboxMenu">
-				<div class="toolboxMenuItem right delete disabled"></div>
+			<div class="menu">
+				<div class="item right delete disabled"></div>
 				<div class="clear"></div>
 			</div>
 		</div>
@@ -286,6 +287,14 @@
 			<string resource="grid"            value="Grid"></string>
 			<string resource="objects"         value="Objects"></string>
 			<string resource="resources"       value="Resources"></string>
+
+			<string resource="dynamicField"    value="Dynamic Field"></string>
+			<string resource="templates"       value="Templates"></string>
+			<string resource="header"          value="Header"></string>
+			<string resource="footer"          value="Footer"></string>
+			<string resource="title"           value="Title"></string>
+			<string resource="type"            value="Type"></string>
+			<string resource="active"          value="Active"></string>
 		</div>
 
 	</body>

@@ -96,8 +96,8 @@ $.extend( true, editor, {
 
 			$('.toolbar.text').show();
 
-			this.parent.toolbox.update( text );
-			this.parent.toolbar.update( text );
+			this.parent.ui.toolbox.update( text );
+			this.parent.ui.toolbar.update( text );
 		},
 
 		changeText : function( newText ) { if(!this.parent.helpers.selectedIsText()) return; this.parent.selecteds[0].text = newText; this.parent.render(); },
@@ -107,8 +107,8 @@ $.extend( true, editor, {
 			var box = this.parent.selecteds[0];
 			$('.toolbox.text').hide();
 			$('.toolbar.box').show();
-			this.parent.toolbox.update( box );
-			this.parent.toolbar.update( box );
+			this.parent.ui.toolbox.update( box );
+			this.parent.ui.toolbar.update( box );
 		},
 
 		align : function( to ){

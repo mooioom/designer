@@ -35,8 +35,8 @@ $.extend( true, editor, {
 		this.helperCanvas = document.getElementById("helperCanvas");
 
 		this.menu.init();
-		this.toolbar.init();
-		this.toolbox.init();
+		this.ui.toolbar.init();
+		this.ui.toolbox.init();
 
 		this.file.init();
 		this.events.init();
