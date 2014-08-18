@@ -42,7 +42,7 @@ $('#dynamicFields').change(function(){
 
 // get templates - << API
 
-editor.toolboxes.push(new editor.toolbox({
+new editor.toolbox({
 
 	name  : 'templates',
 	title : getString('templates'),
@@ -80,4 +80,4 @@ editor.toolboxes.push(new editor.toolbox({
 		];
 	}
 
-}));
+});

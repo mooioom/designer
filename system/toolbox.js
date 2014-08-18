@@ -32,6 +32,10 @@ editor.toolbox.prototype = {
 		this.el.css('left',this.left+'px');
 		this.el.css('top',this.top+'px');
 
+		this.parent = editor;
+
+		this.parent.toolboxes.push(this);
+
 		return this;
 
 	},
