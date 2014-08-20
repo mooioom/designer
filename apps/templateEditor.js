@@ -57,18 +57,34 @@ new editor.toolbox({
 		this.data = this.getData();
 	},
 
+	onLoad : function(){
+
+	},
+
 	render : function(){
 		// render the toolbox custom ui
 		this.append('<div class="item header"><div class="left">'+getString('title')+' + '+getString('type')+'</div><div class="right">'+getString('active')+'?</div><div class="clear"></div></div>');
 		for(i in this.data){
 			item = this.data[i];
 			if(item.isActive) active='active'; else active = '';
-			this.append('<div class="item" id="'+item.id+'"><div class="left">'+item.title+'<br/><span class="type">'+getString(item.type)+'</span></div><div class="right"><div class="isActive '+active+'"></div></div><div class="clear"></div></div>');
+			this.append('<div class="item" id="'+item.id+'"><div class="left"><div class="title">'+item.title+'</div><div class="type">'+getString(item.type)+'</div></div><div class="right"><div class="right isActive '+active+'"></div><div title="'+getString('load')+'" class="right load"></div><div class="clear"></div></div><div class="clear"></div></div>');
 		}
+		$('.toolbox.templates').append('<div class="menu"></div>');
+		$('.toolbox.templates .menu').append('<div class="item add right">+</div>');
+		$('.toolbox.templates .menu').append('<div class="item delete disabled right"></div>');
+		$('.toolbox.templates .menu').append('<div class="clear"></div>');
+	},
+
+	redraw : function(){
+
 	},
 
 	events : function(){
 		// setup toolbox custom	events
+		$('.toolbox.templates .body .item .load').click( $.proxy(this.load,      this) );
+		$('.toolbox.templates .body .isActive').click(   $.proxy(this.isActive,  this) );
+		$('.toolbox.templates .menu .add').click(        $.proxy(this.add,       this) );
+		$('.toolbox.templates .menu .delete').click(     $.proxy(this.delete,    this) );
 	},
 
 	getData : function(){
@@ -78,6 +94,38 @@ new editor.toolbox({
 			{ id : 3, title : 'BillTemplate 3', type : 'header', isActive : false },
 			{ id : 4, title : 'BillTemplate 4', type : 'footer', isActive : false }
 		];
+	},
+
+	load : function( e ){
+		e.preventDefault(); e.stopPropagation();
+
+		var item  = $(e.target).parent().parent(),
+			id    = Number(item.attr('id')),
+			title = item.find('.title').html();
+
+		var loadPop = new Popup({
+			header     : getString('load')+' '+title+' ...',
+			content    : 'Any unsaved changed on the current project will be deleted!',
+			actionText : getString('load'),
+			closeText  : getString('Cancel'),
+			action : function()
+			{
+				loadPop.close();
+			}
+		});
+	},
+
+	isActive : function( e ){
+		e.preventDefault(); e.stopPropagation();
+		console.log('isActive',this);
+	},
+
+	add : function(){
+		console.log('add',this);
+	},
+
+	delete : function(){
+		console.log('delete',this);
 	}
 
 });

@@ -8,6 +8,8 @@ editor.toolbox.prototype = {
 	visible   : false,
 	dockable  : true,
 
+	isDocking : false,
+
 	left : 20,
 	top  : 65,
 
@@ -24,7 +26,7 @@ editor.toolbox.prototype = {
 		this.render();
 		this.system.events();
 		this.events();
-		this.postLoad();
+		this.onLoad();
 
 		this.el = $('.toolbox.'+this.name);
 		this.el.css('right','initial');
@@ -51,8 +53,12 @@ editor.toolbox.prototype = {
 			$('body').append('<div class="toolbox '+this.parent.name+' '+hidden+'"><div class="header">'+this.parent.title+'</div><div class="close">X</div><div class="body"></div></div>');
 		},
 		events : function(){
-			$('.toolbox').draggable({ 
+			$('.toolbox.'+this.parent.name).draggable({ 
 				start : function(){ $(this).css('right','initial'); },
+				drag  : function( e ){
+					// detect sidebar
+					// console.log(e);
+				},
 				containment : "window"
 			});
 		}
@@ -66,9 +72,9 @@ editor.toolbox.prototype = {
 	// toolbox user events & functions
 
 	preLoad  : function(){}, // user preLoad event
-	postLoad : function(){}, // user postLoad event
 	render   : function(){}, // user render event
 	events   : function(){}, // user events
+	onLoad   : function(){}, // user onLoad event
 	refresh  : function(){}  // user refresh event
 
 }

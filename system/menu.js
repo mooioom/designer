@@ -35,9 +35,9 @@ $.extend( true, editor, {
 				{
 					id    : 'view',
 					sub   : [
-						{ id : 'grid',      action : this.parent.toolbox.toggle, args : 'grid',      scope : this.parent.toolbox, shortcut : 'Ctrl + G' },
-						{ id : 'objects',   action : this.parent.toolbox.toggle, args : 'objects',   scope : this.parent.toolbox, shortcut : 'Ctrl + O' },
-						{ id : 'resources', action : this.parent.toolbox.toggle, args : 'resources', scope : this.parent.toolbox, shortcut : 'Ctrl + R' }
+						{ id : 'grid',      action : this.parent.ui.toolbox.toggle, args : 'grid',      scope : this.parent.ui.toolbox, shortcut : 'Ctrl + G' },
+						{ id : 'objects',   action : this.parent.ui.toolbox.toggle, args : 'objects',   scope : this.parent.ui.toolbox, shortcut : 'Ctrl + O' },
+						{ id : 'resources', action : this.parent.ui.toolbox.toggle, args : 'resources', scope : this.parent.ui.toolbox, shortcut : 'Ctrl + R' }
 					]
 				}
 

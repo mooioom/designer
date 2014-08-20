@@ -23,6 +23,7 @@
 		<script type="text/javascript" src="system/menu.js"></script>
 		<script type="text/javascript" src="system/toolbar.js"></script>
 		<script type="text/javascript" src="system/toolbox.js"></script>
+		<script type="text/javascript" src="system/ui.js"></script>
 		<script type="text/javascript" src="system/events.js"></script>
 		<script type="text/javascript" src="system/render.js"></script>
 		<script type="text/javascript" src="system/file.js"></script>
@@ -220,6 +221,8 @@
 			<div class="button box active" id="box"></div>
 			<div class="button text"       id="text"></div>
 		</div>
+
+		<div class="sideBar"></div>
 		
 		<div class="debugger hidden">
 			<span id="x">0</span>, <span id="y">0</span><br />
