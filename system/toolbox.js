@@ -49,8 +49,8 @@ editor.toolbox.prototype = {
 		render : function(){
 			var hidden;
 			if(this.parent.visible == true) hidden = ''; else hidden = 'hidden';
-
 			$('body').append('<div class="toolbox '+this.parent.name+' '+hidden+'"><div class="header">'+this.parent.title+'</div><div class="close">X</div><div class="body"></div></div>');
+			if(this.parent.width) $('.toolbox.'+this.parent.name).css('width',this.parent.width + 'px');
 		},
 		events : function(){
 			$('.toolbox.'+this.parent.name).draggable({ 
@@ -63,10 +63,6 @@ editor.toolbox.prototype = {
 			});
 		}
 
-	},
-
-	append : function( html ){
-		$('.toolbox.'+this.name+' .body').append( html );
 	},
 
 	// toolbox user events & functions

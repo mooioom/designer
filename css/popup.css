@@ -29,6 +29,7 @@
 
 .rtl .popupInner{
     text-align: right;
+    direction: rtl;
 }
 
 .popupInner.enlarge{

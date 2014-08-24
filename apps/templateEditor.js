@@ -57,10 +57,10 @@ $('.toolbox.resources').css('right', 'initial');
 
 new editor.toolbox({
 
-	name  : 'templates',
-	title : getString('templates'),
-
+	name    : 'templates',
+	title   : getString('templates'),
 	visible : true,
+	width   : 350,
 
 	preLoad : function(){
 		// get data from API
@@ -73,14 +73,17 @@ new editor.toolbox({
 
 	render : function(){
 		// render the toolbox custom ui
-		this.append('<div class="item header"><div class="left">'+getString('title')+' + '+getString('type')+'</div><div class="right">'+getString('active')+'?</div><div class="clear"></div></div>');
-		for(i in this.data){
+		$('.toolbox.templates .body').empty();
+		$('.toolbox.templates .menu').remove();
+		$('.toolbox.templates .body').append('<div class="item header"><div class="left">'+getString('title')+' + '+getString('type')+'</div><div class="right">'+getString('active')+'?</div><div class="clear"></div></div>');
+		for(i in this.data)
+		{
 			item = this.data[i];
 			if(item.isActive) active='active'; else active = '';
-			this.append('<div class="item" id="'+item.id+'"><div class="left"><div class="title">'+item.title+'</div><div class="type">'+getString(item.type)+'</div></div><div class="right"><div class="right isActive '+active+'"></div><div title="'+getString('load')+'" class="right load"></div><div class="clear"></div></div><div class="clear"></div></div>');
+			$('.toolbox.templates .body').append('<div class="item" id="'+item.id+'"><div class="left"><div class="title">'+item.title+'</div><div class="type">'+getString(item.type)+'</div></div><div class="right"><div class="right isActive '+active+'"></div><div title="'+getString('load')+'" class="right load"></div><div class="clear"></div></div><div class="clear"></div></div>');
 		}
 		$('.toolbox.templates').append('<div class="menu"></div>');
-		$('.toolbox.templates .menu').append('<div class="item add right">+</div>');
+		$('.toolbox.templates .menu').append('<div class="item add right">'+getString('new')+'</div>');
 		$('.toolbox.templates .menu').append('<div class="item delete disabled right"></div>');
 		$('.toolbox.templates .menu').append('<div class="clear"></div>');
 	},
@@ -98,12 +101,50 @@ new editor.toolbox({
 	},
 
 	getData : function(){
-		return [
-			{ id : 1, title : 'BillTemplate 1', type : 'header', isActive : true },
-			{ id : 2, title : 'BillTemplate 2', type : 'footer', isActive : true },
-			{ id : 3, title : 'BillTemplate 3', type : 'header', isActive : false },
-			{ id : 4, title : 'BillTemplate 4', type : 'footer', isActive : false }
-		];
+		pack = [];
+		$.ajax({
+			type        : "POST",
+			contentType : "application/json; charset=utf-8",
+			url         : "api/api.aspx/init",
+			dataType    : "json",
+			success     : $.proxy(function ( data )
+			{
+				data = $.parseJSON(data.d);
+				for(i in data)
+				{
+					item = data[i];
+					pack.push({
+						id       : item.ID,
+						title    : item.Name,
+						type     : item.Type,
+						isActive : item.Active 
+					});
+					this.data = pack;
+				}
+				if(!this.data) this.firstRun();
+				this.render();
+				this.events();
+			},this)
+		});
+	},
+
+	firstRun : function(){
+
+		var firstRunPopup = new Popup({
+			header     : 'First time using Template Editor?',
+			content    : 'Select a guide or choose a blank Template...',
+			actionText : getString('Create'),
+			closeText  : getString('Cancel'),
+			action     : function()
+			{
+				firstRunPopup.close();
+			}
+		});
+
+	},
+
+	getGuides : function(){
+
 	},
 
 	load : function( e ){
@@ -114,8 +155,8 @@ new editor.toolbox({
 			title = item.find('.title').html();
 
 		var loadPopup = new Popup({
-			header     : getString('load')+' '+title+' ...',
-			content    : 'Any unsaved changed on the current project will be deleted!',
+			header     : getString('load')+' '+title,
+			content    : getString('unsavedData'),
 			actionText : getString('load'),
 			closeText  : getString('Cancel'),
 			action     : function()

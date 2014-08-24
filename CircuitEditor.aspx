@@ -302,6 +302,7 @@
 			<string resource="title"           value="<%=Resources.Strings.Title %>"></string>
 			<string resource="type"            value="<%=Resources.Strings.Type %>"></string>
 			<string resource="active"          value="<%=Resources.Strings.Active %>"></string>
+			<string resource="unsavedData"     value="<%=Resources.Strings.UnsavedDataWillbeLostDoYouWantToContinue %>"></string>
 		</div>
 
 	</body>
