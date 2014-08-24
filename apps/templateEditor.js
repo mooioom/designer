@@ -40,15 +40,25 @@ $('#dynamicFields').change(function(){
 
 });
 
+// setup ui
+
+var canvasLeft = $('#canvas').css('left'),
+	canvasLeft = Number(canvasLeft.replace('px',''));
+
+$('.toolbox.objects').css('left', canvasLeft + 766 + 'px');
+$('.toolbox.objects').css('top', '354px');
+$('.toolbox.objects').css('right', 'initial');
+
+$('.toolbox.resources').css('left', canvasLeft + 526 + 'px');
+$('.toolbox.resources').css('top', '354px');
+$('.toolbox.resources').css('right', 'initial');
+
 // get templates - << API
 
 new editor.toolbox({
 
 	name  : 'templates',
 	title : getString('templates'),
-
-	left : 925,
-	top  : 370,
 
 	visible : true,
 
@@ -129,3 +139,7 @@ new editor.toolbox({
 	}
 
 });
+
+$('.toolbox.templates').css('left', canvasLeft + 'px');
+$('.toolbox.templates').css('top', '354px');
+$('.toolbox.templates').css('right', 'initial');

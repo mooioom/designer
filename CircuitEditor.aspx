@@ -23,6 +23,7 @@
 		<script type="text/javascript" src="system/menu.js"></script>
 		<script type="text/javascript" src="system/toolbar.js"></script>
 		<script type="text/javascript" src="system/toolbox.js"></script>
+		<script type="text/javascript" src="system/sidebar.js"></script>
 		<script type="text/javascript" src="system/ui.js"></script>
 		<script type="text/javascript" src="system/events.js"></script>
 		<script type="text/javascript" src="system/render.js"></script>
