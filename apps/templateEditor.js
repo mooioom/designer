@@ -113,14 +113,14 @@ new editor.toolbox({
 			id    = Number(item.attr('id')),
 			title = item.find('.title').html();
 
-		var loadPop = new Popup({
+		var loadPopup = new Popup({
 			header     : getString('load')+' '+title+' ...',
 			content    : 'Any unsaved changed on the current project will be deleted!',
 			actionText : getString('load'),
 			closeText  : getString('Cancel'),
-			action : function()
+			action     : function()
 			{
-				loadPop.close();
+				loadPopup.close();
 			}
 		});
 	},
