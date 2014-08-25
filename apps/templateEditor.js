@@ -124,11 +124,20 @@ new editor.toolbox({
 				if(!this.data) this.firstRun();
 				this.render();
 				this.events();
-			},this)
+			},this),
+			error : $.proxy(function(){ this.firstRun(); },this)
 		});
 	},
 
 	firstRun : function(){
+
+		// load guides
+
+		var guides = [
+			{
+				
+			}
+		]
 
 		var firstRunPopup = new Popup({
 			header     : 'First time using Template Editor?',
