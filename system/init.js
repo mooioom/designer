@@ -50,7 +50,7 @@ $.extend( true, editor, {
 		this.spectrum('fillStyle');
 		this.spectrum('shadowColor');
 
-		if(data.app) this.load( data.app );
+		if(data.modules) for(i in data.modules) this.load( data.modules[i] );
 
 	},
 
@@ -129,15 +129,19 @@ $.extend( true, editor, {
 		this.draw.toolbar();
 	},
 
-	load : function( app ){
+	load : function( module ){
 
 		$("<link/>", {
 		   rel: "stylesheet",
 		   type: "text/css",
-		   href: "apps/"+app+".css"
+		   href: "modules/"+module+".css"
 		}).appendTo("head");
 
-		$.getScript( "apps/"+app+".js" );
+		$.ajax({
+			url      : "modules/"+module+".js",
+			dataType : 'script',
+			async    : false
+		});
 
 	}
 })

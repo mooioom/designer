@@ -33,7 +33,28 @@
 		<script type="text/javascript" src="system/actions.js"></script>
 		<script type="text/javascript" src="system/helpers.js"></script>
 
-		<script type="text/javascript" src="CircuitEditor.js"></script>
+		<!-- <script type="text/javascript" src="CircuitEditor.js"></script> -->
+
+		<script type="text/javascript">
+
+		$(document).ready(function()
+		{
+
+			setTimeout(function()
+			{
+
+				editor.init({
+					name    : getString("UntitledProject"),
+				    width   : 980,
+					height  : 253,
+					modules : ['templateEditor'<% if(isAdmin) { %>,'templateEditorAdmin' <% } %>]
+				});
+
+			},20);
+			
+		});
+
+		</script>
 
 		<link rel="stylesheet" type="text/css" href="css/spectrum.css">
 		<link rel="stylesheet" type="text/css" href="css/CircuitEditor.css">
@@ -295,14 +316,24 @@
 			<string resource="resources"       value="<%=Resources.Strings.Resources %>"></string>
 
 			<!-- Template Editor -->
-			<string resource="dynamicField"    value="<%=Resources.Strings.Field %>"></string>
-			<string resource="templates"       value="<%=Resources.Strings.Templates %>"></string>
-			<string resource="header"          value="<%=Resources.Strings.Header %>"></string>
-			<string resource="footer"          value="<%=Resources.Strings.Footer %>"></string>
-			<string resource="title"           value="<%=Resources.Strings.Title %>"></string>
-			<string resource="type"            value="<%=Resources.Strings.Type %>"></string>
-			<string resource="active"          value="<%=Resources.Strings.Active %>"></string>
-			<string resource="unsavedData"     value="<%=Resources.Strings.UnsavedDataWillbeLostDoYouWantToContinue %>"></string>
+			<string resource="dynamicField"     value="<%=Resources.Strings.Field %>"></string>
+			<string resource="templates"        value="<%=Resources.Strings.Templates %>"></string>
+			<string resource="header"           value="<%=Resources.Strings.Header %>"></string>
+			<string resource="footer"           value="<%=Resources.Strings.Footer %>"></string>
+			<string resource="title"            value="<%=Resources.Strings.Title %>"></string>
+			<string resource="type"             value="<%=Resources.Strings.Type %>"></string>
+			<string resource="active"           value="<%=Resources.Strings.Active %>"></string>
+			<string resource="unsavedData"      value="<%=Resources.Strings.UnsavedDataWillbeLostDoYouWantToContinue %>"></string>
+			<string resource="CreateATemplate"  value="<%=Resources.Strings.CreateATemplate %>"></string>
+			<string resource="SelectADesign"    value="<%=Resources.Strings.SelectADesign %>"></string>
+			<string resource="FirstTimeUsing"   value="<%=Resources.Strings.FirstTimeUsing %>"></string>
+			<string resource="Height"           value="<%=Resources.Strings.Height %>"></string>
+			<string resource="Continue"         value="<%=Resources.Strings.Continue2 %>"></string>
+			<string resource="TemplateName"     value="<%=Resources.Strings.TemplateName %>"></string>
+			<string resource="UntitledTemplate" value="<%=Resources.Strings.UntitledTemplate %>"></string>
+			
+			
+			
 		</div>
 
 	</body>

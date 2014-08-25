@@ -20,18 +20,12 @@ namespace Satec.eXpertPowerPlus.Web
     public partial class CircuitEditor : AbstractEnergyPage
     {
         private static SessionHandler sessionHandler;
+        public bool isAdmin = false;
 
         protected void Page_Load(object sender, EventArgs e)
         {
             SessionHandler sessionHandler = new SessionHandler();
-        }
-
-        [WebMethod]
-        public static object init()
-        {
-            SessionHandler sessionHandler = new SessionHandler();
-            var obj = new{ init = true };
-            return obj;
+            if (sessionHandler.UserID == 4010) isAdmin = true; 
         }
     }
 }

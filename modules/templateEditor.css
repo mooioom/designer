@@ -1,0 +1,178 @@
+.toolbox.templates .item.header{
+	background-color: #FFFFFF;
+	color: #444;
+	padding: 5px;
+}
+
+.toolbox.templates .body .item.header:hover{
+	background-color: #FFFFFF;
+	cursor: default;
+}
+
+.toolbox.templates .item{
+}
+
+.toolbox.templates .body .item.selected{
+	background: #AEE2FF;
+}
+
+.toolbox.templates .body .item.selected:hover{
+	background: #AEE2FF;	
+}
+
+/*.toolbox.templates .body .item:hover{
+	background: #E9E9E9;
+	cursor: pointer;
+}*/
+
+.toolbox.templates .item .isActive{
+	width: 15px;
+	height: 15px;
+	background: #ccc;
+	border-radius: 12px;
+	cursor: pointer;
+	margin-top: 5px;
+	margin-left: 1px;
+	border: 1px solid #A3A3A3;
+}
+
+.toolbox.templates .item .isActive:hover,.toolbox.templates .item .isActive.active:hover{
+	border:1px solid #333;
+}
+
+.toolbox.templates .item .isActive.active{
+	background-color: rgb(0, 122, 255);
+	border: 1px solid #005AAD;
+}
+
+.toolbox.templates .item .type{
+	color: #A5A5A5;
+}
+
+.toolbox.templates .item .load{
+	background-image: url(../images/upload2.png);
+	width: 28px;
+	height: 26px;
+	cursor: pointer;
+	margin-right: 0px;
+	background-position: 4px 5px;
+	background-size: 69%;
+	background-repeat: no-repeat;
+	opacity: 0.2;
+}
+
+.toolbox.templates .item .load:hover{
+	opacity: 1;
+}
+
+.firstTime{
+	font-weight: bold;
+	font-size: 25px;
+	margin-bottom: 10px;
+	color: #CCBD6F;
+}
+
+.popup .designs{
+    margin-top: 20px;
+}
+
+.popup .design{
+    padding: 5px;
+    cursor: pointer;
+    background: #F7F7F7;
+    margin-bottom: 2px;
+}
+
+.popup .design:hover{
+	background: #E2E2E2;
+}
+
+.popup .design.selected{
+    background: #F5CF36;
+	border-top-right-radius: 10px;
+}
+
+.rtl .popup .design.selected{
+	border-top-right-radius: initial;
+	border-top-left-radius: 10px;
+}
+
+.popup .design .designTitle{
+    width: 370px;
+    font-size: 20px;
+    margin-left: 13px;
+}
+
+.popup .design .designInfo1{
+	width: 370px;
+	font-size: 12px;
+	margin-left: 13px;
+	height: 14px;
+	overflow: hidden;
+	color: #8F8E8E;
+}
+
+.popup .design .designInfo2{
+	width: 370px;
+	font-size: 12px;
+	margin-left: 13px;
+	color: #757575;
+}
+
+.popup .design.selected .designTitle{
+    color: #000000;
+}
+.popup .design.selected .designInfo1{
+    color: #9C742E;
+}
+.popup .design.selected .designInfo2{
+    color: #000;
+}
+
+.rtl .popup .design .designTitle{
+	margin-left: initial;
+	margin-right: 13px;
+}
+
+.popup .design .designImg{
+    width: 90px;
+    height: 56px;
+    background: #FFF;
+}
+
+.popup .TemplateData{
+    margin-top: 20px;
+}
+
+.popup .TemplateData .input{
+    margin-bottom: 10px;
+}
+.popup .TemplateData .title{
+	margin-bottom: 2px;
+	color: #777777;
+	font-size: 20px;
+	padding-left: 3px;
+}
+
+.popup .TemplateData .input input{
+    width: 320px;
+    padding: 3px;
+    font-size: 23px;
+    color: #E29A01;
+}
+
+.popup #TemplateHeight{
+	width: 65px;
+	margin-right: 5px;
+}
+
+.popup #TemplateName{
+	width: 320px;
+	padding: 3px;
+	font-size: 23px;
+}
+
+.popup .sizeDiv{
+    margin-left: 10px;
+	
+}

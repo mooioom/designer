@@ -16,6 +16,8 @@ $(document).ready(function(){
 		actionText : (string)	  - action button text ie: save, undo etc.
 		closeText  : (string)	  - close button text ie: close, cancel etc.
 		enlarge	   : (boolean)    - OPTIONAL enlarges popup
+		onLoad     : (function)   - a function to be called once popup is rendered
+		enable     : (boolean)    - OPTIONAL keep buttons enabled on click (for further actions)
 
 		inputs	   : [		      - OPTIONAL inputs mode
 			{
@@ -90,6 +92,10 @@ $(document).ready(function(){
 
 			if(data.enlarge) $('.popupInner').addClass('enlarge');
 
+			if(data.onLoad) data.onLoad();
+
+			this.data = data;
+
 		},
 
 		close    : function(){ 
@@ -106,7 +112,6 @@ $(document).ready(function(){
 
 			$('.popupContent').hide();
 			$('.popupContentInput').empty().show();
-			//$('.popupButtonA').addClass('disabled');
 
 			for(i in data.inputs)
 			{
@@ -270,7 +275,7 @@ $(document).ready(function(){
 			$('.popupButtonA').html(data.actionText);
 			$('.popupButtonA').click($.proxy(function(){
 				$('.popupLoading').show();
-				$('.popupButton').addClass('disabled');
+				if(!this.data.enable) $('.popupButton').addClass('disabled');
 				if(data.upload)
 				{
 					ret = [];

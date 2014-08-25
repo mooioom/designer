@@ -14,10 +14,10 @@ $(document).ready(function()
 	{
 
 		editor.init({
-			name   : getString("UntitledProject"),
-		    width  : 980,
-			height : 253,
-			app    : 'templateEditor'
+			name    : getString("UntitledProject"),
+		    width   : 980,
+			height  : 253,
+			modules : ['templateEditor']
 		});
 
 	},20);
