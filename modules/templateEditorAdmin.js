@@ -14,6 +14,8 @@ new editor.toolbox({
 	visible : true,
 	width   : 200,
 
+	templateUrl : 'templateEditorAdmin.html',
+
 	preLoad : function(){ this.getData(); },
 	onLoad  : function(){},
 	render  : function(){
@@ -32,7 +34,7 @@ new editor.toolbox({
 	},
 	redraw  : function(){},
 	events  : function(){
-		
+		$('.menu .add',this.el).click(        $.proxy(this.add,       this) );
 	},
 	getData : function(){
 		$.ajax({
@@ -58,6 +60,43 @@ new editor.toolbox({
 				this.events();
 			},this)
 		});
+	},
+	add : function(){
+
+		data = {
+			nameTitle   : getString('TemplateName'),
+			nameValue   : getString('UntitledTemplate'),
+			heightTitle : getString('Height'),
+			heightValue : 253,
+			type        : getString('type'),
+			header 		: getString('header'),
+			footer  	: getString('footer')
+		}
+
+		html = this.template.find('.designCreate').outerHTML();
+		content = Mustache.to_html(html,data);
+
+		var createPopup = new Popup({
+			enable     : true,
+			header     : getString('CreateATemplate'),
+			content    : content,
+			actionText : getString('Create'),
+			closeText  : getString('Cancel'),
+			action     : $.proxy(function()
+			{
+
+				var name   = $('#TemplateName').val(),
+					height = $('#TemplateHeight').val(),
+					type   = $('#TemplateType').val();
+
+				this.setupDesign( name,type,height );
+				createPopup.close();
+				
+			},this)
+		});
+	},
+	setupDesign : function( name,type,height ){
+		console.log('setupDesign',name,type,height)
 	}
 
 })

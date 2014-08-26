@@ -171,8 +171,10 @@ new editor.toolbox({
 			if(design.height) heightStr = ', ' + getString('Height') + ' : ' + design.height + 'px';
 
 			design.selected  = selected;
-			design.typeTitle = getString('type');
-			design.typeData  = getString(design.type)+heightStr
+			design.infoStr   = getString('type') + ' : ' + getString(design.type) + heightStr;
+
+			if(!design.type) design.infoStr = getString('type')   + ' : ' + getString('Customizable') + 
+										', ' + getString('Height') + ' : ' + getString('Customizable');
 
 			html = this.template.find('.design').outerHTML();
 			designHtml = Mustache.to_html(html,design);
@@ -194,32 +196,51 @@ new editor.toolbox({
 			{
 				//popup stage 2
 
-				var designId = Number($('.design.selected').attr('dataid'));
+				var designId     = Number($('.design.selected').attr('dataid')),
+					designType   = $('.design.selected').attr('datatype'),
+					designHeight = Number($('.design.selected').attr('dataheight')),
+					designTitle  = $('.design.selected .designTitle').html();
 
 				$('.popupLoading').hide();
 				$('.popupContent').empty();
 
 				data = {
-					selectName  : 'Select Template Name & Height',
+					selectName  : designTitle,
 					nameTitle   : getString('TemplateName'),
 					nameValue   : getString('UntitledTemplate'),
 					heightTitle : getString('Height'),
-					heightValue : ''
+					heightValue : '',
+					type        : getString('type'),
+					header 		: getString('header'),
+					footer  	: getString('footer')
 				}
 				html       = this.template.find('.popupStage2').outerHTML();
 				stage2Html = Mustache.to_html(html,data);
 
 				$('.popupContent').append(stage2Html);
 				$('.popupButtonA').html(getString('Create'));
+				$('.popupButtonB').html(getString('Back'));
+
+				$('#TemplateType').val(designType ? designType : 'header');
+				$('#TemplateHeight').val(designHeight ? designHeight : 253);
+
+				if(designType)   $('#TemplateType').attr('disabled','disabled').addClass('disabled');
+				if(designHeight) $('#TemplateHeight').attr('disabled','disabled').addClass('disabled');
 
 				$('.popupButtonA').click($.proxy(function()
 				{
-					var name   = $('#TemplateName').val();
-					var height = $('#TemplateHeight').val();
+					var name   = $('#TemplateName').val(),
+						height = $('#TemplateHeight').val(),
+						type   = $('#TemplateType').val();
 
-					this.setupTemplate( name,height,designId );
+					this.setupTemplate( name,height,type,designId );
 
 					createPopup.close();	
+				},this));
+
+				$('.popupButtonB').click($.proxy(function(){
+					createPopup.close();
+					this.create(firstRun);
 				},this));
 				
 			},this)
@@ -232,6 +253,13 @@ new editor.toolbox({
 		// load designs
 
 		return [
+			{
+				id    : 2,
+				title : 'Blank Template',
+				desc  : 'Empty Template',
+				type  : '',
+				img   : ''
+			},
 			{
 				id     : 0,
 				title  : 'Basic Header Template',
@@ -247,26 +275,12 @@ new editor.toolbox({
 				type   : 'footer',
 				height : 180,
 				img    : ''
-			},
-			{
-				id    : 2,
-				title : 'Blank Header Template',
-				desc  : 'Empty Header Template',
-				type  : 'header',
-				img   : ''
-			},
-			{
-				id    : 3,
-				title : 'Blank Footer Template',
-				desc  : 'Empty Footer Template',
-				type  : 'footer',
-				img   : ''
 			}
 		];
 
 	},
 
-	setupTemplate : function( name,height,designId ){
+	setupTemplate : function( name, height, type, designId ){
 
 		$.ajax({
 			type        : "POST",
@@ -275,6 +289,7 @@ new editor.toolbox({
 			data        : JSON.stringify({
 				name     : name,
 				height   : height,
+				type     : type,
 				designId : designId
 			}),
 			dataType    : "json",

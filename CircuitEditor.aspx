@@ -8,18 +8,17 @@
 
 		<title></title>
 		
-		<!--<script type="text/javascript" src="libs/jq.js"></script>
-		<script type="text/javascript" src="libs/mustache.js"></script>
+		<script type="text/javascript" src="libs/jq.js"></script>
 		<script type="text/javascript" src="libs/multisortable.js"></script>
+		<script type="text/javascript" src="libs/helpers.js"></script>
 		<script type="text/javascript" src="libs/spectrum.js"></script>
 		<script type="text/javascript" src="libs/fileSaver.js"></script>
 		<script type="text/javascript" src="libs/toBlob.js"></script>
 		<script type="text/javascript" src="libs/parseColor.js"></script>
-		<script type="text/javascript" src="libs/thumbnailer.js"></script>-->
-
-		<script type="text/javascript" src="libs/all.js"></script>
-		<script type="text/javascript" src="libs/helpers.js"></script>
+		<script type="text/javascript" src="libs/thumbnailer.js"></script>
 		<script type="text/javascript" src="libs/popup.js"></script>
+
+		<script type="text/javascript" src="libs/mustache.js"></script> <!-- Template Editor -->
 
 		<script type="text/javascript" src="system/base.js"></script>
 		<script type="text/javascript" src="system/init.js"></script>
@@ -321,7 +320,7 @@
 			<!-- Template Editor -->
 			<string resource="dynamicField"     value="<%=Resources.Strings.Field %>"></string>
 			<string resource="templates"        value="<%=Resources.Strings.Templates %>"></string>
-			<string resource="header"           value="<%=Resources.Strings.Header %>"></string>
+			<string resource="header"           value="<%=Resources.Strings.TopHeader %>"></string>
 			<string resource="footer"           value="<%=Resources.Strings.Footer %>"></string>
 			<string resource="title"            value="<%=Resources.Strings.Title %>"></string>
 			<string resource="type"             value="<%=Resources.Strings.Type %>"></string>
@@ -334,9 +333,8 @@
 			<string resource="Continue"         value="<%=Resources.Strings.Continue2 %>"></string>
 			<string resource="TemplateName"     value="<%=Resources.Strings.TemplateName %>"></string>
 			<string resource="UntitledTemplate" value="<%=Resources.Strings.UntitledTemplate %>"></string>
-			
-			
-			
+			<string resource="Customizable"     value="<%=Resources.Strings.Customizable %>"></string>	
+			<string resource="Back"             value="<%=Resources.Strings.Back %>"></string>	
 		</div>
 
 	</body>
