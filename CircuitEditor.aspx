@@ -8,14 +8,17 @@
 
 		<title></title>
 		
-		<script type="text/javascript" src="libs/jq.js"></script>
+		<!--<script type="text/javascript" src="libs/jq.js"></script>
+		<script type="text/javascript" src="libs/mustache.js"></script>
 		<script type="text/javascript" src="libs/multisortable.js"></script>
-		<script type="text/javascript" src="libs/helpers.js"></script>
 		<script type="text/javascript" src="libs/spectrum.js"></script>
 		<script type="text/javascript" src="libs/fileSaver.js"></script>
 		<script type="text/javascript" src="libs/toBlob.js"></script>
 		<script type="text/javascript" src="libs/parseColor.js"></script>
-		<script type="text/javascript" src="libs/thumbnailer.js"></script>
+		<script type="text/javascript" src="libs/thumbnailer.js"></script>-->
+
+		<script type="text/javascript" src="libs/all.js"></script>
+		<script type="text/javascript" src="libs/helpers.js"></script>
 		<script type="text/javascript" src="libs/popup.js"></script>
 
 		<script type="text/javascript" src="system/base.js"></script>

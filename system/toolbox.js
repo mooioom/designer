@@ -5,6 +5,10 @@ editor.toolbox.prototype = {
 	name      : "",
 	title     : "",
 
+	el 		     : "",
+	template     : "",
+	templateUrl  : "",
+
 	visible   : false,
 	dockable  : true,
 
@@ -23,6 +27,7 @@ editor.toolbox.prototype = {
 
 		this.preLoad();
 		this.system.render();
+		if(this.templateUrl) this.system.loadTemplate();
 		this.render();
 		this.system.events();
 		this.events();
@@ -35,8 +40,6 @@ editor.toolbox.prototype = {
 		this.el.css('top',this.top+'px');
 
 		this.parent = editor;
-
-		this.parent.toolboxes.push(this);
 
 		return this;
 
@@ -51,6 +54,7 @@ editor.toolbox.prototype = {
 			if(this.parent.visible == true) hidden = ''; else hidden = 'hidden';
 			$('body').append('<div class="toolbox '+this.parent.name+' '+hidden+'"><div class="header">'+this.parent.title+'</div><div class="close">X</div><div class="body"></div></div>');
 			if(this.parent.width) $('.toolbox.'+this.parent.name).css('width',this.parent.width + 'px');
+			this.parent.el = $('.toolbox.'+this.parent.name);
 		},
 		events : function(){
 			$('.toolbox.'+this.parent.name).draggable({ 
@@ -61,8 +65,18 @@ editor.toolbox.prototype = {
 				},
 				containment : "window"
 			});
+		},
+		loadTemplate : function(){
+			$.ajax({
+				async    : false,
+				dataType : 'html',
+				url      : 'modules/'+this.parent.templateUrl,
+				success  : $.proxy(function( html ){
+					html = '<div template>'+html+'</div>';
+					this.parent.template = $(html);
+				},this)
+			})
 		}
-
 	},
 
 	// toolbox user events & functions

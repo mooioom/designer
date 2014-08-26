@@ -57,6 +57,8 @@ $('.toolbox.resources').css('right', 'initial');
 
 new editor.toolbox({
 
+	templateUrl : 'templateEditor.html',
+
 	name    : 'templates',
 	title   : getString('templates'),
 	visible : true,
@@ -70,21 +72,39 @@ new editor.toolbox({
 
 	},
 
+	append : function( el, templateItem, data){
+		html = this.template.find(templateItem).outerHTML();
+		html = Mustache.to_html(html,data);
+		$(el,this.el).append(html);
+	},
+
 	render : function(){
+
 		// render the toolbox custom ui
-		$('.toolbox.templates .body').empty();
-		$('.toolbox.templates .menu').remove();
-		$('.toolbox.templates .body').append('<div class="item header"><div class="left">'+getString('title')+' + '+getString('type')+'</div><div class="right">'+getString('active')+'?</div><div class="clear"></div></div>');
+		$('.body',this.el).empty();
+		$('.menu',this.el).remove();
+
+		header = { title:getString('title'), type:getString('type'), active:getString('active') }
+		this.append('.body','.item.header',header);
+
+		//stub
+		// this.templates = [
+		// 	{ id : 1, title : 'item title 1', type : 'header', isActive : true },
+		// 	{ id : 2, title : 'item title 2', type : 'footer', isActive : false }
+		// ];
+
 		for(i in this.templates)
 		{
-			item = this.templates[i];
-			if(item.isActive) active='active'; else active = '';
-			$('.toolbox.templates .body').append('<div class="item" id="'+item.id+'"><div class="left"><div class="title">'+item.title+'</div><div class="type">'+getString(item.type)+'</div></div><div class="right"><div class="right isActive '+active+'"></div><div title="'+getString('load')+'" class="right load"></div><div class="clear"></div></div><div class="clear"></div></div>');
+			item      = this.templates[i];
+			item.type = getString(item.type);
+			this.append('.body','.item:not(.header)',item);
 		}
-		$('.toolbox.templates').append('<div class="menu"></div>');
-		$('.toolbox.templates .menu').append('<div class="item add right">'+getString('new')+'</div>');
-		$('.toolbox.templates .menu').append('<div class="item delete disabled right"></div>');
-		$('.toolbox.templates .menu').append('<div class="clear"></div>');
+
+		this.el.append('<div class="menu"></div>');
+
+		$('.menu',this.el).append('<div class="item add right">'+getString('new')+'</div>');
+		$('.menu',this.el).append('<div class="item delete disabled right"></div>');
+		$('.menu',this.el).append('<div class="clear"></div>');
 	},
 
 	redraw : function(){
@@ -93,10 +113,10 @@ new editor.toolbox({
 
 	events : function(){
 		// setup toolbox custom	events
-		$('.toolbox.templates .body .item .load').click( $.proxy(this.load,      this) );
-		$('.toolbox.templates .body .isActive').click(   $.proxy(this.isActive,  this) );
-		$('.toolbox.templates .menu .add').click(        $.proxy(this.add,       this) );
-		$('.toolbox.templates .menu .delete').click(     $.proxy(this.delete,    this) );
+		$('.body .item .load',this.el).click( $.proxy(this.load,      this) );
+		$('.body .isActive',this.el).click(   $.proxy(this.isActive,  this) );
+		$('.menu .add',this.el).click(        $.proxy(this.add,       this) );
+		$('.menu .delete',this.el).click(     $.proxy(this.delete,    this) );
 	},
 
 	getData : function()
@@ -150,17 +170,14 @@ new editor.toolbox({
 
 			if(design.height) heightStr = ', ' + getString('Height') + ' : ' + design.height + 'px';
 
-			designsHolder       = $('<div class="design '+selected+'" dataid="'+design.id+'"></div>');
-			designsTitleHolder  = $('<div class="left"></div>');
-			designsTitle        = $('<div class="designTitle">'+design.title+'</div>');
-			//designsInfo1        = $('<div class="designInfo1">'+design.desc+'</div>');
-			designsInfo2        = $('<div class="designInfo2">'+getString('type')+' : '+getString(design.type)+heightStr+'</div>');
-			designsImg          = $('<div class="left designImg"><img src="'+design.img+'" /></div>');
-			designsTitleHolder.append(designsTitle);
-			//designsTitleHolder.append(designsInfo1);
-			designsTitleHolder.append(designsInfo2);
-			designsHolder.append(designsImg).append(designsTitleHolder).append('<div class="clear"></div>');
-			designsDiv.append(designsHolder);
+			design.selected  = selected;
+			design.typeTitle = getString('type');
+			design.typeData  = getString(design.type)+heightStr
+
+			html = this.template.find('.design').outerHTML();
+			designHtml = Mustache.to_html(html,design);
+			designsDiv.append(designHtml);
+
 		}
 
 		var createPopup = new Popup({
@@ -175,26 +192,35 @@ new editor.toolbox({
 			},
 			action     : $.proxy(function()
 			{
-				var selecteddesignId = Number($('.design.selected').attr('dataid'));
+				//popup stage 2
+
+				var designId = Number($('.design.selected').attr('dataid'));
+
 				$('.popupLoading').hide();
 				$('.popupContent').empty();
-				templateDataTitle 	   = $('<div class="TemplateNameSize">Select Template Name & Height</div>')
-				templateData      	   = $('<div class="TemplateData"></div>');
-				templateDataLeft  	   = $('<div class="left"></div>');
-				templateDataRight      = $('<div class="left sizeDiv"></div>');
-				templateDataLeftTitle  = $('<div class="title">'+getString('TemplateName')+'</div>');
-				templateDataLeftInput  = $('<div class="input"><input type="text" id="TemplateName" value="'+getString('UntitledTemplate')+'" /></div>');
-				templateDataRightTitle = $('<div class="title">'+getString('Height')+'</div>');
-				templateDataRightInput = $('<div class="input"><input type="text" id="TemplateHeight" />px</div>');
-				templateDataLeft.append(templateDataLeftTitle).append(templateDataLeftInput);
-				templateDataRight.append(templateDataRightTitle).append(templateDataRightInput);
-				templateData.append(templateDataLeft).append(templateDataRight).append('<div class="clear"></div>');
-				$('.popupContent').append(templateDataTitle).append(templateData);
+
+				data = {
+					selectName  : 'Select Template Name & Height',
+					nameTitle   : getString('TemplateName'),
+					nameValue   : getString('UntitledTemplate'),
+					heightTitle : getString('Height'),
+					heightValue : ''
+				}
+				html       = this.template.find('.popupStage2').outerHTML();
+				stage2Html = Mustache.to_html(html,data);
+
+				$('.popupContent').append(stage2Html);
 				$('.popupButtonA').html(getString('Create'));
-				$('.popupButtonA').click($.proxy(function(){
-					this.setupTemplate( selecteddesignId );
+
+				$('.popupButtonA').click($.proxy(function()
+				{
+					var name   = $('#TemplateName').val();
+					var height = $('#TemplateHeight').val();
+
+					this.setupTemplate( name,height,designId );
+
 					createPopup.close();	
-				},this))
+				},this));
 				
 			},this)
 		});
@@ -240,13 +266,17 @@ new editor.toolbox({
 
 	},
 
-	setupTemplate : function( designId ){
+	setupTemplate : function( name,height,designId ){
 
 		$.ajax({
 			type        : "POST",
 			contentType : "application/json; charset=utf-8",
 			url         : "api/api.aspx/setupTemplate",
-			data        : JSON.stringify({designId : designId}),
+			data        : JSON.stringify({
+				name     : name,
+				height   : height,
+				designId : designId
+			}),
 			dataType    : "json",
 			success     : $.proxy(function ( data )
 			{
