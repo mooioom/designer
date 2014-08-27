@@ -395,8 +395,9 @@ $('.toolbox.templates').css('right', 'initial');
 	2. save (user)
 	3. delete (user)
 	4. edit settings (user + admin)
-	5. clicking on an item should load it, clicking on an already selected item should unload it (user + admin)
-	6. dynamic properties should be saved only as a reference to allow user to see what he's designing
-	7. text input not jump around on every click (editor)
+	5. set active, inactive (user + admin)
+	6. clicking on an item should load it, clicking on an already selected item should unload it (user + admin)
+	7. dynamic properties should be saved only as a reference to allow user to see what he's designing
+	8. text input not jump around on every click (editor)
 
 */
