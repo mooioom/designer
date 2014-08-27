@@ -4,9 +4,6 @@ console.log('templateEditorAdmin');
 
 // admin for creating template designs
 
-var canvasLeft = $('#canvas').css('left'),
-	canvasLeft = Number(canvasLeft.replace('px',''));
-
 new editor.toolbox({
 
 	name    : 'designs',
@@ -14,52 +11,153 @@ new editor.toolbox({
 	visible : true,
 	width   : 200,
 
+	designs : [],
+
 	templateUrl : 'templateEditorAdmin.html',
 
 	preLoad : function(){ this.getData(); },
-	onLoad  : function(){},
+	onLoad  : function(){ this.reposition(); },
+
+	redraw  : function(){
+		this.render();
+		this.events();
+	},
+
 	render  : function(){
 		$('.toolbox.designs .body').empty();
 		$('.toolbox.designs .menu').remove();
+
 		for(i in this.designs)
 		{
-			item = this.designs[i];
-			if(item.isActive) active='active'; else active = '';
-			$('.toolbox.designs .body').append('<div class="item" id="'+item.id+'"><div class="left"><div class="title">'+item.title+'</div><div class="type">'+getString(item.type)+'</div></div><div class="right"><div class="right isActive '+active+'"></div><div title="'+getString('load')+'" class="right load"></div><div class="clear"></div></div><div class="clear"></div></div>');
+			item      = $.extend(true,{},this.designs[i]);
+			item.type = getString(item.type);
+			this.append('.body','.item',item);
 		}
+
 		$('.toolbox.designs').append('<div class="menu"></div>');
 		$('.toolbox.designs .menu').append('<div class="item add right">'+getString('new')+'</div>');
 		$('.toolbox.designs .menu').append('<div class="item delete disabled right"></div>');
 		$('.toolbox.designs .menu').append('<div class="clear"></div>');
+
+		if(this.hasSelected()) $('.delete',this.el).removeClass('disabled');
+
+		this.reposition();
+
 	},
-	redraw  : function(){},
+	
 	events  : function(){
+		$('.body .item .load',this.el).click( $.proxy(this.load,      this) );
+		$('.body .item .save',this.el).click( $.proxy(this.save,      this) );
+		$('.body .isActive',this.el).click(   $.proxy(this.isActive,  this) );
 		$('.menu .add',this.el).click(        $.proxy(this.add,       this) );
+		$('.menu .delete',this.el).click(     $.proxy(this.delete,    this) );
 	},
-	getData : function(){
-		$.ajax({
+
+	api : function( action, callback, data ){
+
+		a = {
 			type        : "POST",
 			contentType : "application/json; charset=utf-8",
-			url         : "api/api.aspx/getDesigns",
+			url         : "api/api.aspx/"+action,
 			dataType    : "json",
-			success     : $.proxy(function ( data )
-			{
-				data = $.parseJSON(data.d);
+			success     : $.proxy(callback,this)
+		}
+
+		if(data) a.data = JSON.stringify(data);
+
+		$.ajax(a);
+
+	},
+
+	getData : function(){
+
+		this.api(
+			'getDesigns',
+			function ( data ) {
+				data         = $.parseJSON(data.d);
+				this.designs = [];
 				for(i in data)
 				{
 					design = data[i];
-					d.push({
+					this.designs.push({
 						id       : design.ID,
 						title    : design.Name,
 						type     : design.Type,
-						isActive : design.Active 
+						height   : design.Height,
+						isActive : design.Active,
+						data     : design.Data
 					});
-					this.designs = d;
 				}
-				this.render();
-				this.events();
+				if(this.designs.length) this.redraw();
+			}
+		);
+
+	},
+	
+	load : function( e ){
+
+		item = $(e.target).parent().parent();
+		id   = Number(item.attr('id'));
+
+		this.api(
+			'getDesign',
+			function( data ){
+				data   = $.parseJSON(data.d);
+				design = data[0];
+				this.select( design.ID );
+				if( design )
+				{
+					editor.reset();
+					editor.init({
+						name    : design.Name,
+					    width   : 980,
+						height  : Number(design.Height),
+						data    : design.Data
+					});
+					this.redraw();
+				}
+			}, 
+			{ id : id } 
+		);
+
+	},
+	select : function( id ){
+		for(i in this.designs)
+		{
+			d = this.designs[i]
+			d.selected = false;
+			if(id == d.id) d.selected = true;
+		}
+	},
+	save : function(){
+		this.api(
+			'saveDesign',
+			function( data ){
+				if(data) console.log('saved');
+			},
+			{ id : this.hasSelected(), data : editor.file.getData() }
+		)
+	},
+	delete : function(){
+		id = this.hasSelected();
+		if(!id) return;
+		deletePop = new Popup({
+			header     : 'Are you sure?',
+			content    : 'Are you sure you want to delete the selected design?',
+			actionText : 'Delete',
+			closeText  : 'Cancel',
+			action     : $.proxy(function(){
+				this.api(
+					'removeDesign',
+					function(data){if(data.d)this.getData();},
+					{id:id}
+				);
+				deletePop.close();
 			},this)
-		});
+		})
+	},
+	isActive : function(){
+
 	},
 	add : function(){
 
@@ -95,12 +193,42 @@ new editor.toolbox({
 			},this)
 		});
 	},
-	setupDesign : function( name,type,height ){
-		console.log('setupDesign',name,type,height)
-	}
+	setupDesign : function( name, type, height ){
 
-})
+		this.api(
+			'setupDesign',
+			function(data){if(data.d)this.getData();},
+			{name:name,height:height,type:type}
+		);
+
+	},
+	append : function( el, templateItem, data){
+		html = this.template.find(templateItem).outerHTML();
+		html = Mustache.to_html(html,data);
+		$(el,this.el).append(html);
+	},
+	reposition : function()
+	{
+		var canvasLeft   = $('#canvas').css('left'),
+			canvasLeft   = Number(canvasLeft.replace('px','')),
+			canvasHeight = $('#canvas').height();
+
+		$('.toolbox.designs').css('left', canvasLeft + 310 + 'px');
+		$('.toolbox.objects').css('left', canvasLeft + 766 + 'px');
+		$('.toolbox.resources').css('left', canvasLeft + 526 + 'px');
+		$('.toolbox.templates').css('left', canvasLeft + 'px');
+
+		$('.toolbox').css('top', canvasHeight + 97 + 4 + 'px').css('right', 'initial');
+
+	},
+	hasSelected : function(){ a = this.designs; for(i in a) if(a[i].selected) return a[i].id;}
+
+});
+
+var canvasLeft = $('#canvas').css('left'),
+	canvasLeft = Number(canvasLeft.replace('px','')),
+	canvasHeight = $('#canvas').height();
 
 $('.toolbox.designs').css('left', canvasLeft + 310 + 'px');
-$('.toolbox.designs').css('top', '354px');
+$('.toolbox.designs').css('top', canvasHeight + 97 + 4 + 'px');
 $('.toolbox.designs').css('right', 'initial');

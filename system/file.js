@@ -12,7 +12,6 @@ $.extend( true, editor, {
 		events : function(){
 
 			$('#files').change($.proxy(function(){
-				console.log('change');
 				var file = document.getElementById("files").files[0];
 				if (file) {
 				    var reader = new FileReader();
@@ -88,13 +87,20 @@ $.extend( true, editor, {
 
 		},
 
-		save : function()
-		{
+		getData : function(){
+
 			var saveObj = {
 				objects   : this.parent.objects,
 				resources : this.parent.resources
 			}
-			var blob = new Blob([JSON.stringify( saveObj )], {type: "text/plain;charset=utf-8"});
+
+			return JSON.stringify( saveObj );
+
+		},
+
+		save : function()
+		{
+			var blob = new Blob([this.getData()], {type: "text/plain;charset=utf-8"});
 			saveAs(blob, "untitled.eld");
 		},
 

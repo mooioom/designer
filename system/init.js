@@ -45,6 +45,18 @@ $.extend( true, editor, {
 		this.draw.grid();
 		this.render();
 
+		this.reset();
+		this.getResources();
+
+		if(data.data)
+		{
+			d = JSON.parse(data.data);
+			this.objects   = d.objects;
+			this.resources = d.resources;
+			this.current   = this.helpers.getLastId() + 1;
+			this.redraw();
+		}
+
 		this.spectrum('fill');
 		this.spectrum('strokeStyle');
 		this.spectrum('fillStyle');
@@ -57,7 +69,9 @@ $.extend( true, editor, {
 	context : function( item )
 	{
 		// create parent context for all child objects
-		for(var i in item) if(item[i] && Object.prototype.toString.call(item[i]).search('Object') != -1) {
+		for(var i in item) if(item[i] && Object.prototype.toString.call(item[i]).search('Object') != -1) 
+		{
+			if(i == 'clipboard' ) continue;
 			if(i != 'parent' && i != 'root') this.context( item[i] );
 			item[i].parent = item;
 			item[i].root   = this;
@@ -123,6 +137,7 @@ $.extend( true, editor, {
 	reset : function(){
 		this.objects   = [];
 		this.selecteds = [];
+		this.resources = [];
 		this.current   = 0;
 		this.render();
 		this.draw.ui();

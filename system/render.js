@@ -22,6 +22,9 @@ $.extend( true, editor, {
 		this.draw.ui();
 		this.draw.toolbar();
 		this.draw.reOrderByUi( true );
+		this.ui.toolbar.init();
+		this.ui.toolbox.init();
+		this.getResources();
 	},
 
 	draw : {

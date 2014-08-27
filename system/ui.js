@@ -71,6 +71,7 @@ $.extend( true, editor, {
 				$('.toolbox .menu .item.transform').click(function(){ $('.toolbox.transform').show(); });
 
 				//text
+				$('.toolbox.text').hide();
 				$('.toolbox.text #text').bind('keyup change keydown',function(){ editor.functions.changeText( $(this).val() ); });
 
 			},

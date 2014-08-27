@@ -13,11 +13,11 @@
 }
 
 .toolbox.templates .body .item.selected{
-	background: #AEE2FF;
+	background: #2C2C2C;
 }
 
 .toolbox.templates .body .item.selected:hover{
-	background: #AEE2FF;	
+	background: #2C2C2C;	
 }
 
 /*.toolbox.templates .body .item:hover{
@@ -65,6 +65,23 @@
 	opacity: 1;
 }
 
+.toolbox.templates .item .save {
+	background-image: url(../images/download.png);
+	width: 28px;
+	height: 26px;
+	cursor: pointer;
+	margin-right: 0px;
+	background-position: 1px 3px;
+	background-size: 80%;
+	background-repeat: no-repeat;
+	opacity: 1;
+	-webkit-filter: invert(100%);
+}
+
+.toolbox.templates .item .save:hover{
+	opacity: 1;
+}
+
 .firstTime{
 	font-weight: bold;
 	font-size: 25px;
@@ -74,6 +91,8 @@
 
 .popup .designs{
     margin-top: 20px;
+    max-height: 340px;
+    overflow-y: auto;
 }
 
 .popup .design{
@@ -98,7 +117,7 @@
 }
 
 .popup .design .designTitle{
-    width: 370px;
+    width: 345px;
     font-size: 20px;
     margin-left: 13px;
     margin-top: 3px;
@@ -114,7 +133,7 @@
 }
 
 .popup .design .designInfo2{
-	width: 370px;
+	width: 345px;
 	font-size: 12px;
 	margin-left: 13px;
 	color: #757575;

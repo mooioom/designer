@@ -14,6 +14,9 @@ $.extend( true, editor, {
 		mouseX : 0,
 		mouseY : 0,
 
+		prevMoveX : false,
+		prevMoveY : false,
+
 		startMoveX : 0,
 		startMoveY : 0,
 		movedX     : 0,
@@ -113,8 +116,15 @@ $.extend( true, editor, {
 		},
 
 		mousemove : function( e )
-		{	
+		{
 			this.parent.helpers.getMousePosition( e );
+
+			if( this.prevMoveX == this.mouseX && 
+				this.prevMoveY == this.mouseY ) return;
+
+			this.prevMoveX = this.mouseX;
+			this.prevMoveY = this.mouseY;
+
 			if( this.mouseDown ) this.drag = true; else this.drag = false;
 			this.parent.actions[ this.parent.action ].mouseMove.call(this);
 			this.parent.render();

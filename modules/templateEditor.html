@@ -4,14 +4,15 @@
 	<div class="clear"></div>
 </div>
 
-<div class="item" id="{{id}}">
+<div class="item {{#selected}}selected{{/selected}}" id="{{id}}">
 	<div class="left">
 		<div class="title">{{title}}</div>
 		<div class="type">{{type}}</div>
 	</div>
 	<div class="right">
 		<div class="right isActive {{#isActive}}active{{/isActive}}"></div>
-		<div title="" class="right load"></div>
+		{{^selected}}<div class="right load"></div>{{/selected}}
+		{{#selected}}<div class="right save"></div>{{/selected}}
 		<div class="clear"></div>
 	</div>
 	<div class="clear"></div>

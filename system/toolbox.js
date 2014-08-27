@@ -19,6 +19,10 @@ editor.toolbox.prototype = {
 
 	init : function( data ){
 
+		this.parent = editor;
+
+		this.parent.toolboxes.push(this);
+
 		for(var i in data) this[i] = data[i];
 
 		if(!this.name) return;
@@ -38,10 +42,6 @@ editor.toolbox.prototype = {
 		this.el.css('left','initial');
 		this.el.css('left',this.left+'px');
 		this.el.css('top',this.top+'px');
-
-		this.parent = editor;
-
-		return this;
 
 	},
 

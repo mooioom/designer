@@ -13,7 +13,9 @@ $.extend( true, editor, {
 			},
 			mouseUp : function(){
 				this.parent.selectionBox = {};
-				if(!this.parent.events.drag) this.parent.helpers.clickSelect();
+				if(!this.parent.events.drag) {
+					this.parent.helpers.clickSelect();
+				}
 			},
 			mouseMove : function(){
 				if(this.parent.events.drag)

@@ -64,12 +64,20 @@ new editor.toolbox({
 	visible : true,
 	width   : 308,
 
+	templates : [],
+	designs   : [],
+
 	preLoad : function(){
 		this.getData();
 	},
 
 	onLoad : function(){
 
+	},
+
+	redraw  : function(){
+		this.render();
+		this.events();
 	},
 
 	append : function( el, templateItem, data){
@@ -87,15 +95,9 @@ new editor.toolbox({
 		header = { title:getString('title'), type:getString('type'), active:getString('active') }
 		this.append('.body','.item.header',header);
 
-		//stub
-		// this.templates = [
-		// 	{ id : 1, title : 'item title 1', type : 'header', isActive : true },
-		// 	{ id : 2, title : 'item title 2', type : 'footer', isActive : false }
-		// ];
-
 		for(i in this.templates)
 		{
-			item      = this.templates[i];
+			item      = $.extend(true,{},this.templates[i]);
 			item.type = getString(item.type);
 			this.append('.body','.item:not(.header)',item);
 		}
@@ -105,10 +107,8 @@ new editor.toolbox({
 		$('.menu',this.el).append('<div class="item add right">'+getString('new')+'</div>');
 		$('.menu',this.el).append('<div class="item delete disabled right"></div>');
 		$('.menu',this.el).append('<div class="clear"></div>');
-	},
 
-	redraw : function(){
-
+		if(this.hasSelected()) $('.delete',this.el).removeClass('disabled');
 	},
 
 	events : function(){
@@ -117,6 +117,22 @@ new editor.toolbox({
 		$('.body .isActive',this.el).click(   $.proxy(this.isActive,  this) );
 		$('.menu .add',this.el).click(        $.proxy(this.add,       this) );
 		$('.menu .delete',this.el).click(     $.proxy(this.delete,    this) );
+	},
+
+	api : function( action, callback, data ){
+
+		a = {
+			type        : "POST",
+			contentType : "application/json; charset=utf-8",
+			url         : "api/api.aspx/"+action,
+			dataType    : "json",
+			success     : $.proxy(callback,this)
+		}
+
+		if(data) a.data = JSON.stringify(data);
+
+		$.ajax(a);
+
 	},
 
 	getData : function()
@@ -129,25 +145,53 @@ new editor.toolbox({
 			success     : $.proxy(function ( data )
 			{
 				data = $.parseJSON(data.d);
+
+				this.templates = [];
+				this.designs   = [];
+
 				for(i in data.templates)
 				{
 					template = data.templates[i];
-					d.push({
+					this.templates.push({
 						id       : template.ID,
 						title    : template.Name,
 						type     : template.Type,
 						height   : template.Height,
 						isActive : template.Active 
 					});
-					this.templates = d;
 				}
-				if(!this.templates) this.create( true );
+
+				this.designs.push({
+					id    : 0,
+					title : 'Blank Template',
+					desc  : 'Empty Template',
+					type  : '',
+					img   : ''
+				});
+
+				for(i in data.designs)
+				{
+					design = data.designs[i];
+					this.designs.push({
+						id       : design.ID,
+						title    : design.Name,
+						type     : design.Type,
+						height   : design.Height,
+						isActive : design.Active,
+						data     : design.Data
+					});
+				}
+
+				if(!this.templates.length) this.create( true );
+
 				this.render();
 				this.events();
-			},this),
-			error : $.proxy(function(){ this.create(); },this)
+
+			},this)
 		});
 	},
+
+	add : function(){ this.create(); },
 
 	create : function( firstRun ){
 
@@ -159,7 +203,7 @@ new editor.toolbox({
 
 		content = firstRunText + content;
 
-		var designs    = this.getDesigns(),
+		var designs    = this.designs,
 			designsDiv = $('<div class="designs"></div>');
 
 		for(i in designs)
@@ -227,7 +271,7 @@ new editor.toolbox({
 				if(designType)   $('#TemplateType').attr('disabled','disabled').addClass('disabled');
 				if(designHeight) $('#TemplateHeight').attr('disabled','disabled').addClass('disabled');
 
-				$('.popupButtonA').click($.proxy(function()
+				$('.popupButtonA').unbind('click').bind('click',$.proxy(function()
 				{
 					var name   = $('#TemplateName').val(),
 						height = $('#TemplateHeight').val(),
@@ -248,38 +292,6 @@ new editor.toolbox({
 
 	},
 
-	getDesigns : function(){
-
-		// load designs
-
-		return [
-			{
-				id    : 2,
-				title : 'Blank Template',
-				desc  : 'Empty Template',
-				type  : '',
-				img   : ''
-			},
-			{
-				id     : 0,
-				title  : 'Basic Header Template',
-				desc   : 'This is a basic template with a simple logo design, title and some basic information...',
-				type   : 'header',
-				height : 253,
-				img    : ''
-			},
-			{
-				id     : 1,
-				title  : 'Basic Footer Template',
-				desc   : 'A Basic footer template, logo, address and information',
-				type   : 'footer',
-				height : 180,
-				img    : ''
-			}
-		];
-
-	},
-
 	setupTemplate : function( name, height, type, designId ){
 
 		$.ajax({
@@ -295,29 +307,68 @@ new editor.toolbox({
 			dataType    : "json",
 			success     : $.proxy(function ( data )
 			{
-				console.log( data );
+				//console.log( data );
+				this.getData();
 			},this)
 		});
 
 	},
 
-	load : function( e ){
+	load : function( e )
+	{
 		e.preventDefault(); e.stopPropagation();
 
 		var item  = $(e.target).parent().parent(),
 			id    = Number(item.attr('id')),
 			title = item.find('.title').html();
 
-		var loadPopup = new Popup({
-			header     : getString('load')+' '+title,
-			content    : getString('unsavedData'),
-			actionText : getString('load'),
-			closeText  : getString('Cancel'),
-			action     : function()
-			{
-				loadPopup.close();
-			}
-		});
+		if(editor.objects.length){
+			var loadPopup = new Popup({
+				header     : getString('load')+' '+title,
+				content    : getString('unsavedData'),
+				actionText : getString('load'),
+				closeText  : getString('Cancel'),
+				action     : $.proxy(function()
+				{
+					this.getTemplate(id);
+					loadPopup.close();
+				},this)
+			});
+		} else this.getTemplate(id);	
+	},
+
+	getTemplate : function( id ){
+
+		this.api(
+			'getTemplate',
+			function( data ){
+				data     = $.parseJSON(data.d);
+				template = data[0];
+				this.select( template.ID );
+				if( template )
+				{
+					editor.reset();
+					editor.init({
+						name    : template.Name,
+					    width   : 980,
+						height  : Number(template.Height),
+						data    : template.Data
+					});
+					this.redraw();
+				}
+			}, 
+			{ id : id } 
+		);
+
+	},
+
+	select : function( id ){
+		for(i in this.templates)
+		{
+			d = this.templates[i]
+			d.selected = false;
+			if(id == d.id) d.selected = true;
+		}
 	},
 
 	isActive : function( e ){
@@ -325,16 +376,27 @@ new editor.toolbox({
 		console.log('isActive',this);
 	},
 
-	add : function(){
-		this.create();
-	},
-
 	delete : function(){
 		console.log('delete',this);
-	}
+	},
+	hasSelected : function(){ a = this.templates; for(i in a) if(a[i].selected) return a[i].id;}
 
 });
 
 $('.toolbox.templates').css('left', canvasLeft + 'px');
 $('.toolbox.templates').css('top', '354px');
 $('.toolbox.templates').css('right', 'initial');
+
+/*
+
+	TODOS ::
+
+	1. saving a design should export it's html properties also (user + admin)
+	2. save (user)
+	3. delete (user)
+	4. edit settings (user + admin)
+	5. clicking on an item should load it, clicking on an already selected item should unload it (user + admin)
+	6. dynamic properties should be saved only as a reference to allow user to see what he's designing
+	7. text input not jump around on every click (editor)
+
+*/
