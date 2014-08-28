@@ -18,7 +18,7 @@
 		<script type="text/javascript" src="libs/thumbnailer.js"></script>
 		<script type="text/javascript" src="libs/popup.js"></script>
 
-		<script type="text/javascript" src="libs/mustache.js"></script> <!-- Template Editor -->
+		<script type="text/javascript" src="libs/mustache.js"></script>
 
 		<script type="text/javascript" src="system/base.js"></script>
 		<script type="text/javascript" src="system/init.js"></script>

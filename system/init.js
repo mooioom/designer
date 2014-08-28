@@ -158,5 +158,9 @@ $.extend( true, editor, {
 			async    : false
 		});
 
+	},
+
+	getToolbox : function( toolboxName ){
+		for(i in this.toolboxes) {t=this.toolboxes[i];if(t.name==toolboxName) return t}
 	}
 })

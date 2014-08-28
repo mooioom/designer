@@ -57,7 +57,7 @@ $('.toolbox.resources').css('right', 'initial');
 
 new editor.toolbox({
 
-	templateUrl : 'templateEditor.html',
+	templateUrl : 'modules/'+'templateEditor.html',
 
 	name    : 'templates',
 	title   : getString('templates'),

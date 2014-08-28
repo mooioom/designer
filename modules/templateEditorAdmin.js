@@ -13,7 +13,7 @@ new editor.toolbox({
 
 	designs : [],
 
-	templateUrl : 'templateEditorAdmin.html',
+	templateUrl : 'modules/'+'templateEditorAdmin.html',
 
 	preLoad : function(){ this.getData(); },
 	onLoad  : function(){ this.reposition(); },

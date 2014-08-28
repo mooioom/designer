@@ -7,6 +7,7 @@
 		
 		<script type="text/javascript" src="libs/jq.js"></script>
 		<script type="text/javascript" src="libs/multisortable.js"></script>
+		<script type="text/javascript" src="libs/mustache.js"></script>
 		<script type="text/javascript" src="libs/helpers.js"></script>
 		<script type="text/javascript" src="libs/spectrum.js"></script>
 		<script type="text/javascript" src="libs/fileSaver.js"></script>
@@ -55,9 +56,6 @@
 			<div class="item">Fill <input type="text" class="fill" data="string" /></div>
 			<div class="sep"></div>
 			<div class="item">Stroke <input type="text" class="lineWidth" /> &nbsp;Color <input type="text" class="strokeStyle" data="string" /></div>
-			
-			<!-- <div class="sep"></div>
-			<div class="item"><div class="smallButton" id="boxCreate">Create</div></div> -->
 			<div class="clear"></div>
 		</div>
 
@@ -250,6 +248,17 @@
 				<div class="left objectName">Object 0</div>
 				<div class="right objectLock unlocked"></div>
 				<div class="right objectVisible"></div>
+				<div class="clear"></div>
+			</div>
+			
+		</div>
+
+		<div id="ceTemplates2" class="hidden">
+			<!-- Objects2 toolbox item -->
+			<div class="objectsItem ver2" objectid="{{id}}">
+				<div class="left objectName">{{title}}</div>
+				<div class="right objectLock {{^locked}}unlocked{{/locked}}"></div>
+				<div class="right objectVisible {{^visible}}invisible{{/visible}}"></div>
 				<div class="clear"></div>
 			</div>
 		</div>

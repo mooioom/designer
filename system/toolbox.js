@@ -70,7 +70,7 @@ editor.toolbox.prototype = {
 			$.ajax({
 				async    : false,
 				dataType : 'html',
-				url      : 'modules/'+this.parent.templateUrl,
+				url      : this.parent.templateUrl,
 				success  : $.proxy(function( html ){
 					html = '<div template>'+html+'</div>';
 					this.parent.template = $(html);

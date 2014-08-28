@@ -297,6 +297,8 @@ $.extend( true, editor, {
 
 		ui : function(){
 
+			//this.parent.getToolbox('objects2').redraw();
+
 			$('.toolbox.objects .body .objectsItem').remove();
 
 			this.parent.helpers.toggleObjectsOptions();

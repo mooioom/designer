@@ -7,6 +7,81 @@ $.extend( true, editor, {
 
 			init : function(){
 
+				// new this.parent.parent.toolbox({
+
+				// 	name    : 'objects2',
+				// 	title   : 'Objects2',
+				// 	visible : true,
+				// 	width   : 200,
+
+				// 	redraw  : function(){
+				// 		this.render();
+				// 		this.events();
+				// 	},
+
+				// 	prepend : function( el, templateItem, data ){
+				// 		html = $('#ceTemplates2').find(templateItem).outerHTML();
+				// 		html = Mustache.to_html(html,data);
+				// 		$(el,this.el).prepend(html);
+				// 	},
+
+				// 	preLoad : function(){},
+				// 	onLoad  : function(){},
+				// 	render  : function(){
+
+				// 		$('.body',this.el).empty();
+				// 		$('.menu',this.el).remove();
+
+				// 		$('.body',this.el).removeClass('sortable').addClass('sortable');
+
+				// 		for(i in this.parent.objects)
+				// 		{
+				// 			object = $.extend(true,{},this.parent.objects[i]);
+				// 			if(this.parent.helpers.isObjectSelected(object.id)) object.selected = true;
+				// 			title = object.type; if(object.src) title = 'image';
+				// 			title += ' ' + object.id; if(object.type == 'text') title += ' - ' + object.text;
+				// 			title = title.capitalize();
+				// 			object.title = title;
+				// 			this.prepend('.body','.objectsItem.ver2',object);
+				// 		}
+
+				// 		this.el.append('<div class="menu"></div>');
+
+				// 		$('.menu',this.el).append('<div class="item add right">'+getString('new')+'</div>');
+				// 		$('.menu',this.el).append('<div class="item delete disabled right"></div>');
+				// 		$('.menu',this.el).append('<div class="clear"></div>');
+				// 	},
+				// 	events  : function(){
+
+				// 		$('.sortable').multisortable({
+				// 			items         : ".objectsItem",
+				// 			selectedClass : "selected",
+				// 			stop          : $.proxy(function(){ 
+				// 				this.parent.render.reOrderByUi();
+				// 				this.parent.helpers.toggleObjectsOptions();
+				// 			},this),
+				// 			click         : $.proxy(function(){
+				// 				this.parent.render.reOrderByUi(); 
+				// 				this.parent.helpers.toggleObjectsOptions();
+				// 			},this)
+				// 		});
+
+				// 		$('.objectVisible',this.el).unbind('click').bind('click',function(){
+				// 			$(this).toggleClass('invisible');
+				// 			editor.selecteds[0].visible = !$(this).hasClass('invisible');
+				// 			editor.render();
+				// 		});
+
+				// 		$('.objectLock',this.el).unbind('click').bind('click',function(){
+				// 			$(this).toggleClass('unlocked');
+				// 			editor.selecteds[0].locked = !$(this).hasClass('unlocked');
+				// 			editor.render();
+				// 		});
+
+				// 	}
+
+				// });
+
 				$('.toolbox').draggable({ 
 					start       : function(){ $(this).css('right','initial'); },
 					containment : "window"
