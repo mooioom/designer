@@ -6,14 +6,14 @@ console.log('templateEditorAdmin');
 
 new editor.toolbox({
 
+	templateUrl : 'modules/templateEditorAdmin.html',
+
 	name    : 'designs',
 	title   : 'Designs',
 	visible : true,
 	width   : 200,
 
 	designs : [],
-
-	templateUrl : 'modules/'+'templateEditorAdmin.html',
 
 	preLoad : function(){ this.getData(); },
 	onLoad  : function(){ this.reposition(); },
@@ -46,7 +46,7 @@ new editor.toolbox({
 	},
 	
 	events  : function(){
-		$('.body .item .load',this.el).click( $.proxy(this.load,      this) );
+		$('.body .item',this.el).click(       $.proxy(this.load,      this) );
 		$('.body .item .save',this.el).click( $.proxy(this.save,      this) );
 		$('.body .isActive',this.el).click(   $.proxy(this.isActive,  this) );
 		$('.menu .add',this.el).click(        $.proxy(this.add,       this) );
@@ -96,8 +96,8 @@ new editor.toolbox({
 	
 	load : function( e ){
 
-		item = $(e.target).parent().parent();
-		id   = Number(item.attr('id'));
+		var item = $(e.target),
+			id   = Number(item.attr('id'));
 
 		this.api(
 			'getDesign',
@@ -129,7 +129,8 @@ new editor.toolbox({
 			if(id == d.id) d.selected = true;
 		}
 	},
-	save : function(){
+	save : function( e ){
+		e.preventDefault(); e.stopPropagation();
 		this.api(
 			'saveDesign',
 			function( data ){
@@ -138,7 +139,8 @@ new editor.toolbox({
 			{ id : this.hasSelected(), data : editor.file.getData() }
 		)
 	},
-	delete : function(){
+	delete : function( e ){
+		e.preventDefault(); e.stopPropagation();
 		id = this.hasSelected();
 		if(!id) return;
 		deletePop = new Popup({

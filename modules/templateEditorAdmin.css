@@ -16,6 +16,11 @@
 .toolbox.designs .item{
 }
 
+.toolbox.designs .body .item:hover{
+	cursor: pointer;
+	background: #F5F5F5;
+}
+
 .toolbox.designs .body .item.selected{
 	background: #1F1F1F;
 }

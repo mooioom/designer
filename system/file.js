@@ -110,6 +110,105 @@ $.extend( true, editor, {
 			canvas.toBlob(function(blob) { saveAs(blob, "image.png"); }, "image/png");
 		},
 
+		getHtml : function( data )
+		{
+			headStr = '';
+			if(data.utf8) headStr = '<head><meta charset="UTF-8"></head>';
+
+			html = headStr + '<div style="width:'+this.parent.width+'px; height:'+this.parent.height+'px; position:relative; overflow:hidden">';
+
+			left = 'left';
+			if(data.mirror) left = 'right';
+
+			for(x in data.objects)
+			{
+
+				o = data.objects[x];
+
+				var absCoords = this.parent.helpers.getAbsCoords(o.startX,o.startY,o.width,o.height),
+					x = absCoords.x,y = absCoords.y,w = absCoords.w,h = absCoords.h,cx = x + (w/2),cy = y + (h/2),
+					sx = o.shadowOffsetX, sy = o.shadowOffsetY, sb = o.shadowBlur, sc = o.shadowColor;
+
+				if(!sx) sx = '0'; if(!sy) sy = '0'; if(!sb) sb = '0'; if(!sc) sc = 'rgba(0,0,0,1)';
+
+				color       = $.parseColor(sc);
+				colorString = "rgb("+color[0]+","+color[1]+","+color[2]+")";
+				opacity     = color[3];
+
+				if(o.type == 'box')
+				{
+					if(o.src)
+					{
+						var str = '<img style="';
+							str+= ' position:absolute;';
+							str+= ' '+left+':'	  + x + 'px;';
+							str+= ' top:'		  + y + 'px;';
+							str+= ' width:'	  	  + w + 'px;';
+							str+= ' height:'  	  + h + 'px;';
+							str+= ' box-shadow: '+o.shadowOffsetX+'px '+o.shadowOffsetY+'px '+o.shadowBlur+'px '+o.shadowColor+';';
+							str+= ' -ms-transform: rotate('+o.rotate+'deg); -webkit-transform: rotate('+o.rotate+'deg); transform: rotate('+o.rotate+'deg);'; 
+							str+= '" src="' + o.src + '"';
+							str+= ' />';
+					}else
+					{
+						if(!o.fill) fill = "rgba(0,0,0,0)"; else fill = o.fill;
+						var str = '<div style="';
+							str+= ' position:absolute;';
+							str+= ' '+left+':'		+ x + 'px;';
+							str+= ' top:'		    + y + 'px;';
+							str+= ' width:'	        + w + 'px;';
+							str+= ' height:'	    + h + 'px;';
+							str+= ' box-shadow: '+o.shadowOffsetX+'px '+o.shadowOffsetY+'px '+o.shadowBlur+'px '+o.shadowColor+';';
+							str+= ' -ms-transform: rotate('+o.rotate+'deg); -webkit-transform: rotate('+o.rotate+'deg); transform: rotate('+o.rotate+'deg);'; 
+							if(o.lineWidth) str+= ' border-style:solid; box-sizing:border-box;';
+							str+= ' border-radius:'	+ o.radius + 'px;';
+							str+= ' border-color:'	+ o.strokeStyle + ';';
+							str+= ' border-width:'  + Number((o.lineWidth / 2) + 1) + 'px;';
+							str+= ' background-color:' + fill + ';"';
+							str+= '></div>';
+					}
+					html+=str;
+				}
+				if(o.type == 'text')
+				{
+					if(!o.fill) fill = "#000"; else fill = o.fill;
+					var str = '<div style="';
+						str+= ' position:absolute;';
+						str+= ' '+left+':'		+ x + 'px;';
+						str+= ' top:'		    + y + 'px;';
+						str+= ' color:'		    + o.fillStyle + ';';
+						str+= ' font-size:'	    + o.fontSize + 'px;';
+						str+= ' font-family:'	+ o.font + ';';
+						str+= ' text-shadow: '+o.shadowOffsetX+'px '+o.shadowOffsetY+'px '+o.shadowBlur+'px '+o.shadowColor+';';
+						str+= ' -ms-transform: rotate('+o.rotate+'deg); -webkit-transform: rotate('+o.rotate+'deg); transform: rotate('+o.rotate+'deg);'; 
+						if(o.isBold)   str+= ' font-weight:bold;';
+						if(o.isItalic) str+= ' font-style:italic;';
+						str+= ' alignment-baseline:before-edge';
+						str+= '" >'+o.text+'</div>';
+					html+=str;
+				}
+
+			}
+
+			html += '</div>';
+
+			return html;
+		},
+
+		html : function(){
+			var blob = new Blob(
+				[
+					this.getHtml( { 
+						objects : this.parent.objects, 
+						utf8    : true 
+					} )
+				], {
+					type: "text/html; charset=UTF-8"
+				}
+			);
+			saveAs(blob, "untitled.html");
+		},
+
 		svg : function()
 		{
 			svg = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="'+this.parent.width+'px" height="'+this.parent.height+'px">';

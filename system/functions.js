@@ -87,12 +87,12 @@ $.extend( true, editor, {
 
 			var text = this.parent.selecteds[0];
 
-			var textPositionTop  = ( text.startY - 100 ); if(textPositionTop<0) textPositionTop = 10;
-			var textPositionLeft = ( text.startX + text.width  + 40 ); if(textPositionLeft>(this.parent.width - 300)) textPositionLeft = this.parent.width - 300;
+			// var textPositionTop  = ( text.startY - 100 ); if(textPositionTop<0) textPositionTop = 10;
+			// var textPositionLeft = ( text.startX + text.width  + 40 ); if(textPositionLeft>(this.parent.width - 300)) textPositionLeft = this.parent.width - 300;
 
-			$('.toolbox.text').css('right', 'initial' );
-			$('.toolbox.text').css('left',( textPositionLeft ) + 'px' );
-			$('.toolbox.text').css('top', ( textPositionTop ) + 'px' );
+			// $('.toolbox.text').css('right', 'initial' );
+			// $('.toolbox.text').css('left',( textPositionLeft ) + 'px' );
+			// $('.toolbox.text').css('top', ( textPositionTop ) + 'px' );
 
 			$('.toolbar.text').show();
 

@@ -121,6 +121,29 @@ input[type='range'] {
 .stage.rotate{
 	cursor: url(../images/rotate.png),url(../images/rotate.cur),auto;
 }
+
+#indicator{
+	position: absolute;
+	bottom: -30px;
+	background: #7C7C7C;
+	color: #FFFFFF;
+	padding: 3px;
+	right: 0px;
+	padding-left: 50px;
+	padding-right: 50px;
+	border-top-left-radius: 5px;
+	font-size: 11px;
+	padding-bottom: 5px;
+}
+
+#indicator.show{
+    bottom: 0px;
+}
+
+#indicator.animate{
+	transition: bottom, 1s;
+}
+
 .debugger{
 	position: absolute;
 	top: 70px;

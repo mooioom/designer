@@ -301,6 +301,7 @@
 			<string resource="new"             value="<%=Resources.Strings.New %>"></string>
 			<string resource="save"            value="<%=Resources.Strings.SaveAs2 %>"></string>
 			<string resource="load"            value="<%=Resources.Strings.Load %>"></string>
+			<string resource="exportHtml"      value="<%=Resources.Strings.ExportHtml %>"></string>
 			<string resource="exportSvg"       value="<%=Resources.Strings.ExportSvg %>"></string>
 			<string resource="exportPng"       value="<%=Resources.Strings.ExportPng %>"></string>
 			<string resource="edit"            value="<%=Resources.Strings.Edit2 %>"></string>
@@ -318,6 +319,7 @@
 			<string resource="resources"       value="<%=Resources.Strings.Resources %>"></string>
 
 			<!-- Template Editor -->
+			<string resource="LoadingTemplates" value="<%=Resources.Strings.LoadingTemplates %>"></string>
 			<string resource="dynamicField"     value="<%=Resources.Strings.Field %>"></string>
 			<string resource="templates"        value="<%=Resources.Strings.Templates %>"></string>
 			<string resource="header"           value="<%=Resources.Strings.TopHeader %>"></string>
@@ -334,7 +336,14 @@
 			<string resource="TemplateName"     value="<%=Resources.Strings.TemplateName %>"></string>
 			<string resource="UntitledTemplate" value="<%=Resources.Strings.UntitledTemplate %>"></string>
 			<string resource="Customizable"     value="<%=Resources.Strings.Customizable %>"></string>	
-			<string resource="Back"             value="<%=Resources.Strings.Back %>"></string>	
+			<string resource="Back"             value="<%=Resources.Strings.Back %>"></string>
+			<string resource="AreYouSure"       value="<%=Resources.Strings.AreYouSure %>"></string>
+			<string resource="DeleteTemplate"   value="<%=Resources.Strings.AreYouSureDeleteTemplate %>"></string>
+			<string resource="Loading"   		value="<%=Resources.Strings.Loading %>"></string>
+			<string resource="Saving"   		value="<%=Resources.Strings.Saving %>"></string>
+			<string resource="SuccessfullySaved"value="<%=Resources.Strings.SuccessfullySaved %>"></string>
+			
+			
 		</div>
 
 	</body>

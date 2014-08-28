@@ -12,6 +12,11 @@
 .toolbox.templates .item{
 }
 
+.toolbox.templates .body .item:hover{
+	cursor: pointer;
+	background: #F5F5F5;
+}
+
 .toolbox.templates .body .item.selected{
 	background: #2C2C2C;
 }

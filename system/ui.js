@@ -220,6 +220,24 @@ $.extend( true, editor, {
 
 			}
 
+		},
+
+		indicator : {
+
+			show : function( message ){
+
+				if(!$('#indicator').length)$('body').append('<div id="indicator"></div>');
+				$('#indicator').addClass('animate').html(message).addClass('show');
+
+			},
+
+			hide : function(){
+				$('#indicator').removeClass('animate')
+							   .addClass('show')
+							   .addClass('animate')
+							   .removeClass('show');
+			}
+
 		}
 
 	}

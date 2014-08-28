@@ -53,11 +53,13 @@ $('.toolbox.resources').css('left', canvasLeft + 526 + 'px');
 $('.toolbox.resources').css('top', '354px');
 $('.toolbox.resources').css('right', 'initial');
 
+$('.toolbox.objects, .toolbox.resources').hide();
+
 // get templates - << API
 
 new editor.toolbox({
 
-	templateUrl : 'modules/'+'templateEditor.html',
+	templateUrl : 'modules/templateEditor.html',
 
 	name    : 'templates',
 	title   : getString('templates'),
@@ -92,8 +94,8 @@ new editor.toolbox({
 		$('.body',this.el).empty();
 		$('.menu',this.el).remove();
 
-		header = { title:getString('title'), type:getString('type'), active:getString('active') }
-		this.append('.body','.item.header',header);
+		//header = { title:getString('title'), type:getString('type'), active:getString('active') }
+		//this.append('.body','.item.header',header);
 
 		for(i in this.templates)
 		{
@@ -113,7 +115,8 @@ new editor.toolbox({
 
 	events : function(){
 		// setup toolbox custom	events
-		$('.body .item .load',this.el).click( $.proxy(this.load,      this) );
+		$('.body .item',this.el).click(       $.proxy(this.load,      this) );
+		$('.body .save',this.el).click(       $.proxy(this.save,      this) );
 		$('.body .isActive',this.el).click(   $.proxy(this.isActive,  this) );
 		$('.menu .add',this.el).click(        $.proxy(this.add,       this) );
 		$('.menu .delete',this.el).click(     $.proxy(this.delete,    this) );
@@ -137,6 +140,9 @@ new editor.toolbox({
 
 	getData : function()
 	{
+
+		editor.ui.indicator.show( getString('LoadingTemplates')+' ...' );
+
 		$.ajax({
 			type        : "POST",
 			contentType : "application/json; charset=utf-8",
@@ -181,6 +187,8 @@ new editor.toolbox({
 						data     : design.Data
 					});
 				}
+
+				editor.ui.indicator.hide();
 
 				if(!this.templates.length) this.create( true );
 
@@ -318,7 +326,7 @@ new editor.toolbox({
 	{
 		e.preventDefault(); e.stopPropagation();
 
-		var item  = $(e.target).parent().parent(),
+		var item  = $(e.target),
 			id    = Number(item.attr('id')),
 			title = item.find('.title').html();
 
@@ -330,11 +338,32 @@ new editor.toolbox({
 				closeText  : getString('Cancel'),
 				action     : $.proxy(function()
 				{
+					editor.ui.indicator.show( getString('Loading')+'...' );
 					this.getTemplate(id);
 					loadPopup.close();
 				},this)
 			});
 		} else this.getTemplate(id);	
+	},
+
+	save : function( e ){
+		e.preventDefault(); e.stopPropagation();
+		editor.ui.indicator.show( getString('Saving')+'...' );
+
+		//todo :: replace text to dynamic markup 
+		objects = $.extend(true,{},editor.objects);
+
+		this.api(
+			'saveTemplate',
+			function( data ){
+				if(data) {
+					editor.ui.indicator.hide();
+					editor.ui.indicator.show( getString('SuccessfullySaved')+'!' );
+					setTimeout(function(){editor.ui.indicator.hide();},1500)
+				}
+			},
+			{ id : this.hasSelected(), data : editor.file.getData(), html : editor.file.getHtml( objects ) }
+		)
 	},
 
 	getTemplate : function( id ){
@@ -354,7 +383,9 @@ new editor.toolbox({
 						height  : Number(template.Height),
 						data    : template.Data
 					});
+					$('.toolbox.objects, .toolbox.resources').show();
 					this.redraw();
+					editor.ui.indicator.hide();
 				}
 			}, 
 			{ id : id } 
@@ -377,7 +408,24 @@ new editor.toolbox({
 	},
 
 	delete : function(){
-		console.log('delete',this);
+		
+		id = this.hasSelected();
+
+		if(!id) return;
+		deletePop = new Popup({
+			header     : getString('AreYouSure'),
+			content    : getString('DeleteTemplate'),
+			actionText : getString('delete'),
+			closeText  : getString('Cancel'),
+			action     : $.proxy(function(){
+				this.api(
+					'removeTemplate',
+					function(data){if(data.d)this.getData();editor.reset();$('.toolbox.objects, .toolbox.resources').hide();},
+					{id:id}
+				);
+				deletePop.close();
+			},this)
+		})
 	},
 	hasSelected : function(){ a = this.templates; for(i in a) if(a[i].selected) return a[i].id;}
 
@@ -392,12 +440,9 @@ $('.toolbox.templates').css('right', 'initial');
 	TODOS ::
 
 	1. saving a design should export it's html properties also (user + admin)
-	2. save (user)
-	3. delete (user)
-	4. edit settings (user + admin)
-	5. set active, inactive (user + admin)
-	6. clicking on an item should load it, clicking on an already selected item should unload it (user + admin)
-	7. dynamic properties should be saved only as a reference to allow user to see what he's designing
-	8. text input not jump around on every click (editor)
+	2. edit settings (user + admin)
+	3. set active, inactive (user + admin)
+	4. dynamic properties should be saved only as a reference to allow user to see what he's designing
+	5. text input not jump around on every click (editor)
 
 */

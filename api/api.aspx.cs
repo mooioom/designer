@@ -72,7 +72,7 @@ namespace Satec.eXpertPowerPlus.Web
                 data = designDt.Rows[0]["Data"].ToString();
             }
 
-            string query = @"insert into test_BillTemplates (UserId,Name,Height,Type,Data,Active) VALUES (" + sessionHandler.UserID + ",'" + name + "'," + height + ",'" + type + "',N'" + data + "',1);";
+            string query = @"insert into test_BillTemplates (UserId,Name,Height,Type,Data,Active) VALUES (" + sessionHandler.UserID + ",'" + name + "'," + height + ",'" + type + "',N'" + data + "',0);";
             int result;
             result = dbUtils.ExecNonQuery(query);
             return js.Serialize(result);
@@ -97,9 +97,27 @@ namespace Satec.eXpertPowerPlus.Web
         }
 
         [WebMethod]
+        public static object removeTemplate(String id)
+        {
+            string query = @"delete from test_BillTemplates WHERE ID="+id+";";
+            int result;
+            result = dbUtils.ExecNonQuery(query);
+            return js.Serialize(result);
+        }
+
+        [WebMethod]
         public static object saveDesign(String id, String data)
         {
             string query = @"update test_BillTemplatesDesigns SET Data = N'"+data+"' WHERE ID=" + id + ";";
+            int result;
+            result = dbUtils.ExecNonQuery(query);
+            return js.Serialize(result);
+        }
+
+        [WebMethod]
+        public static object saveTemplate(String id, String data, String html)
+        {
+            string query = @"update test_BillTemplates SET Data = N'" + data + "', Html = N'"+html+"' WHERE ID=" + id + ";";
             int result;
             result = dbUtils.ExecNonQuery(query);
             return js.Serialize(result);
