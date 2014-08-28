@@ -123,6 +123,19 @@ namespace Satec.eXpertPowerPlus.Web
             return js.Serialize(result);
         }
 
+        [WebMethod]
+        public static object setActiveTemplate(String id, String type, String active)
+        {
+            string query = @"update test_billTemplates set Active = 0 where Type='" + type + "';";
+            int result1;
+            result1 = dbUtils.ExecNonQuery(query);
+
+            query = @"update test_BillTemplates SET Active = "+active+" where ID = "+id+" ;";
+            int result2;
+            result2 = dbUtils.ExecNonQuery(query);
+            return js.Serialize(result2);
+        }
+
         public static List<Dictionary<string, object>> formatDataTable(DataTable dt)
         {
             List<Dictionary<string, object>> rows = new List<Dictionary<string, object>>();
