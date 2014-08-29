@@ -24,7 +24,6 @@ $.extend( true, editor, {
 		this.draw.reOrderByUi( true );
 		this.ui.toolbar.init();
 		this.ui.toolbox.init();
-		this.getResources();
 	},
 
 	draw : {
@@ -297,47 +296,8 @@ $.extend( true, editor, {
 
 		ui : function(){
 
-			//this.parent.getToolbox('objects2').redraw();
-
-			$('.toolbox.objects .body .objectsItem').remove();
-
-			this.parent.helpers.toggleObjectsOptions();
-			
-			for(i in this.parent.objects)
-			{
-				var object = this.parent.objects[i],
-					title  = "";
-				var objectsItem = $('#ceTemplates .objectsItem').clone();
-				objectsItem.attr('objectid',object.id);
-
-				title = object.type;
-				if(object.src) title = 'image';
-				title += ' ' + object.id;
-				if(object.type == 'text') title += ' - '+object.text;
-				title = title.capitalize();
-				objectsItem.find('.objectName').html( title );
-
-				if(this.parent.helpers.isObjectSelected(object.id))
-					objectsItem.addClass('selected');
-
-				object.visible ? '' : objectsItem.find('.objectVisible').addClass('invisible') ;
-				object.locked  ? objectsItem.find('.objectLock').removeClass('unlocked') : '' ;
-
-				$('.toolbox.objects .body').prepend( objectsItem );
-			}
-
-			$('.sortable').multisortable({
-				items         : ".objectsItem",
-				selectedClass : "selected",
-				stop          : $.proxy(function(){ 
-					this.reOrderByUi();
-					this.parent.helpers.toggleObjectsOptions();
-				},this),
-				click         : $.proxy(function(){
-					this.reOrderByUi(); 
-					this.parent.helpers.toggleObjectsOptions();
-				},this)
-			});
+			this.parent.getToolbox('objects').redraw();
+			this.parent.getToolbox('resources').redraw();
 
 		},
 
@@ -359,9 +319,6 @@ $.extend( true, editor, {
 			for(s in selecteds) this.parent.functions.select( this.parent.functions.getObject( selecteds[s] ) );
 
 			this.parent.objects = tempObjects;
-
-			//this.renderThumbnails( renderAllThumbs );
-
 			this.parent.render();
 			this.toolbar();
 

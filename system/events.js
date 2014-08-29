@@ -3,9 +3,11 @@ $.extend( true, editor, {
 
 	events : {
 
-		pressed        : [],
-		keyboardEvents : [],
-		clickEvents    : [],
+		pressed           : [],
+		keyboardEvents    : [],
+		clickEvents       : [],
+		browserDropEvents : [],
+		canvasDropEvents  : [],
 
 		ctrl  : false,
 		alt   : false,
@@ -28,8 +30,6 @@ $.extend( true, editor, {
 		init : function()
 		{
 
-			this.droppable();
-
 			this.keyboardEvents.push({ action : this.parent.functions.move, scope : this.parent.functions, shortcut : 'left',  args : 'left'  });
 			this.keyboardEvents.push({ action : this.parent.functions.move, scope : this.parent.functions, shortcut : 'up',    args : 'up'    });
 			this.keyboardEvents.push({ action : this.parent.functions.move, scope : this.parent.functions, shortcut : 'right', args : 'right' });
@@ -47,7 +47,9 @@ $.extend( true, editor, {
 
 			$('body').bind('dragenter', $.proxy(this.ignoreDrag,this))
 					 .bind('dragover',  $.proxy(this.ignoreDrag,this))
-					 .bind('drop',      $.proxy(this.drop,this));
+					 .bind('drop',      $.proxy(this.browserDrop,this));
+
+			$("#canvas").droppable({drop:$.proxy(this.canvasDrop,this)});
 
 			$(window).resize( $.proxy(this.parent.helpers.positionCanvas,this));
 
@@ -63,33 +65,6 @@ $.extend( true, editor, {
 		ignoreDrag : function( e ){
 			e.originalEvent.stopPropagation();
 			e.originalEvent.preventDefault();
-		},
-
-		drop : function( e ){
-			if(!e.originalEvent.dataTransfer) return;
-			this.ignoreDrag(e);
-			var dt    = e.originalEvent.dataTransfer,
-				files = dt.files;
-				
-			if(!files || !dt.files.length) return;
-			var file = dt.files[0];
-			if (!file.type.match('image')) return;
-
-			var reader = new FileReader();
-
-			reader.onload = ($.proxy(function(theFile) {
-				return $.proxy(function(e) {
-					this.parent.resources.push({
-						src       : e.target.result,
-						name      : theFile.name,
-						size      : theFile.size,
-						type      : theFile.type
-					});
-					this.parent.getResources();
-				},this);
-			},this))(file);
-			// Read in the image file as a data URL.
-			reader.readAsDataURL(file);
 		},
 
 		mousedown : function( e )
@@ -227,43 +202,13 @@ $.extend( true, editor, {
 			this.parent.draw.reOrderByUi();
 		},
 
-		droppable : function(){
+		browserDrop : function( e ){
+			for(i in this.browserDropEvents) this.browserDropEvents[i]( e );
+		},
 
-			$( "#canvas" ).droppable({
-				drop: $.proxy(function( event, ui )
-				{
-
-					if(!$(event.toElement).hasClass('dropItem')) return;
-
-					var src      = event.toElement.src,
-						point    = { x:event.clientX, y:event.clientY },
-					    position = this.parent.helpers.getPositionOnCanvas( point );
-
-					img     = new Image();
-					img.src = src;
-					w       = img.width;
-					h       = img.height;
-
-					this.parent.getResources();
-					this.parent.history.save();
-
-					this.parent.selecteds = [];
-
-					this.parent.create.box( position.x, position.y, w, h );
-					this.parent.selecteds[0].src = src;
-
-					$('.tools .move').click();
-
-					this.parent.render();
-					this.parent.draw.ui();
-					this.parent.draw.toolbar();
-
-				},this)
-		    });
-
-			this.parent.getResources();
-
-		}
+		canvasDrop : function( event, ui ){
+			for(i in this.canvasDropEvents) this.canvasDropEvents[i]( event, ui );
+		},
 
 	}
 

@@ -158,30 +158,6 @@
 			</div>
 		</div>
 
-		<div class="toolbox objects">
-			<div class="header">Objects</div>
-			<div class="close">X</div>
-			<div class="body sortable"></div>
-			<div class="menu">
-				<div class="item left shadow disabled">Shadow</div>
-				<div class="item left transform disabled">Transform</div>
-				<div class="item left fx disabled">Fx</div>
-				<div class="item right add">+</div>
-				<div class="item right delete disabled"></div>
-				<div class="clear"></div>
-			</div>
-		</div>
-
-		<div class="toolbox resources">
-			<div class="header">Resources</div>
-			<div class="close">X</div>
-			<div class="body"></div>
-			<div class="menu">
-				<div class="item right delete disabled"></div>
-				<div class="clear"></div>
-			</div>
-		</div>
-
 		<div class="toolbox shadow hidden">
 			<div class="header">Shadow</div>
 			<div class="close">X</div>
@@ -232,35 +208,25 @@
 
 		<div class="clear"></div>
 
-		<div id="resourcesData" class="hidden"></div>
-
 		<!-- TEMPLATES -->
 		<div id="ceTemplates" class="hidden">
 			<!-- Resources toolbox item -->
 			<div class="resourceItem dropItem">
-				<div class="left resourceDisplay dropItem"><span class="helper"></span><img class="resourceImage dropItem" /></div>
-				<div class="left resourceName dropItem"></div>
+				<div class="left resourceDisplay dropItem">
+					<span class="helper"></span>
+					<img class="resourceImage dropItem" />
+				</div>
+				<div class="left resourceName dropItem">{{name}}</div>
 				<div class="clear"></div>
 			</div>
 			<!-- Objects toolbox item -->
-			<div class="objectsItem">
-				<!--<div class="left objectDisplay"><canvas class="objectCanvas"></canvas></div>-->
-				<div class="left objectName">Object 0</div>
-				<div class="right objectLock unlocked"></div>
-				<div class="right objectVisible"></div>
-				<div class="clear"></div>
-			</div>
-			
-		</div>
-
-		<div id="ceTemplates2" class="hidden">
-			<!-- Objects2 toolbox item -->
-			<div class="objectsItem ver2" objectid="{{id}}">
+			<div class="objectsItem {{#selected}}selected{{/selected}}" objectid="{{id}}">
 				<div class="left objectName">{{title}}</div>
 				<div class="right objectLock {{^locked}}unlocked{{/locked}}"></div>
 				<div class="right objectVisible {{^visible}}invisible{{/visible}}"></div>
 				<div class="clear"></div>
 			</div>
+			
 		</div>
 
 		<div class="hidden">
@@ -282,6 +248,7 @@
 			<string resource="new"             value="New"></string>
 			<string resource="save"            value="Save"></string>
 			<string resource="load"            value="Load"></string>
+			<string resource="exportHtml"      value="Export Html"></string>
 			<string resource="exportSvg"       value="Export Svg"></string>
 			<string resource="exportPng"       value="Export Png"></string>
 			<string resource="edit"            value="Edit"></string>

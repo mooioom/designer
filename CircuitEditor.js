@@ -15,8 +15,8 @@ $(document).ready(function()
 
 		editor.init({
 			name    : getString("UntitledProject"),
-		    width   : 980,
-			height  : 253,
+		    width   : $('.stage').width(),
+			height  : $('.stage').height(),
 			modules : ['templateEditor']
 		});
 

@@ -27,7 +27,7 @@ $.extend( true, editor, {
 				        this.parent.draw.ui();
 						this.parent.draw.toolbar();
 						this.parent.draw.reOrderByUi( true );
-						this.parent.getResources();
+						this.parent.getToolbox('resources').redraw();
 				    },this)
 				}
 			},this));

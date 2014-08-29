@@ -280,21 +280,6 @@ $.extend( true, editor, {
 			}
 			o[prop] = val;
 			this.parent.draw.toolbar();
-		},
-
-		toggleObjectsOptions : function(){
-
-			if(this.parent.selecteds && this.parent.selecteds.length) {
-				$('.toolbox.objects .menu .shadow').removeClass('disabled');
-				$('.toolbox.objects .menu .transform').removeClass('disabled');
-				$('.toolbox.objects .menu .delete').removeClass('disabled');
-			}
-			else {
-				$('.toolbox.objects .menu .shadow').addClass('disabled');
-				$('.toolbox.objects .menu .transform').addClass('disabled');
-				$('.toolbox.objects .menu .delete').addClass('disabled');
-			}
-
 		}
 
 	}
