@@ -73,7 +73,9 @@ new editor.toolbox({
 		this.getData();
 	},
 
-	onLoad : function(){ this.reposition(); },
+	onLoad : function(){
+
+	},
 
 	redraw  : function(){
 		this.render();
@@ -97,8 +99,8 @@ new editor.toolbox({
 
 		for(i in this.templates)
 		{
-			item          = $.extend(true,{},this.templates[i]);
-			item.typeText = getString(item.type);
+			item      = $.extend(true,{},this.templates[i]);
+			item.type = getString(item.type);
 			this.append('.body','.item:not(.header)',item);
 		}
 
@@ -109,8 +111,6 @@ new editor.toolbox({
 		$('.menu',this.el).append('<div class="clear"></div>');
 
 		if(this.hasSelected()) $('.delete',this.el).removeClass('disabled');
-
-		this.reposition();
 	},
 
 	events : function(){
@@ -362,7 +362,7 @@ new editor.toolbox({
 					setTimeout(function(){editor.ui.indicator.hide();},1500)
 				}
 			},
-			{ id : this.hasSelected(), data : editor.file.getData(), html : editor.file.getHtml( {objects:objects} ) }
+			{ id : this.hasSelected(), data : editor.file.getData(), html : editor.file.getHtml( objects ) }
 		)
 	},
 
@@ -379,7 +379,7 @@ new editor.toolbox({
 					editor.reset();
 					editor.init({
 						name    : template.Name,
-					    width   : 1024,
+					    width   : 980,
 						height  : Number(template.Height),
 						data    : template.Data
 					});
@@ -404,15 +404,7 @@ new editor.toolbox({
 
 	isActive : function( e ){
 		e.preventDefault(); e.stopPropagation();
-		id   = Number($(e.target).parent().parent().attr('id'));
-		type = $(e.target).parent().parent().find('.type').attr('type');
-		if($(e.target).hasClass('active')) active = 0;
-		else active = 1;
-		this.api(
-			'setActiveTemplate',
-			function(data){if(data.d)this.getData();},
-			{id:id,type:type,active:active}
-		);
+		console.log('isActive',this);
 	},
 
 	delete : function(){
@@ -434,20 +426,6 @@ new editor.toolbox({
 				deletePop.close();
 			},this)
 		})
-	},
-	reposition : function()
-	{
-		var canvasLeft   = $('#canvas').css('left'),
-			canvasLeft   = Number(canvasLeft.replace('px','')),
-			canvasHeight = $('#canvas').height();
-
-		$('.toolbox.designs').css('left', canvasLeft + 310 + 'px');
-		$('.toolbox.objects').css('left', canvasLeft + 766 + 'px');
-		$('.toolbox.resources').css('left', canvasLeft + 526 + 'px');
-		$('.toolbox.templates').css('left', canvasLeft + 'px');
-
-		$('.toolbox').css('top', canvasHeight + 97 + 4 + 'px').css('right', 'initial');
-
 	},
 	hasSelected : function(){ a = this.templates; for(i in a) if(a[i].selected) return a[i].id;}
 

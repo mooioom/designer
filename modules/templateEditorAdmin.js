@@ -110,7 +110,7 @@ new editor.toolbox({
 					editor.reset();
 					editor.init({
 						name    : design.Name,
-					    width   : 1024,
+					    width   : 980,
 						height  : Number(design.Height),
 						data    : design.Data
 					});

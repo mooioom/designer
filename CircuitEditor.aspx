@@ -47,7 +47,7 @@
 
 				editor.init({
 					name    : getString("UntitledProject"),
-				    width   : 1024,
+				    width   : 980,
 					height  : 253,
 					modules : ['templateEditor'<% if(isAdmin) { %>,'templateEditorAdmin' <% } %>]
 				});
