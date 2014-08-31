@@ -216,6 +216,7 @@ $.extend( true, editor, {
 							resource = $.extend(true,{},this.parent.resources[i]);
 							flag = false;
 							('.resourceItem',this.el).each(function(){
+								debugger;
 								name = $('.resourceName',this).html();
 								if(name==resource.name) flag = true;
 							});
