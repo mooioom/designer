@@ -250,3 +250,18 @@
 	margin-left: initial;
 	margin-right: 10px;
 }
+
+.closeDesigner{
+	background: #FDA200;
+	padding: 5px;
+	top: 9px;
+	color: #FFF;
+	position: absolute;
+	right: 10px;
+	cursor: pointer;
+	padding-right: 40px;
+	padding-left: 40px;
+	border-radius: 4px;
+	z-index: 1000;
+	border: 1px solid #3F3F3F;
+}

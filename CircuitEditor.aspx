@@ -49,7 +49,7 @@
 					name    : getString("UntitledProject"),
 				    width   : 1024,
 					height  : 253,
-					modules : ['templateEditor'<% if(isAdmin) { %>,'templateEditorAdmin' <% } %>]
+					modules : ['templateEditor'<% /*if(isAdmin) { %>,'templateEditorAdmin' <% }*/ %>]
 				});
 
 			},20);
@@ -186,30 +186,6 @@
 			</div>
 		</div>
 
-		<div class="toolbox objects">
-			<div class="header"><%=Resources.Strings.Objects %></div>
-			<div class="close">X</div>
-			<div class="body sortable"></div>
-			<div class="menu">
-				<div class="item left shadow disabled"><%=Resources.Strings.Shadow %></div>
-				<div class="item left transform disabled"><%=Resources.Strings.Transform %></div>
-				<div class="item left fx disabled">Fx</div>
-				<div class="item right add">+</div>
-				<div class="item right delete disabled"></div>
-				<div class="clear"></div>
-			</div>
-		</div>
-
-		<div class="toolbox resources">
-			<div class="header"><%=Resources.Strings.Resources %></div>
-			<div class="close">X</div>
-			<div class="body"></div>
-			<div class="menu">
-				<div class="item right delete disabled"></div>
-				<div class="clear"></div>
-			</div>
-		</div>
-
 		<div class="toolbox shadow hidden">
 			<div class="header"><%=Resources.Strings.Shadow %></div>
 			<div class="close">X</div>
@@ -268,18 +244,21 @@
 		<div id="ceTemplates" class="hidden">
 			<!-- Resources toolbox item -->
 			<div class="resourceItem dropItem">
-				<div class="left resourceDisplay dropItem"><span class="helper"></span><img class="resourceImage dropItem" /></div>
-				<div class="left resourceName dropItem"></div>
+				<div class="left resourceDisplay dropItem">
+					<span class="helper"></span>
+					<img class="resourceImage dropItem" />
+				</div>
+				<div class="left resourceName dropItem">{{name}}</div>
 				<div class="clear"></div>
 			</div>
 			<!-- Objects toolbox item -->
-			<div class="objectsItem">
-				<!--<div class="left objectDisplay"><canvas class="objectCanvas"></canvas></div>-->
-				<div class="left objectName"><%=Resources.Strings.Object %> 0</div>
-				<div class="right objectLock unlocked"></div>
-				<div class="right objectVisible"></div>
+			<div class="objectsItem {{#selected}}selected{{/selected}}" objectid="{{id}}">
+				<div class="left objectName">{{title}}</div>
+				<div class="right objectLock {{^locked}}unlocked{{/locked}}"></div>
+				<div class="right objectVisible {{^visible}}invisible{{/visible}}"></div>
 				<div class="clear"></div>
 			</div>
+			
 		</div>
 
 		<div class="hidden">
@@ -342,6 +321,7 @@
 			<string resource="Loading"   		value="<%=Resources.Strings.Loading %>"></string>
 			<string resource="Saving"   		value="<%=Resources.Strings.Saving %>"></string>
 			<string resource="SuccessfullySaved"value="<%=Resources.Strings.SuccessfullySaved %>"></string>
+			<string resource="Close"            value="<%=Resources.Strings.Close %>"></string>
 			
 			
 		</div>

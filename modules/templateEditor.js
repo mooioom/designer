@@ -326,7 +326,7 @@ new editor.toolbox({
 	{
 		e.preventDefault(); e.stopPropagation();
 
-		var item  = $(e.target),
+		var item  = $(e.target).closest('.item'),
 			id    = Number(item.attr('id')),
 			title = item.find('.title').html();
 
@@ -456,6 +456,8 @@ new editor.toolbox({
 $('.toolbox.templates').css('left', canvasLeft + 'px');
 $('.toolbox.templates').css('top', '354px');
 $('.toolbox.templates').css('right', 'initial');
+
+$('body').append('<div class="closeDesigner" onClick="window.parent.closeDesigner();">'+getString('Close')+'</div>');
 
 /*
 

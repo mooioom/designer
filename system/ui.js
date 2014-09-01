@@ -7,10 +7,13 @@ $.extend( true, editor, {
 
 			init : function(){
 
+				//debugger;
+				if(this.parent.parent.getToolbox('objects')) return;
+
 				new this.parent.parent.toolbox({
 
 					name    : 'objects',
-					title   : 'Objects',
+					title   : getString('objects'),
 					visible : true,
 
 					redraw  : function(){
@@ -124,10 +127,12 @@ $.extend( true, editor, {
 
 				});
 
+				if(this.parent.parent.getToolbox('resources')) return;
+
 				new this.parent.parent.toolbox({
 
 					name    : 'resources',
-					title   : 'Resources',
+					title   : getString('resources'),
 					visible : true,
 
 					redraw  : function(){
