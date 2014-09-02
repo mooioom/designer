@@ -154,8 +154,10 @@ $.extend( true, editor, {
 
 		getMousePosition : function( e )
 		{
-			this.parent.events.mouseX = e.offsetX;
-			this.parent.events.mouseY = e.offsetY;
+			var x = e.offsetX == undefined ? e.layerX : e.offsetX;
+			var y = e.offsetY == undefined ? e.layerY : e.offsetY;
+			this.parent.events.mouseX = x;
+			this.parent.events.mouseY = y;
 		},
 
 		getPositionOnCanvas : function( globalPoint )

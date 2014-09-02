@@ -16,8 +16,7 @@ $(document).ready(function()
 		editor.init({
 			name    : getString("UntitledProject"),
 		    width   : $('.stage').width(),
-			height  : $('.stage').height(),
-			modules : ['templateEditor']
+			height  : $('.stage').height()
 		});
 
 	},20);

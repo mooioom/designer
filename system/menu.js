@@ -27,7 +27,7 @@ $.extend( true, editor, {
 						{ id : 'copy'         , action : this.parent.functions.copy,         scope : this.parent.functions, shortcut : 'Ctrl + C' },
 						{ id : 'paste'	      , action : this.parent.functions.paste,        scope : this.parent.functions, shortcut : 'Ctrl + V' },
 						{ id : 'selectAll'    , action : this.parent.functions.selectAll,    scope : this.parent.functions, shortcut : 'Ctrl + A' },
-						{ id : 'delete'	  	  , action : this.parent.functions.delete,       scope : this.parent.functions, shortcut : 'Del'      },
+						{ id : 'delete'	  	  , action : this.parent.functions['delete'],       scope : this.parent.functions, shortcut : 'Del'      },
 						{ id : 'sep' 														                                                        },
 						{ id : 'bringToFront' , action : this.parent.functions.bringToFront, scope : this.parent.functions, shortcut : 'Ctrl + F' },
 						{ id : 'sendToBack'   , action : this.parent.functions.sendToBack,   scope : this.parent.functions, shortcut : 'Ctrl + B' },
