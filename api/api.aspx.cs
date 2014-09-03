@@ -106,9 +106,9 @@ namespace Satec.eXpertPowerPlus.Web
         }
 
         [WebMethod]
-        public static object saveDesign(String id, String data)
+        public static object saveDesign(String id, String data, String html)
         {
-            string query = @"update test_BillTemplatesDesigns SET Data = N'"+data+"' WHERE ID=" + id + ";";
+            string query = @"update test_BillTemplatesDesigns SET Data = N'"+data+"', Html = N'"+html+"' WHERE ID=" + id + ";";
             int result;
             result = dbUtils.ExecNonQuery(query);
             return js.Serialize(result);
@@ -134,6 +134,139 @@ namespace Satec.eXpertPowerPlus.Web
             int result2;
             result2 = dbUtils.ExecNonQuery(query);
             return js.Serialize(result2);
+        }
+
+        /* Invoice Layout */
+
+        [WebMethod]
+        public static object initLayout()
+        {
+            // check tables for data
+            DataTable dtHeader, dtFooter, dtGrid, dtHeaderDesigns,dtGridDesigns,dtFooterDesigns;
+
+            int initialSetup = 0;
+
+            dtHeader = dbUtils.FillDataSetTable("select DesignId, CASE WHEN Html IS NULL THEN 0 ELSE 1 END AS Audited from test_BillTemplates where CustomerId = "+sessionHandler.CustomerID+" and Type = 'header'", "test_BillTemplates").Tables[0];
+            dtGrid   = dbUtils.FillDataSetTable("select DesignId from test_BillTemplateGrids where CustomerId = " + sessionHandler.CustomerID, "test_BillTemplateGrids").Tables[0];
+            dtFooter = dbUtils.FillDataSetTable("select DesignId, CASE WHEN Html IS NULL THEN 0 ELSE 1 END AS Audited from test_BillTemplates where CustomerId = " + sessionHandler.CustomerID + " and Type = 'footer'", "test_BillTemplates").Tables[0];
+
+            List<Dictionary<string, object>> header = formatDataTable(dtHeader);
+            List<Dictionary<string, object>> grid   = formatDataTable(dtGrid);
+            List<Dictionary<string, object>> footer = formatDataTable(dtFooter);
+
+            //if nothing found setup initial values
+            if (dtHeader.Rows.Count == 0)
+            {
+                string query = "insert into test_BillTemplates (Type,CustomerId) Values ('header'," + sessionHandler.CustomerID + ");";
+                initialSetup = dbUtils.ExecNonQuery(query);
+            }
+            if (dtGrid.Rows.Count == 0)
+            {
+                string query = "insert into test_BillTemplateGrids (CustomerId) Values (" + sessionHandler.CustomerID + ");";
+                initialSetup = dbUtils.ExecNonQuery(query);
+            }
+            if (dtFooter.Rows.Count == 0)
+            {
+                string query = "insert into test_BillTemplates (Type,CustomerId) Values ('footer'," + sessionHandler.CustomerID + ");";
+                initialSetup = dbUtils.ExecNonQuery(query);
+            }
+
+            //get design options
+
+            dtHeaderDesigns = dbUtils.FillDataSetTable("select ID, Type, Name, IsDefault from test_BillTemplatesDesigns where Type = 'header' AND Active = 1 order by IsDefault DESC", "test_BillTemplatesDesigns").Tables[0];
+            dtGridDesigns   = dbUtils.FillDataSetTable("select ID, Name, IsDefault from test_BillTemplateGridsDesigns where Active = 1 order by IsDefault DESC", "test_BillTemplateGridsDesigns").Tables[0];
+            dtFooterDesigns = dbUtils.FillDataSetTable("select ID, Type, Name, IsDefault from test_BillTemplatesDesigns where Type = 'footer' AND Active = 1 order by IsDefault DESC", "test_BillTemplatesDesigns").Tables[0];
+
+            List<Dictionary<string, object>> headerDesigns = formatDataTable(dtHeaderDesigns);
+            List<Dictionary<string, object>> gridDesigns   = formatDataTable(dtGridDesigns);
+            List<Dictionary<string, object>> footerDesigns = formatDataTable(dtFooterDesigns);
+
+            //if none create from default template
+            return js.Serialize(new 
+            {
+                header        = header,
+                footer        = footer,
+                grid          = grid,
+                headerDesigns = headerDesigns,
+                gridDesigns   = gridDesigns,
+                footerDesigns = footerDesigns,
+                initialSetup  = initialSetup
+            });
+        }
+
+        [WebMethod]
+        public static object switchTemplate(String type, String id)
+        {
+            String t = "";
+            String typeString = " and Type='" + type + "'";
+
+            if (type == "header" || type == "footer") t = "test_BillTemplates";
+            if (type == "grid") { t = "test_BillTemplateGrids"; typeString = ""; }
+
+            string query = "update " + t + " set DesignId = " + id + " where CustomerId = " + sessionHandler.CustomerID + typeString;
+
+            int result = dbUtils.ExecNonQuery(query);
+            return js.Serialize(new{success = result});
+        }
+
+        [WebMethod]
+        public static object getTemplateData(String type, String id, String isAudited)
+        {
+            String queryDefault;
+            String queryDesign;
+            String query;
+            DataTable dt = new DataTable();
+            List<Dictionary<string, object>> data;
+
+            if(type == "header" || type == "footer")
+            {
+                queryDefault = "select top 1 Html from test_BillTemplatesDesigns where isDefault = '1' and Type = '" + type + "';";
+                query        = "select top 1 Html from test_BillTemplates where Type = '" + type + "' AND CustomerId = " + sessionHandler.CustomerID;
+                queryDesign  = "select top 1 Html from test_BillTemplatesDesigns where ID = " + id + " and Type='" + type + "'";
+                if (isAudited != "0")
+                {
+                    // get user data
+                    if (id != "0")
+                    {
+                        dt = dbUtils.FillDataSetTable(query, "test_BillTemplates").Tables[0];
+                        if (dt.Rows[0]["Html"].ToString() == "") dt = dbUtils.FillDataSetTable(queryDefault, "test_BillTemplates").Tables[0];
+                    }
+                    else dt = dbUtils.FillDataSetTable(queryDefault, "test_BillTemplates").Tables[0];
+                }
+                else
+                {
+                    dt = dbUtils.FillDataSetTable(queryDesign, "test_BillTemplates").Tables[0];
+                }
+                
+            }
+            if (type == "grid") 
+            {
+                queryDefault = "select top 1 * from test_BillTemplateGridsDesigns where isDefault = '1'";
+                query        = "select top 1 * from test_BillTemplateGrids where CustomerId = " + sessionHandler.CustomerID;
+                queryDesign  = "select top 1 * from test_BillTemplateGridsDesigns where ID = " + id;
+                if (isAudited != "0")
+                {
+                    if (id != "0")
+                    {
+                        dt = dbUtils.FillDataSetTable(query, "test_BillTemplateGrids").Tables[0];
+                        if (dt.Rows[0]["Cell"].ToString() == "") dt = dbUtils.FillDataSetTable(queryDefault, "test_BillTemplateGridsDesigns").Tables[0];
+                    }
+                    else dt = dbUtils.FillDataSetTable(queryDefault, "test_BillTemplateGridsDesigns").Tables[0];
+                }
+                else
+                {
+                    dt = dbUtils.FillDataSetTable(queryDesign, "test_BillTemplateGrids").Tables[0];
+                }
+                
+            }
+            data = formatDataTable(dt);
+            return js.Serialize(data);
+        }
+
+        [WebMethod]
+        public static object getTemplateHtml(String id)
+        {
+            return js.Serialize(id);
         }
 
         public static List<Dictionary<string, object>> formatDataTable(DataTable dt)

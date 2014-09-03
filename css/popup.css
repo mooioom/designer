@@ -1,5 +1,6 @@
 .middle{height: 100%;display: inline-block;vertical-align: middle;}
-    
+.clear{clear:both;}
+.hidden{display: none;}
 .popup{
     position: absolute;
     width: 100%;
@@ -11,7 +12,7 @@
     text-align: center;
     position: fixed;
     top: 0px;
-    z-index: 2000;
+    z-index: 200000;
     direction: ltr;
 }
 

@@ -349,7 +349,6 @@ new editor.toolbox({
 	save : function( e ){
 		e.preventDefault(); e.stopPropagation();
 		editor.ui.indicator.show( getString('Saving')+'...' );
-
 		//todo :: replace text to dynamic markup 
 		objects = $.extend(true,{},editor.objects);
 

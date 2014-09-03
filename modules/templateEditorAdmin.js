@@ -131,12 +131,13 @@ new editor.toolbox({
 	},
 	save : function( e ){
 		e.preventDefault(); e.stopPropagation();
+		//todo edit objects before save
 		this.api(
 			'saveDesign',
 			function( data ){
 				if(data) console.log('saved');
 			},
-			{ id : this.hasSelected(), data : editor.file.getData() }
+			{ id : this.hasSelected(), data : editor.file.getData(), html : editor.file.getHtml( {objects:editor.objects} )  }
 		)
 	},
 	delete : function( e ){

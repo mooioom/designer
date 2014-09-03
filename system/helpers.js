@@ -123,8 +123,6 @@ $.extend( true, editor, {
 		    };
 		},
 
-		
-
 		getAbsCoords : function(x, y, w, h)
 		{
 			//returns absolute coords when width || height < 0
