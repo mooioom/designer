@@ -167,6 +167,10 @@ $.extend( true, editor, {
 
 							reader.onload = ($.proxy(function(theFile) {
 								return $.proxy(function(e) {
+									flag = false;
+									for(i in this.parent.resources) 
+										if(theFile.name == this.parent.resources[i].name) flag = true;
+									if(flag) return;
 									this.parent.resources.push({
 										src       : e.target.result,
 										name      : theFile.name,
@@ -215,16 +219,18 @@ $.extend( true, editor, {
 					render  : function(){
 						
 						$('.toolbox.resources .resourceItem').remove();
+						$('.menu',this.el).remove();
 
 						for(i in this.parent.resources)
 						{
 							resource = $.extend(true,{},this.parent.resources[i]);
+							console.log('rendering resource',resource)
 							flag = false;
 							('.resourceItem',this.el).each(function(){
 								name = $('.resourceName',this).html();
 								if(name==resource.name) flag = true;
 							});
-							if(flag) continue;
+							//if(flag) continue;
 							this.prepend('.body','.resourceItem',resource);
 							$('.resourceImage',this.el).attr('src',resource.src);
 						};
@@ -233,6 +239,11 @@ $.extend( true, editor, {
 
 						if(!this.parent.resources.length) 
 							$('.toolbox.resources .body').append('<div class="resourceItem noResources">' + getString('NoResources') + '</div>');
+
+						this.el.append('<div class="menu"></div>');
+						$('.menu',this.el).append('<div class="item delete disabled right"></div>');
+						$('.menu',this.el).append('<div class="clear"></div>');
+
 					},
 					events  : function(){
 
@@ -244,13 +255,13 @@ $.extend( true, editor, {
 							else $('.toolbox.resources .delete').addClass('disabled'); 
 						});
 
-						$('.toolbox.resources .delete').unbind('click').bind('click',function(){
+						$('.toolbox.resources .delete').unbind('click').bind('click',$.proxy(function(){
 							$('.resourceItem.selected').each(function(){
 								idx = $(this).index();
 								editor.resources.splice(idx,1);
 							})
 							this.redraw();
-						});
+						},this));
 					}
 				});
 

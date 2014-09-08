@@ -613,11 +613,10 @@ input[type='range'] {
 	cursor: pointer;
 	background: #E2E2E2;
 	margin-bottom: 0px;
-	width: 218px;
 	border-bottom: 1px solid #ccc;
 }
 .resourceItem.selected{
-	background: #fff;
+	background: #FFEEC2;
 	border-radius: 0px;
 }
 .resourceDisplay{

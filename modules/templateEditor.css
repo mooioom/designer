@@ -251,17 +251,33 @@
 	margin-right: 10px;
 }
 
-.closeDesigner{
-	background: #FDA200;
-	padding: 5px;
-	top: 9px;
-	color: #FFF;
+.closeDesignerWrapper{
 	position: absolute;
+	top: 9px;
 	right: 10px;
+	z-index: 100;
+}
+
+.rtl .closeDesignerWrapper{
+	right: initial;
+	left : 10px;
+}
+
+.closeDesignerWrapper .button{
+	background: #FF9B05;
+	padding: 5px;
+	color: #FFF;
 	cursor: pointer;
-	padding-right: 40px;
-	padding-left: 40px;
-	border-radius: 4px;
+	padding-right: 30px;
+	padding-left: 30px;
+	border-radius: 3px;
 	z-index: 1000;
-	border: 1px solid #3F3F3F;
+	border: 1px solid #B97536;
+	box-shadow: 0px 0px 10px rgba(0,0,0,0.4);
+	margin-left: 5px;
+}
+
+.rtl .closeDesignerWrapper .button{
+	margin-left: initial;
+	margin-right: 5px;
 }

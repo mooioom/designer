@@ -36,6 +36,7 @@ namespace Satec.eXpertPowerPlus.Web
         [WebMethod]
         public static object getDesigns() {
             DataTable designsDt;
+            js.MaxJsonLength = Int32.MaxValue;
             designsDt = dbUtils.FillDataSetTable("select * from test_BillTemplatesDesigns", "test_BillTemplatesDesigns").Tables[0];
             List<Dictionary<string, object>> designs = formatDataTable(designsDt);
             return js.Serialize(designs);
@@ -48,15 +49,6 @@ namespace Satec.eXpertPowerPlus.Web
             designDt = dbUtils.FillDataSetTable("select * from test_BillTemplatesDesigns where ID = "+id, "test_BillTemplatesDesigns").Tables[0];
             List<Dictionary<string, object>> design = formatDataTable(designDt);
             return js.Serialize(design);
-        }
-
-        [WebMethod]
-        public static object getTemplate(string id)
-        {
-            DataTable dt;
-            dt = dbUtils.FillDataSetTable("select * from test_BillTemplates where ID = " + id, "test_BillTemplates").Tables[0];
-            List<Dictionary<string, object>> template = formatDataTable(dt);
-            return js.Serialize(template);
         }
 
         [WebMethod]
@@ -115,15 +107,6 @@ namespace Satec.eXpertPowerPlus.Web
         }
 
         [WebMethod]
-        public static object saveTemplate(String id, String data, String html)
-        {
-            string query = @"update test_BillTemplates SET Data = N'" + data + "', Html = N'"+html+"' WHERE ID=" + id + ";";
-            int result;
-            result = dbUtils.ExecNonQuery(query);
-            return js.Serialize(result);
-        }
-
-        [WebMethod]
         public static object setActiveTemplate(String id, String type, String active)
         {
             string query = @"update test_billTemplates set Active = 0 where Type='" + type + "';";
@@ -136,7 +119,38 @@ namespace Satec.eXpertPowerPlus.Web
             return js.Serialize(result2);
         }
 
-        /* Invoice Layout */
+        /* New api */
+
+        [WebMethod]
+        public static object getTemplate(string id, string type, string isAudited)
+        {
+            string query;
+            DataTable dt;
+
+            if (isAudited == "0")
+            {
+                //return the design
+                query = "select * from test_BillTemplatesDesigns where Type = '" + type + "' and ID = " + id;
+            }
+            else { 
+                query = "select * from test_BillTemplates where Type = '" + type + "' and CustomerId = " + sessionHandler.CustomerID;
+            }
+            
+            dt = dbUtils.FillDataSetTable(query, "test_BillTemplates").Tables[0];
+            List<Dictionary<string, object>> template = formatDataTable(dt);
+            return js.Serialize(template);
+        }
+
+        [WebMethod]
+        public static object saveTemplate(String id, String type, String height, String data, String html)
+        {
+            string query = @"update test_BillTemplates 
+                           SET DesignId = "+id+", Height = "+ height +", Data = N'" + data + "', Html = N'" + html + 
+                           "' WHERE CustomerId=" + sessionHandler.CustomerID + " and Type = '"+type+"';";
+            int result;
+            result = dbUtils.ExecNonQuery(query);
+            return js.Serialize(result);
+        }
 
         [WebMethod]
         public static object initLayout()
@@ -203,7 +217,7 @@ namespace Satec.eXpertPowerPlus.Web
             if (type == "header" || type == "footer") t = "test_BillTemplates";
             if (type == "grid") { t = "test_BillTemplateGrids"; typeString = ""; }
 
-            string query = "update " + t + " set DesignId = " + id + " where CustomerId = " + sessionHandler.CustomerID + typeString;
+            string query = "update " + t + " set DesignId = " + id + ", Html = null, Data = null, Height = null WHERE CustomerId = " + sessionHandler.CustomerID + typeString;
 
             int result = dbUtils.ExecNonQuery(query);
             return js.Serialize(new{success = result});
@@ -235,7 +249,11 @@ namespace Satec.eXpertPowerPlus.Web
                 }
                 else
                 {
-                    dt = dbUtils.FillDataSetTable(queryDesign, "test_BillTemplates").Tables[0];
+                    if (id != "0") 
+                    {
+                        dt = dbUtils.FillDataSetTable(queryDesign, "test_BillTemplates").Tables[0];
+                    }
+                    else dt = dbUtils.FillDataSetTable(query, "test_BillTemplates").Tables[0];
                 }
                 
             }

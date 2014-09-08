@@ -279,6 +279,7 @@
 			<string resource="file"            value="<%=Resources.Strings.File %>"></string>
 			<string resource="new"             value="<%=Resources.Strings.New %>"></string>
 			<string resource="save"            value="<%=Resources.Strings.SaveAs2 %>"></string>
+			<string resource="save2"            value="<%=Resources.Strings.Save %>"></string>
 			<string resource="load"            value="<%=Resources.Strings.Load %>"></string>
 			<string resource="exportHtml"      value="<%=Resources.Strings.ExportHtml %>"></string>
 			<string resource="exportSvg"       value="<%=Resources.Strings.ExportSvg %>"></string>

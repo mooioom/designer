@@ -216,9 +216,10 @@ new editor.toolbox({
 			canvasLeft   = Number(canvasLeft.replace('px','')),
 			canvasHeight = $('#canvas').height();
 
-		$('.toolbox.designs').css('left', canvasLeft + 310 + 'px');
-		$('.toolbox.objects').css('left', canvasLeft + 766 + 'px');
-		$('.toolbox.resources').css('left', canvasLeft + 526 + 'px');
+		$('.toolbox.designs').css('left', canvasLeft + 'px');
+		$('.toolbox.objects').css('left', canvasLeft + 810 + 'px');
+		$('.toolbox.resources').css('left', canvasLeft + 570 + 'px');
+		$('.toolbox.text').css('left', canvasLeft + 'px');
 		$('.toolbox.templates').css('left', canvasLeft + 'px');
 
 		$('.toolbox').css('top', canvasHeight + 97 + 4 + 'px').css('right', 'initial');
