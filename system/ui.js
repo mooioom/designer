@@ -273,21 +273,21 @@ $.extend( true, editor, {
 
 					events : function(){
 
-						$('.toolbox.grid input[type="text"]').keyup(function(){
+						$('input[type="text"]',this.el).keyup($.proxy(function(){
 							if(!$(this).val()) return;
-							editor.grid[$(this).attr('id')] = $(this).val();
-							editor.draw.grid();
-						});
+							this.parent.grid[$(this).attr('id')] = $(this).val();
+							this.parent.draw.grid();
+						},this));
 
-						$('.toolbox.grid #visible').change(function(){
-							editor.grid.visible = $(this).prop('checked');
-							editor.draw.grid.apply(editor);
-						});
+						$('#visible',this.el).change($.proxy(function(){
+							console.log('change');
+							this.parent.grid.visible = $('#visible',this.el).prop('checked');
+							this.parent.draw.grid();
+						},this));
 
-						$('.toolbox.grid #snap').change(function(){
-							editor.grid.snap = $(this).prop('checked');
-							editor.draw.grid();
-						});
+						$('#snap',this.el).change($.proxy(function(){
+							this.parent.grid.snap = $('#snap',this.el).prop('checked');
+						},this));
 
 					}
 
