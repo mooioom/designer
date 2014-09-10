@@ -3,23 +3,20 @@
 console.log('templateEditor',editor);
 
 $('.toolbar.text .clear').remove();
-$('.toolbar.text').append('<div class="sep"></div>');
-$('.toolbar.text').append('<div class="item">'+getString('dynamicField')+' : <select id="dynamicFields"></select></div>');
+$('.toolbar.text').append('<div class="sep dynamicInput hidden"></div>');
+$('.toolbar.text').append('<div class="item dynamicInput hidden"><div class="left">Dynamic Data : <select id="dynamicFields"></select></div><div class="left"><div class="toolbarButtonB removeDynamicData">Make Static Text</div></div><div class="clear"></div></div>');
+$('.toolbar.text').append('<div class="sep chooseDataType hidden"></div>');
+$('.toolbar.text').append('<div class="item chooseDataType hidden"><div class="toolbarButtonB left dynamicData">Make Dynamic Data</div><div class="toolbarButtonB left globalizedString">Make Globalized String</div><div class="clear"></div></div>');
 $('.toolbar.text').append('<div class="clear"></div>');
 
 // get dynamic dynamicFields - << API
 
 dynamicFields = [
-	{ label : 'Title : User Name', value : 'titleUserName', display : 'User Name' , type : 'text' },
-	{ label : 'Value : User Name', value : 'valueUserName', display : '<userName>', type : 'dynamic' },
-	{ label : 'Title : User Address', value : 'titleAddress', display : 'Address', type : 'text' },
-	{ label : 'Value : User Address', value : 'valueUserAddress', display : '<userAddress>', type : 'dynamic' },
-	{ label : 'Title : Serial Number', value : 'titleSerialNumber', display : 'Serial Number', type : 'text' },
-	{ label : 'Value : Serial Number', value : 'valueSerialNumber', display : '<serialNumber>', type : 'dynamic' },
-	{ label : 'Title : Meter Number', value : 'titleMeterNumber', display : 'Meter Number', type : 'text' },
-	{ label : 'Value : Meter Number', value : 'valueMeterNumber', display : '<meterNumber>', type : 'dynamic' },
-	{ label : 'Title : Bill Period', value : 'titleBillPeriod', display : 'Bill Period', type : 'text' },
-	{ label : 'Value : Bill Period', value : 'valueBillPeriod', display : '<billPeriod>', type : 'dynamic' }
+	{ label : 'User Name',     value : 'valueUserName', display : '<userName>', type : 'dynamic' },
+	{ label : 'User Address',  value : 'valueUserAddress', display : '<userAddress>', type : 'dynamic' },
+	{ label : 'Serial Number', value : 'valueSerialNumber', display : '<serialNumber>', type : 'dynamic' },
+	{ label : 'Meter Number',  value : 'valueMeterNumber', display : '<meterNumber>', type : 'dynamic' },
+	{ label : 'Bill Period',   value : 'valueBillPeriod', display : '<billPeriod>', type : 'dynamic' }
 ]
 
 // --- end of stub
@@ -33,21 +30,53 @@ for(i in dynamicFields){
 
 $('#dynamicFields').change(function(){
 
-	if(editor.selecteds.length)
-	{
-		editor.selecteds[0].text = $(this).val();
-		editor.redraw();
-	}
+	if(editor.selecteds.length) editor.selecteds[0].dynamic = $(this).val();
 
 });
+
+$('.removeDynamicData').click(function(){
+	if(editor.selecteds.length) {
+		if(editor.selecteds[0].dynamic) delete editor.selecteds[0].dynamic;
+		$('.chooseDataType').show();
+		$('.dynamicInput').hide();
+	}
+})
 
 editor.onSelect = function(){
 	//console.log('onSelect');
 }
 
+editor.onToolChange = function(){
+	if(editor.action == 'text'){
+		$('.chooseDataType').hide();
+		$('.dynamicInput').hide();
+	}else editor.onMouseUp();
+}
+
 editor.onMouseUp = function(){
 	console.log('onMouseUp');
+	$('.chooseDataType').hide();
+	$('.dynamicInput').hide();
+	if( editor.helpers.selectedIsText() )
+	{
+		text = editor.selecteds[0];
+		if(text.dynamic){
+			$('.dynamicInput').show();
+			$('#dynamicFields').val(text.dynamic);
+		}
+		else if(text.globalized){
+			// 
+		}
+		else{
+			$('.chooseDataType').show();
+		}
+	}
 }
+
+$('.dynamicData').click(function(){
+	$('.chooseDataType').hide();
+	$('.dynamicInput').show();
+});
 
 templateEditor = {
 
@@ -168,20 +197,18 @@ templateEditor = {
 
 $('body').append('<div class="closeDesignerWrapper"><div class="saveTemplate left button">'+getString('save2')+'</div><div class="closeDesigner left button">'+getString('Close')+'</div><div class="clear"></div></div>');
 
-// window.parent.$("html, body").animate({ scrollTop: 0 }, "slow",function(){
-// 	window.parent.$('html').css('height','100%').css('overflow','hidden')
-// });
-
 window.parent.scrollTo(0,0);
 window.parent.$('html').css('height','100%').css('overflow','hidden')
 
 templateEditor.init();
 
-/*
-	TODOS :
 
-	1. dynamic properties (strings, logo etc...)
-	2. color picker tool
+/* HELPERS */
 
+function encode_utf8(s) {
+  return unescape(encodeURIComponent(s));
+}
 
-*/
+function decode_utf8(s) {
+  return decodeURIComponent(escape(s));
+}

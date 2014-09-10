@@ -280,6 +280,17 @@ $.extend( true, editor, {
 			}
 			o[prop] = val;
 			this.parent.draw.toolbar();
+		},
+
+		timer : function( startStop, title){
+			if(startStop == 'start' ) {
+				this.timerStart = new Date().getTime();
+				console.log(title+' started');
+			}
+			if(startStop == 'stop' ) {
+				timerStop = new Date().getTime();
+				console.log(title+' ended - '+ (timerStop - this.timerStart) +' milliseconds');
+			}
 		}
 
 	}

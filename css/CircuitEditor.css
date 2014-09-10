@@ -308,7 +308,7 @@ input[type='range'] {
 .toolbar select{
 	height: 20px;
 	position: relative;
-	top: 1px;
+	font-size: 11px;
 }
 .toolbarButton{
     width: 22px;

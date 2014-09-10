@@ -107,6 +107,7 @@ $.extend( true, editor, {
 	onMouseMove  : function(){},
 	onKeyDown    : function(){},
 	onKeyUp      : function(){},
+	onToolChange : function(){},
 	onSelect 	 : function(){},
 	onMove   	 : function(){},
 	onTextCreate : function(){},

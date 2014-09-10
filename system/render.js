@@ -3,6 +3,9 @@ $.extend( true, editor, {
 
 	render : function()
 	{
+
+		//this.helpers.timer('start','render');
+
 		var focusedInputs = $("input:focus");
 		var inputHasFocus = false;
 		if (focusedInputs != null && focusedInputs.length > 0) { inputHasFocus = true; }
@@ -14,6 +17,8 @@ $.extend( true, editor, {
 		this.draw.selectionBox();
 
 		if( this.action == 'transform' ) this.draw.actionPoints();
+
+		//this.helpers.timer('stop','render');
 
 	},
 
@@ -237,7 +242,7 @@ $.extend( true, editor, {
 				this.parent.ctx.beginPath();
 				this.parent.ctx.rect( x, y, w, h );
 				this.parent.ctx.lineWidth   = this.selectedBox.lineWidth;
-				this.parent.ctx.strokeStyle = this.selectedBox.strokeStyle;
+				this.parent.ctx.strokeStyle = this.parent.selecteds[i].fillStyle;
 				this.parent.ctx.stroke();
 				this.parent.ctx.restore();
 			}
@@ -297,8 +302,12 @@ $.extend( true, editor, {
 
 		ui : function(){
 
+			//this.parent.helpers.timer('start','ui');
+
 			this.parent.getToolbox('objects').redraw();
 			this.parent.getToolbox('resources').redraw();
+
+			//this.parent.helpers.timer('stop','ui');
 
 		},
 

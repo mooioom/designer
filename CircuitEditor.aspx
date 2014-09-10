@@ -48,7 +48,7 @@
 					name    : getString("UntitledProject"),
 				    width   : 1024,
 					height  : 253,
-					modules : ['templateEditor'<% if(isAdmin) { %>,'templateEditorAdmin' <% } %>]
+					modules : ['templateEditor'<% /*if(isAdmin) { %>,'templateEditorAdmin' <% }*/ %>]
 				});
 
 			},20);

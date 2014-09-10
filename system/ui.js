@@ -14,8 +14,10 @@ $.extend( true, editor, {
 					visible : true,
 
 					redraw  : function(){
+						//this.parent.helpers.timer('start','objects toolbox');
 						this.render();
 						this.events();
+						//this.parent.helpers.timer('stop','objects toolbox');
 					},
 
 					prepend : function( el, templateItem, data ){

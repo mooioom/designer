@@ -281,3 +281,29 @@
 	margin-left: initial;
 	margin-right: 5px;
 }
+
+.toolbarButtonB{
+	float: left;
+	margin-left: 3px;
+	background-position: center;
+	background-size: contain;
+	cursor: pointer;
+	position: relative;
+	border-radius: 2px;
+	top: 2px;
+	width: initial;
+	text-align: center;
+	line-height: 20px;
+	background: #5C5D5D;
+	color: #fff;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+.toolbarButtonB:hover{
+	background-color: #2571D3;
+}
+
+#dynamicFields{
+	font-size: 11px;
+}
