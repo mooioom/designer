@@ -63,6 +63,8 @@ $.extend( true, editor, {
 
 		if(data.modules) for(i in data.modules) this.load( data.modules[i] );
 
+		this.onLoad();
+
 	},
 
 	context : function( item )

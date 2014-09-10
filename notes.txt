@@ -1,9 +1,9 @@
-TODO : 
+TODOS : 
 
 - save currentObject identifier
 - point to resources (do not draw src each time)
 - resources delete
-- scale
+- scale & rotate tool
 - dynamic properties (text / button)
 - save file name
 - resources drag into object but do not replace image
@@ -12,6 +12,13 @@ TODO :
 - canvas size
 - zoom
 - save toolboxes position, hidden / shown etc.
+- image filters
+- image resize
+- animation
+- tools should move to ui
+- toolboxes should be upgraded to fit new toolbox object
+- object fill color should allow selection from Solid, Gradient and Image
+
 
 BUGS :
 

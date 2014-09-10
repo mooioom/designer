@@ -6,6 +6,7 @@ $.extend( true, editor, {
 		select : function( o )
 		{
 			this.parent.selecteds.push( o );
+			this.parent.onSelect();
 		},
 
 		selectAll : function(){

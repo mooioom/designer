@@ -21,7 +21,7 @@ $.extend( true, editor, {
 		this.render(); 
 		this.draw.ui();
 		this.draw.toolbar();
-		this.draw.reOrderByUi( true );
+		//this.draw.reOrderByUi( true );
 		this.ui.toolbar.init();
 		this.ui.toolbox.init();
 	},
@@ -62,7 +62,7 @@ $.extend( true, editor, {
 
 		grid : function()
 		{
-			//debugger;
+
 			this.parent.gridCtx.clearRect(0, 0, this.parent.canvas.width, this.parent.canvas.height);
 
 			if(this.parent.grid.visible)
@@ -343,8 +343,9 @@ $.extend( true, editor, {
 				   !flag) { $('.toolbar.selectMultiple').show(); flag = true; }
 
 				if(!flag) $('.toolbar.'+this.parent.action).show();
+
 			}
-			else $('.toolbar.'+this.parent.action).show();	
+			else $('.toolbar.'+this.parent.action).show();
 
 		},
 

@@ -105,7 +105,7 @@ $.extend( true, editor, {
 							this.parent.render(); 
 							this.parent.draw.ui();
 							this.parent.draw.toolbar();
-							this.parent.draw.reOrderByUi( true );
+							//this.parent.draw.reOrderByUi( true );
 						},this));
 
 					},

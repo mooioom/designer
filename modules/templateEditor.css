@@ -253,14 +253,14 @@
 
 .closeDesignerWrapper{
 	position: absolute;
-	top: 9px;
-	right: 10px;
+	top: 5px;
+	right: 5px;
 	z-index: 100;
 }
 
 .rtl .closeDesignerWrapper{
 	right: initial;
-	left : 10px;
+	left : 5px;
 }
 
 .closeDesignerWrapper .button{

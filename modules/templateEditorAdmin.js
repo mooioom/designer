@@ -218,7 +218,7 @@ new editor.toolbox({
 
 		$('.toolbox.designs').css('left', canvasLeft + 'px');
 		$('.toolbox.objects').css('left', canvasLeft + 810 + 'px');
-		$('.toolbox.resources').css('left', canvasLeft + 570 + 'px');
+		$('.toolbox.resources').css('left', canvasLeft + 526 + 'px');
 		$('.toolbox.text').css('left', canvasLeft + 'px');
 		$('.toolbox.templates').css('left', canvasLeft + 'px');
 

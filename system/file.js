@@ -26,7 +26,7 @@ $.extend( true, editor, {
 				        this.parent.render();
 				        this.parent.draw.ui();
 						this.parent.draw.toolbar();
-						this.parent.draw.reOrderByUi( true );
+						//this.parent.draw.reOrderByUi( true );
 						this.parent.getToolbox('resources').redraw();
 				    },this)
 				}
@@ -135,6 +135,10 @@ $.extend( true, editor, {
 				colorString = "rgb("+color[0]+","+color[1]+","+color[2]+")";
 				opacity     = color[3];
 
+				if(!o.shadowOffsetX) o.shadowOffsetX = 0;
+				if(!o.shadowOffsetY) o.shadowOffsetY = 0;
+				if(!o.shadowBlur)    o.shadowBlur = 0;
+
 				if(o.type == 'box')
 				{
 					if(o.src)
@@ -145,8 +149,10 @@ $.extend( true, editor, {
 							str+= ' top:'		  + y + 'px;';
 							str+= ' width:'	  	  + w + 'px;';
 							str+= ' height:'  	  + h + 'px;';
-							str+= ' box-shadow: '+o.shadowOffsetX+'px '+o.shadowOffsetY+'px '+o.shadowBlur+'px '+o.shadowColor+';';
-							str+= ' -ms-transform: rotate('+o.rotate+'deg); -webkit-transform: rotate('+o.rotate+'deg); transform: rotate('+o.rotate+'deg);'; 
+							if(o.shadowOffsetX || o.shadowOffsetY || o.shadowBlur || o.shadowColor) 
+								str+= ' box-shadow: '+o.shadowOffsetX+'px '+o.shadowOffsetY+'px '+o.shadowBlur+'px '+o.shadowColor+';';
+							if(o.rotate)
+								str+= ' -ms-transform: rotate('+o.rotate+'deg); -webkit-transform: rotate('+o.rotate+'deg); transform: rotate('+o.rotate+'deg);'; 
 							str+= '" src="' + o.src + '"';
 							str+= ' />';
 					}else
@@ -158,12 +164,12 @@ $.extend( true, editor, {
 							str+= ' top:'		    + y + 'px;';
 							str+= ' width:'	        + w + 'px;';
 							str+= ' height:'	    + h + 'px;';
-							str+= ' box-shadow: '+o.shadowOffsetX+'px '+o.shadowOffsetY+'px '+o.shadowBlur+'px '+o.shadowColor+';';
-							str+= ' -ms-transform: rotate('+o.rotate+'deg); -webkit-transform: rotate('+o.rotate+'deg); transform: rotate('+o.rotate+'deg);'; 
-							if(o.lineWidth) str+= ' border-style:solid; box-sizing:border-box;';
-							str+= ' border-radius:'	+ o.radius + 'px;';
-							str+= ' border-color:'	+ o.strokeStyle + ';';
-							str+= ' border-width:'  + Number((o.lineWidth / 2) + 1) + 'px;';
+							if(o.shadowOffsetX || o.shadowOffsetY || o.shadowBlur || o.shadowColor) str+= ' box-shadow: '+o.shadowOffsetX+'px '+o.shadowOffsetY+'px '+o.shadowBlur+'px '+o.shadowColor+';';
+							if(o.rotate)      str+= ' -ms-transform: rotate('+o.rotate+'deg); -webkit-transform: rotate('+o.rotate+'deg); transform: rotate('+o.rotate+'deg);'; 
+							if(o.lineWidth)   str+= ' border-style:solid; box-sizing:border-box;';
+							if(o.radius)      str+= ' border-radius:'	+ o.radius + 'px;';
+							if(o.strokeStyle) str+= ' border-color:'	+ o.strokeStyle + ';';
+							if(o.lineWidth)   str+= ' border-width:'  + Number((o.lineWidth / 2) + 1) + 'px;';
 							str+= ' background-color:' + fill + ';"';
 							str+= '></div>';
 					}
@@ -179,8 +185,8 @@ $.extend( true, editor, {
 						str+= ' color:'		    + o.fillStyle + ';';
 						str+= ' font-size:'	    + o.fontSize + 'px;';
 						str+= ' font-family:'	+ o.font + ';';
-						str+= ' text-shadow: '+o.shadowOffsetX+'px '+o.shadowOffsetY+'px '+o.shadowBlur+'px '+o.shadowColor+';';
-						str+= ' -ms-transform: rotate('+o.rotate+'deg); -webkit-transform: rotate('+o.rotate+'deg); transform: rotate('+o.rotate+'deg);'; 
+						if(o.shadowOffsetX || o.shadowOffsetY || o.shadowBlur || o.shadowColor) str+= ' text-shadow: '+o.shadowOffsetX+'px '+o.shadowOffsetY+'px '+o.shadowBlur+'px '+o.shadowColor+';';
+						if(o.rotate)   str+= ' -ms-transform: rotate('+o.rotate+'deg); -webkit-transform: rotate('+o.rotate+'deg); transform: rotate('+o.rotate+'deg);'; 
 						if(o.isBold)   str+= ' font-weight:bold;';
 						if(o.isItalic) str+= ' font-style:italic;';
 						str+= ' alignment-baseline:before-edge';

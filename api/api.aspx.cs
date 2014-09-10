@@ -4,6 +4,7 @@ using System.Web.Services;
 using System;
 using Satec.eXpertPower.Utilities;
 using System.Web.Script.Serialization;
+using System.Data.SqlClient;
 
 namespace Satec.eXpertPowerPlus.Web
 {
@@ -153,6 +154,20 @@ namespace Satec.eXpertPowerPlus.Web
         }
 
         [WebMethod]
+        public static object saveGrid(String id, String cell, String cellText, String header, String headerText, String total, String totalText, String border)
+        {
+            string query = @"update test_BillTemplateGrids 
+                           SET Cell = @cell, CellText = '" + cellText + "', Header = '" + header + "', HeaderText = '" + headerText +
+                           "', Total = '"+ total +"', TotalText = '" + totalText + "', Border = '" + border + "', DesignId = " + id + " WHERE CustomerId = " + sessionHandler.CustomerID;
+            int result;
+            result = dbUtils.ExecNonQuery(query, new List<System.Data.SqlClient.SqlParameter>
+                {
+                    new SqlParameter("cell",cell)
+                });
+            return js.Serialize(result);
+        }
+
+        [WebMethod]
         public static object initLayout()
         {
             // check tables for data
@@ -161,7 +176,7 @@ namespace Satec.eXpertPowerPlus.Web
             int initialSetup = 0;
 
             dtHeader = dbUtils.FillDataSetTable("select DesignId, CASE WHEN Html IS NULL THEN 0 ELSE 1 END AS Audited from test_BillTemplates where CustomerId = "+sessionHandler.CustomerID+" and Type = 'header'", "test_BillTemplates").Tables[0];
-            dtGrid   = dbUtils.FillDataSetTable("select DesignId from test_BillTemplateGrids where CustomerId = " + sessionHandler.CustomerID, "test_BillTemplateGrids").Tables[0];
+            dtGrid   = dbUtils.FillDataSetTable("select DesignId, CASE WHEN Cell IS NULL THEN 0 ELSE 1 END AS Audited from test_BillTemplateGrids where CustomerId = " + sessionHandler.CustomerID, "test_BillTemplateGrids").Tables[0];
             dtFooter = dbUtils.FillDataSetTable("select DesignId, CASE WHEN Html IS NULL THEN 0 ELSE 1 END AS Audited from test_BillTemplates where CustomerId = " + sessionHandler.CustomerID + " and Type = 'footer'", "test_BillTemplates").Tables[0];
 
             List<Dictionary<string, object>> header = formatDataTable(dtHeader);
@@ -212,12 +227,20 @@ namespace Satec.eXpertPowerPlus.Web
         public static object switchTemplate(String type, String id)
         {
             String t = "";
+            String nullify = "";
             String typeString = " and Type='" + type + "'";
+            String customerString = " WHERE CustomerId = " + sessionHandler.CustomerID;
 
-            if (type == "header" || type == "footer") t = "test_BillTemplates";
-            if (type == "grid") { t = "test_BillTemplateGrids"; typeString = ""; }
+            if (type == "header" || type == "footer") {
+                t = "test_BillTemplates";
+                nullify = ", Html = null, Data = null, Height = null";
+            } 
+            if (type == "grid") { 
+                t = "test_BillTemplateGrids"; typeString = "";
+                nullify = ", Cell = null, CellText = null, Header = null, HeaderText = null, Total = null, TotalText = null, Border = null";
+            }
 
-            string query = "update " + t + " set DesignId = " + id + ", Html = null, Data = null, Height = null WHERE CustomerId = " + sessionHandler.CustomerID + typeString;
+            string query = "update " + t + " set DesignId = " + id + nullify + customerString + typeString;
 
             int result = dbUtils.ExecNonQuery(query);
             return js.Serialize(new{success = result});
@@ -273,7 +296,10 @@ namespace Satec.eXpertPowerPlus.Web
                 }
                 else
                 {
-                    dt = dbUtils.FillDataSetTable(queryDesign, "test_BillTemplateGrids").Tables[0];
+                    if (id != "0") {
+                        dt = dbUtils.FillDataSetTable(queryDesign, "test_BillTemplateGrids").Tables[0];
+                    }
+                    else dt = dbUtils.FillDataSetTable(queryDefault, "test_BillTemplateGrids").Tables[0];
                 }
                 
             }

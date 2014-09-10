@@ -97,6 +97,21 @@ $.extend( true, editor, {
 
 		actionPointSize : 5
 
-	}
+	},
+
+	/* global usage events to be used in modules */
+
+	onLoad 	 	 : function(){},
+	onMouseUp    : function(){},
+	onMouseDown  : function(){},
+	onMouseMove  : function(){},
+	onKeyDown    : function(){},
+	onKeyUp      : function(){},
+	onSelect 	 : function(){},
+	onMove   	 : function(){},
+	onTextCreate : function(){},
+	onBoxCreate  : function(){},
+	onRender 	 : function(){},
+	onRedraw 	 : function(){}
 
 })

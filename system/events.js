@@ -24,20 +24,21 @@ $.extend( true, editor, {
 		movedX     : 0,
 		movedY     : 0,
 
-		mouseDown : false,
-		drag      : false,
+		mousePressed : false,
+		drag         : false,
 
 		init : function()
 		{
+			console.log('events init');
 
 			this.keyboardEvents.push({ action : this.parent.functions.move, scope : this.parent.functions, shortcut : 'left',  args : 'left'  });
 			this.keyboardEvents.push({ action : this.parent.functions.move, scope : this.parent.functions, shortcut : 'up',    args : 'up'    });
 			this.keyboardEvents.push({ action : this.parent.functions.move, scope : this.parent.functions, shortcut : 'right', args : 'right' });
 			this.keyboardEvents.push({ action : this.parent.functions.move, scope : this.parent.functions, shortcut : 'down',  args : 'down'  });
 
-			this.parent.canvas.addEventListener("mousemove",$.proxy(this.mousemove,this),false);
-			this.parent.canvas.addEventListener("mousedown",$.proxy(this.mousedown,this),false);
-			this.parent.canvas.addEventListener("mouseup",  $.proxy(this.mouseup,this),false);
+			this.parent.canvas.addEventListener("mousemove",$.proxy(this.mouseMove,this),false);
+			this.parent.canvas.addEventListener("mousedown",$.proxy(this.mouseDown,this),false);
+			this.parent.canvas.addEventListener("mouseup",  $.proxy(this.mouseUp,this),false);
 
 			$(document).unbind('keydown')
 					   .unbind('keyup');
@@ -67,30 +68,32 @@ $.extend( true, editor, {
 			e.originalEvent.preventDefault();
 		},
 
-		mousedown : function( e )
+		mouseDown : function( e )
 		{
 			this.parent.helpers.getMousePosition( e );
-			this.mouseDown = true;
+			this.mousePressed = true;
 			this.parent.actions[ this.parent.action ].mouseDown.call(this);
 			this.parent.render();
 			this.parent.draw.ui();
-			this.parent.draw.reOrderByUi();
+			//this.parent.draw.reOrderByUi();
 			this.parent.draw.toolbar();
+			this.parent.onMouseDown();
 		},
 
-		mouseup : function( e )
+		mouseUp : function( e )
 		{
 			this.parent.helpers.getMousePosition( e );
 			this.parent.actions[ this.parent.action ].mouseUp.call(this);
-			this.mouseDown = false;
+			this.mousePressed = false;
 			this.drag      = false;
 			this.parent.render();
 			this.parent.draw.ui();
-			this.parent.draw.reOrderByUi();
+			//this.parent.draw.reOrderByUi();
 			this.parent.draw.toolbar();
+			this.parent.onMouseUp();
 		},
 
-		mousemove : function( e )
+		mouseMove : function( e )
 		{
 			this.parent.helpers.getMousePosition( e );
 
@@ -100,9 +103,10 @@ $.extend( true, editor, {
 			this.prevMoveX = this.mouseX;
 			this.prevMoveY = this.mouseY;
 
-			if( this.mouseDown ) this.drag = true; else this.drag = false;
+			if( this.mousePressed ) this.drag = true; else this.drag = false;
 			this.parent.actions[ this.parent.action ].mouseMove.call(this);
 			this.parent.render();
+			this.parent.onMouseMove();
 		},
 
 
@@ -124,7 +128,7 @@ $.extend( true, editor, {
 					keys 		  = keyboardEvent.shortcut.split('+');
 
 				for(i in keys) if( this.isPressed(keys[i]) ) found.push( true );
-				if(found.length && found.length == keys.length)
+				if(found.length && found.length == keys.length && !p)
 				{
 					p = true;
 					$.proxy(keyboardEvent.action,keyboardEvent.scope,keyboardEvent.args)();
@@ -132,6 +136,8 @@ $.extend( true, editor, {
 			}
 
 			if(p) e.preventDefault(); e.stopPropagation();
+
+			this.parent.onKeyDown();
 		},
 
 		keyUp : function( e )
@@ -142,6 +148,7 @@ $.extend( true, editor, {
 			this.setSpecialKeys( keyCode, false );
 			this.clearPressed( keyCode );
 			if(p) e.preventDefault(); e.stopPropagation();
+			this.parent.onKeyUp();
 		},
 
 		addToPressed : function( keyCode )
@@ -199,16 +206,11 @@ $.extend( true, editor, {
 			this.parent.render();
 			this.parent.draw.ui();
 			this.parent.draw.toolbar();
-			this.parent.draw.reOrderByUi();
+			//this.parent.draw.reOrderByUi();
 		},
 
-		browserDrop : function( e ){
-			for(i in this.browserDropEvents) this.browserDropEvents[i]( e );
-		},
-
-		canvasDrop : function( event, ui ){
-			for(i in this.canvasDropEvents) this.canvasDropEvents[i]( event, ui );
-		},
+		browserDrop : function( e ){         for(i in this.browserDropEvents) this.browserDropEvents[i]( e ); },
+		canvasDrop  : function( event, ui ){ for(i in this.canvasDropEvents)  this.canvasDropEvents[i]( event, ui ); }
 
 	}
 

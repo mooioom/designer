@@ -3,6 +3,7 @@
 console.log('templateEditor',editor);
 
 $('.toolbar.text .clear').remove();
+$('.toolbar.text').append('<div class="sep"></div>');
 $('.toolbar.text').append('<div class="item">'+getString('dynamicField')+' : <select id="dynamicFields"></select></div>');
 $('.toolbar.text').append('<div class="clear"></div>');
 
@@ -40,6 +41,14 @@ $('#dynamicFields').change(function(){
 
 });
 
+editor.onSelect = function(){
+	//console.log('onSelect');
+}
+
+editor.onMouseUp = function(){
+	console.log('onMouseUp');
+}
+
 templateEditor = {
 
 	id        : 0,
@@ -64,6 +73,8 @@ templateEditor = {
 		});
 
 		$('.saveTemplate').click($.proxy(this.save,this));
+
+		$(window).resize( templateEditor.reposition );
 
 	},
 
@@ -98,7 +109,7 @@ templateEditor = {
 				data    : template.Data
 			});
 
-			//$('#new,#save,#load').hide();
+			$('#new,#save,#load').hide();
 			this.reposition();
 
 		}),{
@@ -116,6 +127,11 @@ templateEditor = {
 		editor.ui.indicator.show( getString('Saving')+'...' );
 		//todo :: replace text to dynamic markup 
 		objects = $.extend(true,{},editor.objects);
+
+		// dynamic markup should export :
+		// 1. dynamic fields
+		// 2. globalized fields
+		// 3. preview data
 
 		this.api(
 			'saveTemplate',
@@ -140,7 +156,7 @@ templateEditor = {
 
 		$('.toolbox.designs').css('left', canvasLeft + 'px');
 		$('.toolbox.objects').css('left', canvasLeft + 810 + 'px');
-		$('.toolbox.resources').css('left', canvasLeft + 570 + 'px');
+		$('.toolbox.resources').css('left', canvasLeft + 526 + 'px');
 		$('.toolbox.text').css('left', canvasLeft + 'px');
 		$('.toolbox.templates').css('left', canvasLeft + 'px');
 
@@ -160,7 +176,6 @@ window.parent.scrollTo(0,0);
 window.parent.$('html').css('height','100%').css('overflow','hidden')
 
 templateEditor.init();
-
 
 /*
 	TODOS :
