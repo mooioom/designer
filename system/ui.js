@@ -221,18 +221,17 @@ $.extend( true, editor, {
 						$('.toolbox.resources .resourceItem').remove();
 						$('.menu',this.el).remove();
 
+						console.log(this.parent.resources);
+
 						for(i in this.parent.resources)
 						{
 							resource = $.extend(true,{},this.parent.resources[i]);
-							console.log('rendering resource',resource)
-							flag = false;
-							('.resourceItem',this.el).each(function(){
+							('.resourceItem',this.el).each(function()
+							{
 								name = $('.resourceName',this).html();
-								if(name==resource.name) flag = true;
 							});
-							//if(flag) continue;
 							this.prepend('.body','.resourceItem',resource);
-							$('.resourceImage',this.el).attr('src',resource.src);
+							$('.resourceImage:eq(0)',this.el).attr('src',resource.src);
 						};
 
 						if(!$('.resourceItem.selected').length) $('.toolbox.resources .delete').addClass('disabled');
