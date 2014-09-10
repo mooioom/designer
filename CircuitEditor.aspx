@@ -166,18 +166,6 @@
 			<canvas id="gridCanvas"></canvas>
 		</div>
 
-		<div class="toolbox grid hidden">
-			<div class="header"><%=Resources.Strings.Grid2 %></div>
-			<div class="close">X</div>
-			<div class="body">
-				<div class="item"><input type="checkbox" id="visible" checked="checked" /> <%=Resources.Strings.Visible %></div>
-				<div class="item"><input type="checkbox" id="snap" checked="checked" /> <%=Resources.Strings.Snap %> </div>
-				<div class="item"><input type="text" id="size" value="14"  /> <%=Resources.Strings.Size %> </div>
-				<div class="item"><input type="text" id="lineWidth" value="0.1"  /> <%=Resources.Strings.LineWidth %> </div>
-				<div class="item"><input type="text" id="strokeStyle" value="#000"  /> <%=Resources.Strings.Style %> </div>
-			</div>
-		</div>
-
 		<div class="toolbox text hidden">
 			<div class="header"><%=Resources.Strings.Text %></div>
 			<div class="close">X</div>
@@ -297,6 +285,11 @@
 			<string resource="grid"            value="<%=Resources.Strings.Grid2 %>"></string>
 			<string resource="objects"         value="<%=Resources.Strings.Objects %>"></string>
 			<string resource="resources"       value="<%=Resources.Strings.Resources %>"></string>
+			<string resource="visible"         value="Visible"></string>
+			<string resource="snap"            value="Snap"></string>
+			<string resource="size"            value="Size"></string>
+			<string resource="lineWidth"       value="LineWidth"></string>
+			<string resource="style"           value="Style"></string>
 
 			<!-- Template Editor -->
 			<string resource="LoadingTemplates" value="<%=Resources.Strings.LoadingTemplates %>"></string>

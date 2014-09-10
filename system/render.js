@@ -62,6 +62,7 @@ $.extend( true, editor, {
 
 		grid : function()
 		{
+			//debugger;
 			this.parent.gridCtx.clearRect(0, 0, this.parent.canvas.width, this.parent.canvas.height);
 
 			if(this.parent.grid.visible)

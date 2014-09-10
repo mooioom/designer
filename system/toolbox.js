@@ -26,13 +26,14 @@ editor.toolbox.prototype = {
 
 	init : function( data ){
 
-		this.parent = editor;
+		for(var i in data) this[i] = data[i];
+		if(!this.name) return;
+
+		this.parent = editor; // static name
+
+		if(this.parent.getToolbox(this.name)) return;
 
 		this.parent.toolboxes.push(this);
-
-		for(var i in data) this[i] = data[i];
-
-		if(!this.name) return;
 
 		this.system.parent = this;
 
@@ -72,6 +73,9 @@ editor.toolbox.prototype = {
 				},
 				containment : "window"
 			});
+			$('.toolbox.'+this.parent.name+' .close').click($.proxy(function(){
+				$('.toolbox.'+this.parent.name).hide();
+			},this))
 		},
 		loadTemplate : function(){
 			$.ajax({

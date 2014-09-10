@@ -7,9 +7,6 @@ $.extend( true, editor, {
 
 			init : function(){
 
-				//debugger;
-				if(this.parent.parent.getToolbox('objects')) return;
-
 				new this.parent.parent.toolbox({
 
 					name    : 'objects',
@@ -127,8 +124,6 @@ $.extend( true, editor, {
 
 				});
 
-				if(this.parent.parent.getToolbox('resources')) return;
-
 				new this.parent.parent.toolbox({
 
 					name    : 'resources',
@@ -221,15 +216,10 @@ $.extend( true, editor, {
 						$('.toolbox.resources .resourceItem').remove();
 						$('.menu',this.el).remove();
 
-						console.log(this.parent.resources);
-
 						for(i in this.parent.resources)
 						{
 							resource = $.extend(true,{},this.parent.resources[i]);
-							('.resourceItem',this.el).each(function()
-							{
-								name = $('.resourceName',this).html();
-							});
+							('.resourceItem',this.el).each(function() { name = $('.resourceName',this).html(); });
 							this.prepend('.body','.resourceItem',resource);
 							$('.resourceImage:eq(0)',this.el).attr('src',resource.src);
 						};
@@ -264,21 +254,56 @@ $.extend( true, editor, {
 					}
 				});
 
+				new this.parent.parent.toolbox({
+
+					name    : 'grid',
+					title   : getString('grid'),
+					visible : true,
+
+					render : function(){
+
+						$('.body',this.el).empty();
+						$('.body',this.el).append('<div class="item"><input type="checkbox" id="visible" checked="checked"> '+getString('visible')+'</div>');
+						$('.body',this.el).append('<div class="item"><input type="checkbox" id="snap" checked="checked"> '+getString('snap')+' </div>');
+						$('.body',this.el).append('<div class="item"><input type="text" id="size" value="14"> '+getString('size')+' </div>');
+						$('.body',this.el).append('<div class="item"><input type="text" id="lineWidth" value="0.1"> '+getString('lineWidth')+' </div>');
+						$('.body',this.el).append('<div class="item"><input type="text" id="strokeStyle" value="#000"> '+getString('style')+' </div>');
+
+					},
+
+					events : function(){
+
+						$('.toolbox.grid input[type="text"]').keyup(function(){
+							if(!$(this).val()) return;
+							editor.grid[$(this).attr('id')] = $(this).val();
+							editor.draw.grid();
+						});
+
+						$('.toolbox.grid #visible').change(function(){
+							editor.grid.visible = $(this).prop('checked');
+							editor.draw.grid.apply(editor);
+						});
+
+						$('.toolbox.grid #snap').change(function(){
+							editor.grid.snap = $(this).prop('checked');
+							editor.draw.grid();
+						});
+
+					}
+
+				});
+				
+
+				// can be removed once all toolboxes upgrade
+				// -----------------------------------------
 				$('.toolbox').draggable({ 
 					start       : function(){ $(this).css('right','initial'); },
 					containment : "window"
 				});
-
 				$(document).on('click', '.toolbox .close', function () {
 					$(this).parent().hide();
 				});
-
-				//grid
-				$('.toolbox.grid input[type="text"]').keyup(function(){
-					if(!$(this).val()) return;
-					editor.grid[$(this).attr('id')] = $(this).val();
-					editor.draw.grid();
-				});
+				// -----------------------------------------
 
 				$('.toolbox input[type="range"]').change(function(){
 					var prop = $(this).attr('class');
@@ -293,16 +318,6 @@ $.extend( true, editor, {
 					editor.history.save();
 				});
 
-				$('.toolbox.grid #visible').change(function(){
-					editor.grid.visible = $(this).prop('checked');
-					editor.draw.grid.apply(editor);
-				});
-
-				$('.toolbox.grid #snap').change(function(){
-					editor.grid.snap = $(this).prop('checked');
-					editor.draw.grid();
-				});
-
 				//text
 				$('.toolbox.text').hide();
 				$('.toolbox.text #text').bind('keyup change keydown',function(){ editor.functions.changeText( $(this).val() ); });
@@ -311,7 +326,7 @@ $.extend( true, editor, {
 
 			update : function( o ){
 
-				$('.toolbox.transform .rotate').val( o.rotate );
+				$('.toolbox.transform .rotate').val(     o.rotate );
 				$('.toolbox.shadow .shadowBlur').val(    o.shadowBlur    );
 				$('.toolbox.shadow .shadowOffsetX').val( o.shadowOffsetX );
 				$('.toolbox.shadow .shadowOffsetY').val( o.shadowOffsetY );
