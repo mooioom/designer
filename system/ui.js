@@ -258,7 +258,7 @@ $.extend( true, editor, {
 
 					name    : 'grid',
 					title   : getString('grid'),
-					visible : true,
+					visible : false,
 
 					render : function(){
 
