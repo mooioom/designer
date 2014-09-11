@@ -2,82 +2,6 @@
 
 console.log('templateEditor',editor);
 
-$('.toolbar.text .clear').remove();
-$('.toolbar.text').append('<div class="sep dynamicInput hidden"></div>');
-$('.toolbar.text').append('<div class="item dynamicInput hidden"><div class="left">Dynamic Data : <select id="dynamicFields"></select></div><div class="left"><div class="toolbarButtonB removeDynamicData">Make Static Text</div></div><div class="clear"></div></div>');
-$('.toolbar.text').append('<div class="sep chooseDataType hidden"></div>');
-$('.toolbar.text').append('<div class="item chooseDataType hidden"><div class="toolbarButtonB left dynamicData">Make Dynamic Data</div><div class="toolbarButtonB left globalizedString">Make Globalized String</div><div class="clear"></div></div>');
-$('.toolbar.text').append('<div class="clear"></div>');
-
-// get dynamic dynamicFields - << API
-
-dynamicFields = [
-	{ label : 'User Name',     value : 'valueUserName', display : '<userName>', type : 'dynamic' },
-	{ label : 'User Address',  value : 'valueUserAddress', display : '<userAddress>', type : 'dynamic' },
-	{ label : 'Serial Number', value : 'valueSerialNumber', display : '<serialNumber>', type : 'dynamic' },
-	{ label : 'Meter Number',  value : 'valueMeterNumber', display : '<meterNumber>', type : 'dynamic' },
-	{ label : 'Bill Period',   value : 'valueBillPeriod', display : '<billPeriod>', type : 'dynamic' }
-]
-
-// --- end of stub
-
-for(i in dynamicFields){
-
-	field = dynamicFields[i];
-	$('#dynamicFields').append('<option data="'+field.value+'" value="'+field.display+'">'+field.label+'</option>');
-
-}
-
-$('#dynamicFields').change(function(){
-
-	if(editor.selecteds.length) editor.selecteds[0].dynamic = $(this).val();
-
-});
-
-$('.removeDynamicData').click(function(){
-	if(editor.selecteds.length) {
-		if(editor.selecteds[0].dynamic) delete editor.selecteds[0].dynamic;
-		$('.chooseDataType').show();
-		$('.dynamicInput').hide();
-	}
-})
-
-editor.onSelect = function(){
-	//console.log('onSelect');
-}
-
-editor.onToolChange = function(){
-	if(editor.action == 'text'){
-		$('.chooseDataType').hide();
-		$('.dynamicInput').hide();
-	}else editor.onMouseUp();
-}
-
-editor.onMouseUp = function(){
-	console.log('onMouseUp');
-	$('.chooseDataType').hide();
-	$('.dynamicInput').hide();
-	if( editor.helpers.selectedIsText() )
-	{
-		text = editor.selecteds[0];
-		if(text.dynamic){
-			$('.dynamicInput').show();
-			$('#dynamicFields').val(text.dynamic);
-		}
-		else if(text.globalized){
-			// 
-		}
-		else{
-			$('.chooseDataType').show();
-		}
-	}
-}
-
-$('.dynamicData').click(function(){
-	$('.chooseDataType').hide();
-	$('.dynamicInput').show();
-});
-
 templateEditor = {
 
 	id        : 0,
@@ -86,11 +10,47 @@ templateEditor = {
 
 	init : function(){
 
-		this.id   = Number(getParams().id);
-		this.type = getParams().type;
+		this.id        = Number(getParams().id);
+		this.type      = getParams().type;
 		this.isAudited = getParams().audited;
+
+		this.getData();
+		this.render();
 		this.events();
 		this.load();
+
+	},
+
+	getData : function(){
+
+		//get available dynamic fields from server
+		this.dynamicFields = [
+			{ label : 'User Name',     value : 'valueUserName', display : '<userName>', type : 'dynamic' },
+			{ label : 'User Address',  value : 'valueUserAddress', display : '<userAddress>', type : 'dynamic' },
+			{ label : 'Serial Number', value : 'valueSerialNumber', display : '<serialNumber>', type : 'dynamic' },
+			{ label : 'Meter Number',  value : 'valueMeterNumber', display : '<meterNumber>', type : 'dynamic' },
+			{ label : 'Bill Period',   value : 'valueBillPeriod', display : '<billPeriod>', type : 'dynamic' }
+		]
+
+	},
+
+	render : function(){
+
+		$('.toolbar.text .clear').remove();
+		$('.toolbar.text').append('<div class="sep dynamicInput hidden"></div>');
+		$('.toolbar.text').append('<div class="item dynamicInput hidden"><div class="left">Dynamic Data : <select id="dynamicFields"></select></div><div class="left"><div class="toolbarButtonB removeDynamicData">Make Static Text</div></div><div class="clear"></div></div>');
+		$('.toolbar.text').append('<div class="sep chooseDataType hidden"></div>');
+		$('.toolbar.text').append('<div class="item chooseDataType hidden"><div class="toolbarButtonB left dynamicData">Make Dynamic Data</div><div class="toolbarButtonB left globalizedStringButton">Make Globalized String</div><div class="clear"></div></div>');
+		$('.toolbar.text').append('<div class="sep globalizedString hidden"></div>');
+		$('.toolbar.text').append('<div class="item globalizedString hidden"><div class="left globalHolder">Global Text : <input type="text" id="globalizedString" /><div id="globalizedStringChooser" class="hidden"></div></div><div class="left globalizedGlobe disabled"></div><div class="left"><div class="toolbarButtonB removeDynamicData">Make Static Text</div></div><div class="clear"></div></div>');
+		$('.toolbar.text').append('<div class="clear"></div>');
+
+		for(i in this.dynamicFields){
+
+			field = this.dynamicFields[i];
+			$('#dynamicFields').append('<option data="'+field.value+'" value="'+field.display+'">'+field.label+'</option>');
+
+		}
 
 	},
 
@@ -104,6 +64,131 @@ templateEditor = {
 		$('.saveTemplate').click($.proxy(this.save,this));
 
 		$(window).resize( templateEditor.reposition );
+
+		$('#dynamicFields').change(function(){
+
+			if(editor.selecteds.length) editor.selecteds[0].dynamic = $(this).val();
+
+		});
+
+		$('.removeDynamicData').click(function(){
+			if(editor.selecteds.length) {
+				if(editor.selecteds[0].dynamic) delete editor.selecteds[0].dynamic;
+				if(editor.selecteds[0].globalized) delete editor.selecteds[0].globalized;
+				$('.chooseDataType').show();
+				$('.dynamicInput').hide();
+				$('.globalizedString').hide();
+			}
+		});
+
+		$('#globalizedString').keyup(function(){
+
+			$('#globalizedStringChooser').empty().hide();
+			$('.globalizedGlobe').addClass('disabled');
+
+			var q = $(this).val();
+
+			$.ajax({
+				type        : "POST",
+				contentType : "application/json; charset=utf-8",
+				data        : JSON.stringify({q:q}),
+				url         : "../../Login/OpenWebMethods.aspx/StringTexts",
+				dataType    : "json",
+				success     : function( data )
+				{
+					if(data.d && data.d.length){
+						$('#globalizedStringChooser').show();
+						var strings = data.d;
+						for(i in strings)
+						{
+							var string = strings[i];
+							if(string.label == '' || string.label == ' ') continue;
+							$('#globalizedStringChooser').append('<div stringid="'+string.id+'" class="chooserItem">'+string.label+'</div>');
+						}
+					}
+					else $('#globalizedStringChooser').hide();
+				}
+			});
+
+		});
+
+		$(document).on('click', '#globalizedStringChooser .chooserItem', $.proxy(function( e ){
+
+			var item = $(e.target),
+				id   = Number(item.attr('stringid')),
+				text = item.html();
+
+			$('#globalizedString').val(text);
+			$('.globalizedGlobe').removeClass('disabled');
+
+			editor.selecteds[0].globalized = {
+				id   : id,
+				text : text
+			};
+
+			$('#globalizedStringChooser').empty().hide();
+
+		},this));
+
+		$('.globalizedGlobe').click($.proxy(function(){
+
+			this.api('StringsByIDLang',function( data ){
+				if(data.d && data.d.length){
+					langs = JSON.parse(data.d);
+					var divs = $('<div class="langs"></div>');
+					for(i in langs){
+						lang = langs[i];
+						if(!lang.Lang) lang.Lang = lang.Description;
+						divs.append('<div class="lang"><div class="left langTitle">'+lang.Lang+'</div><div class="left langText">'+lang.Text+'</div><div class="clear"></div></div>');
+					}
+					langPop = new Popup({
+						header  : 'Variations of ' + editor.selecteds[0].globalized.text,
+						content : divs.html(),
+						closeText : 'Close'
+					})
+				}
+			},{id  : editor.selecteds[0].globalized.id})
+
+		},this));
+
+		editor.onSelect = function(){
+			//console.log('onSelect');
+		}
+
+		editor.onToolChange = function(){
+			if(editor.action == 'text') $('.chooseDataType, .dynamicInput, .globalizedString').hide();
+			else editor.onMouseUp();
+		}
+
+		editor.onMouseUp = function(){
+			$('.chooseDataType, .dynamicInput, .globalizedString').hide();
+			if( editor.helpers.selectedIsText() )
+			{
+				text = editor.selecteds[0];
+				if(text.dynamic){
+					$('.dynamicInput').show();
+					$('#dynamicFields').val(text.dynamic);
+				}
+				else if(text.globalized){
+					$('.globalizedString').show();
+					$('#globalizedString').val(text.globalized.text);
+					$('.globalizedGlobe').removeClass('disabled');
+				}
+				else $('.chooseDataType').show();
+			}
+		}
+
+		$('.dynamicData').click(function(){
+			$('.chooseDataType').hide();
+			$('.dynamicInput').show();
+		});
+
+		$('.globalizedStringButton').click(function(){
+			$('.chooseDataType').hide();
+			$('#globalizedString').val('');
+			$('.globalizedGlobe').addClass('disabled');
+			$('.globalizedString').show();
+		});
 
 	},
 

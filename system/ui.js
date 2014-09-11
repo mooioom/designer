@@ -87,10 +87,20 @@ $.extend( true, editor, {
 
 					render  : function(){
 
+						//todo :: can be better if renders only the difference of current objects
+
+						if(!this.currentObjects)   this.currentObjects   = $.extend(true,[],this.parent.objects);
+						if(!this.currentSelecteds) this.currentSelecteds = $.extend(true,[],this.parent.selecteds);
+
+						else if( 
+							this.parent.helpers.equalObjects(this.currentObjects,   this.parent.objects) &&
+							this.parent.helpers.equalObjects(this.currentSelecteds, this.parent.selecteds)
+						) return;
+
 						$('.body',this.el).empty();
 						$('.body',this.el).removeClass('sortable').addClass('sortable');
 
-						this.parent.helpers.timer('start','objects toolbox :: render');
+						//this.parent.helpers.timer('start','objects toolbox :: render');
 
 						for(i in this.parent.objects)
 						{
@@ -103,9 +113,12 @@ $.extend( true, editor, {
 							this.prepend('.body','.objectsItem',object);
 						}
 
-						this.parent.helpers.timer('stop','objects toolbox :: render');
+						//this.parent.helpers.timer('stop','objects toolbox :: render');
 
 						this.toggleOptions();
+
+						this.currentObjects   = $.extend(true,[],this.parent.objects);
+						this.currentSelecteds = $.extend(true,[],this.parent.selecteds);
 						
 					},
 

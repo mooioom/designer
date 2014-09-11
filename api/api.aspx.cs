@@ -123,6 +123,20 @@ namespace Satec.eXpertPowerPlus.Web
         /* New api */
 
         [WebMethod]
+        public static Object StringsByIDLang(int id)
+        {
+            string query = @"select Text,Description, (select top 1 Text from StringsText st2 where st2.StringId = lol.StringId and Language = "+sessionHandler.LangID+@") as Lang 
+                            from StringsText st 
+	                            join ListOfLanguages lol on st.Language = lol.ID
+                            where st.StringId = "+id.ToString();
+            DataTable dt;
+
+            dt = dbUtils.FillDataSetTable(query, "strings").Tables[0];
+            List<Dictionary<string, object>> template = formatDataTable(dt);
+            return js.Serialize(template);
+        }
+
+        [WebMethod]
         public static object getTemplate(string id, string type, string isAudited)
         {
             string query;

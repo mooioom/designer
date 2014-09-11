@@ -291,6 +291,20 @@ $.extend( true, editor, {
 				timerStop = new Date().getTime();
 				console.log(title+' ended - '+ (timerStop - this.timerStart) +' milliseconds');
 			}
+		},
+
+		equalObjects : function(obj1,obj2){
+			if (!obj1 && !obj2) return true;
+			if (obj2.constructor !== obj1.constructor) return false;
+			var aMemberCount = 0;
+			for (var a in obj2) {
+				if (!obj2.hasOwnProperty(a)) continue;
+				if (typeof obj2[a] === 'object' && 
+					typeof obj1[a] === 'object' ? !this.equalObjects(obj2[a],obj1[a]) : obj2[a] !== obj1[a]) return false;
+				++aMemberCount;
+			}
+			for (var a in obj1) if (obj1.hasOwnProperty(a)) --aMemberCount;
+			return aMemberCount ? false : true;
 		}
 
 	}

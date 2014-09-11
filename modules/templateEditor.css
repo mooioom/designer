@@ -307,3 +307,65 @@
 #dynamicFields{
 	font-size: 11px;
 }
+
+.globalHolder{
+	position: relative;
+}
+
+#globalizedString{
+	padding: 3px;
+	width: 163px;
+}
+
+#globalizedStringChooser{
+	position: absolute;
+	right: 0px;
+	width: 171px;
+	background: #fff;
+	top: 22px;
+	border: 1px solid #C7C7C7;
+	box-sizing: border-box;
+	border-top: 0px;
+}
+
+#globalizedStringChooser .chooserItem{
+	border-bottom: 1px solid #F1F1F1;
+	padding-left: 5px;
+}
+
+#globalizedStringChooser .chooserItem:last-of-type{
+	border:none;
+}
+
+#globalizedStringChooser .chooserItem:hover{
+	cursor: pointer;
+	background: #E6E6E6;
+}
+
+.globalizedGlobe{
+	width: 21px;
+	height: 21px;
+	background: url('images/glb.png');
+	cursor: pointer;
+	background-repeat: no-repeat;
+	background-size: cover;
+	margin-left: 5px;
+	margin-top: 1px;
+	margin-right: 3px;
+}
+
+.popup .langs{}
+.popup .lang{
+    font-size: 14px;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 10px;
+    padding-top: 10px;
+}
+.popup .langTitle{
+    width: 240px;
+    color: #464646;
+}
+.popup .langText{
+    width: 240px;
+    color: #2D507E;
+}
