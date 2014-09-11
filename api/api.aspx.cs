@@ -125,10 +125,14 @@ namespace Satec.eXpertPowerPlus.Web
         [WebMethod]
         public static Object StringsByIDLang(int id)
         {
-            string query = @"select Text,Description, (select top 1 Text from StringsText st2 where st2.StringId = lol.StringId and Language = "+sessionHandler.LangID+@") as Lang 
-                            from StringsText st 
-	                            join ListOfLanguages lol on st.Language = lol.ID
-                            where st.StringId = "+id.ToString();
+            string query = @"select 
+	                        st.Text,
+	                        ISNULL(st2.Text, Description) Description
+                        from StringsText st 
+	                        join ListOfLanguages lol on st.Language = lol.ID
+	                        left join  StringsText st2 on st2.StringId = lol.StringId and st2.Language = " + sessionHandler.LangID + @"
+                        where st.StringId = " +id.ToString();
+
             DataTable dt;
 
             dt = dbUtils.FillDataSetTable(query, "strings").Tables[0];

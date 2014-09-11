@@ -297,3 +297,29 @@ function encode_utf8(s) {
 function decode_utf8(s) {
   return decodeURIComponent(escape(s));
 }
+
+// todos
+// - images should also be dynamic
+// - export objects and replace
+// - handle ltr / rtl
+
+// crossbrowser issues
+// -------------------
+
+// FIREFOX
+
+// + medium   - css zoom issue on preview image - customerDetails 
+// + minor    - preview button text bleeds - customerDetails
+// + minor    - tools background color is blue - templateEditor
+// + medium   - some of the texts moved a bit to the top when comparing to chrome - templateEditor
+// + critical - scrolling doesn't work in the 'objects' toolbox, dragging the scroller causes entire toolbox to drag - templateEditor
+// + critical - dragging an image from 'resources' toolbox to canvas doesn't work - templateEditor (same bug in explorer)
+
+// EXPLORER 9,10,11
+
+// + medium   - preview image appears smaller - customerDetails
+// + critical - poor toolboxes display and movement behavior - templateEditor
+// + minor    - tools background color is blue (like firefox) - templateEditor
+// + critical - main menu doesn't show (shows undefined) also menu shortcuts doesn't work - templateEditor
+// + critical - wrong scrolling behavior on 'objects' toolbox, on mouseup the toolbox starts dragging - templateEditor
+// + critical - dragging an image from 'resources' toolbox to canvas doesn't work - templateEditor (same bug in firefox)
