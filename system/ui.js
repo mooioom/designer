@@ -27,39 +27,49 @@ $.extend( true, editor, {
 					},
 
 					preLoad : function(){},
-					onLoad  : function(){},
-					render  : function(){
 
-						$('.body',this.el).empty();
+					onLoad  : function(){
+						this.initRender();
+						this.initEvents();
+					},
+
+					initRender : function(){
 						$('.menu',this.el).remove();
-
-						$('.body',this.el).removeClass('sortable').addClass('sortable');
-
-						for(i in this.parent.objects)
-						{
-							object = $.extend(true,{},this.parent.objects[i]);
-							if(this.parent.helpers.isObjectSelected(object.id)) object.selected = true;
-							title = object.type; if(object.src) title = 'image';
-							title += ' ' + object.id; if(object.type == 'text') title += ' - ' + object.text;
-							title = title.capitalize();
-							object.title = title;
-							this.prepend('.body','.objectsItem',object);
-						}
-
-						this.el.append('<div class="menu"></div>');
-
+						$('.toolbox.objects').append('<div class="menu"></div>');
 						$('.menu',this.el).append('<div class="item add right">'+getString('new')+'</div>');
 						$('.menu',this.el).append('<div class="item delete disabled right"></div>');
 						$('.menu',this.el).append('<div class="item shadow disabled left">Shadow</div>');
 						$('.menu',this.el).append('<div class="item transform disabled left">Transform</div>');
 						$('.menu',this.el).append('<div class="item fx disabled left">fx</div>');
 						$('.menu',this.el).append('<div class="clear"></div>');
-
-						this.toggleOptions();
-
-						
 					},
-					events  : function(){
+					initEvents : function(){
+
+						$(document).on('click', '.toolbox .objectVisible', $.proxy(function( e ){
+							e.preventDefault(); e.stopPropagation();
+							$(e.target).toggleClass('invisible');
+							id = Number($(e.target).parent().attr('objectid'));
+							this.parent.functions.getObject(id).visible = !$(e.target).hasClass('invisible');
+							this.parent.render();
+						},this));
+
+						$(document).on('click', '.toolbox .objectLock',$.proxy(function( e ){
+							e.preventDefault(); e.stopPropagation();
+							$(e.target).toggleClass('unlocked');
+							id = Number($(e.target).parent().attr('objectid'));
+							this.parent.functions.getObject(id).locked = !$(e.target).hasClass('unlocked');
+							this.parent.render();
+						},this));
+
+						$('.delete',this.el).unbind('click').bind('click',$.proxy(function(){ this.parent.functions.delete(); },this));
+						$('.shadow',this.el).unbind('click').bind('click',$.proxy(function(){ $('.toolbox.shadow').show(); },this));
+						$('.transform',this.el).unbind('click').bind('click',$.proxy(function(){ $('.toolbox.transform').show(); },this));
+						$('.add',this.el).unbind('click').bind('click',$.proxy(function(){
+							this.parent.create.box(0,0,this.parent.width,this.parent.height);
+							this.parent.render(); 
+							this.parent.draw.ui();
+							this.parent.draw.toolbar();
+						},this));
 
 						$('.sortable').multisortable({
 							items         : ".objectsItem",
@@ -73,45 +83,36 @@ $.extend( true, editor, {
 								this.toggleOptions();
 							},this)
 						});
-
-						$('.objectVisible',this.el).unbind('click').bind('click',$.proxy(function( e ){
-							e.preventDefault(); e.stopPropagation();
-							$(e.target).toggleClass('invisible');
-							id = Number($(e.target).parent().attr('objectid'));
-							this.parent.functions.getObject(id).visible = !$(e.target).hasClass('invisible');
-							this.parent.render();
-						},this));
-
-						$('.objectLock',this.el).unbind('click').bind('click',$.proxy(function( e ){
-							e.preventDefault(); e.stopPropagation();
-							$(e.target).toggleClass('unlocked');
-							id = Number($(e.target).parent().attr('objectid'));
-							this.parent.functions.getObject(id).locked = !$(e.target).hasClass('unlocked');
-							this.parent.render();
-						},this));
-
-						$('.delete',this.el).unbind('click').bind('click',$.proxy(function(){
-							this.parent.functions.delete();
-						},this));
-
-						$('.shadow',this.el).unbind('click').bind('click',$.proxy(function(){
-							$('.toolbox.shadow').show();
-						},this));
-
-						$('.transform',this.el).unbind('click').bind('click',$.proxy(function(){
-							$('.toolbox.transform').show();
-						},this));
-
-						$('.add',this.el).unbind('click').bind('click',$.proxy(function(){
-							this.parent.create.box(0,0,this.parent.width,this.parent.height);
-							this.parent.render(); 
-							this.parent.draw.ui();
-							this.parent.draw.toolbar();
-							//this.parent.draw.reOrderByUi( true );
-						},this));
-
 					},
+
+					render  : function(){
+
+						$('.body',this.el).empty();
+						$('.body',this.el).removeClass('sortable').addClass('sortable');
+
+						this.parent.helpers.timer('start','objects toolbox :: render');
+
+						for(i in this.parent.objects)
+						{
+							object = $.extend(true,{},this.parent.objects[i]);
+							if(this.parent.helpers.isObjectSelected(object.id)) object.selected = true;
+							title = object.type; if(object.src) title = 'image';
+							title += ' ' + object.id; if(object.type == 'text') title += ' - ' + object.text;
+							title = title.capitalize();
+							object.title = title;
+							this.prepend('.body','.objectsItem',object);
+						}
+
+						this.parent.helpers.timer('stop','objects toolbox :: render');
+
+						this.toggleOptions();
+						
+					},
+
+					events  : function(){},
+
 					toggleOptions : function(){
+						
 						if(this.parent.selecteds && this.parent.selecteds.length) {
 							$('.shadow',   this.el).removeClass('disabled');
 							$('.transform',this.el).removeClass('disabled');
