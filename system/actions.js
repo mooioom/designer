@@ -54,30 +54,109 @@ $.extend( true, editor, {
 				this.parent.events.startMoveX = this.parent.events.mouseX;
 				this.parent.events.startMoveY = this.parent.events.mouseY;
 				for(i in this.parent.selecteds)
+				{
+
+					var o = this.parent.selecteds[i];
+
+					// if(o.src) {
+					// 	if(!o.originalSrc) {
+					// 		o.originalSrc = o.src;
+					// 	} else {
+					// 		o.src    = o.originalSrc;
+					// 		o.startX = o.originalStartX;
+					// 		o.startY = o.originalStartY;
+					// 		o.width  = o.originalWidth;
+					// 		o.height = o.originalHeight;
+					// 	}
+					// }
+
 					this.parent.temps.push({
-						startX : this.parent.selecteds[i].startX,
-						startY : this.parent.selecteds[i].startY,
-						endX   : this.parent.selecteds[i].endX,
-						endY   : this.parent.selecteds[i].endY,
+						startX : o.startX,
+						startY : o.startY,
+						endX   : o.endX,
+						endY   : o.endY,
 					});
+				}
 			},
 			mouseUp : function(){
+				// assign cropped image data
+				for(i in this.parent.selecteds)
+				{
+
+					var o = this.parent.selecteds[i];
+
+					if(o.src){
+
+						// issues:
+						// - should handle rotation & other transformation
+						// - should find viewable size and only render this (on helper canvas)
+						// - should work in first drop of image to canvas
+						// var mime;
+						// if( o.src.search('image/png') != -1 || 
+						// 	o.src.search('image/gif') != -1 ||
+						// 	o.src.search('image/tif') != -1 ) mime = 'png'; else mime = 'jpeg';
+
+						// var w = this.parent.width,
+						// 	h = this.parent.height;
+
+						// o.originalStartX = o.startX;
+						// o.originalStartY = o.startY;
+						// o.originalWidth  = o.width;
+						// o.originalHeight = o.height;
+
+						// //get rendering dimensions
+						// var rsx, rsy, rex, rey, rw, rh;
+						// if(o.startX < 0) rsx = 0; else rsx = o.startX;
+						// if(o.startY < 0) rsy = 0; else rsy = o.startY;
+						// if(o.endX > w) rex = w; else rex = o.endX;
+						// if(o.endY > h) rey = h; else rey = o.endY;
+						// rw = rex - rsx;
+						// rh = rey - rsy;
+
+						// $(this.parent.helperCanvas).attr('width',rw);
+						// $(this.parent.helperCanvas).attr('height',rh);
+
+						// //get dimensions within the original image
+						// if(o.startX < 0 && o.startY < 0 && o.endX < w && o.endY < h){
+						// 	o.startX = o.startX;
+						// 	o.startY = o.startY;
+						// 	o.endX = 
+						// }
+						// else if(o.startX > 0 && o.startY < 0 && o.endX < w && o.endY > h) // case 2
+
+						// this.parent.draw.clearCanvas(this.parent.helperCtx);
+						// this.parent.draw.drawObject(o,this.parent.helperCtx);
+
+						// o.src = this.parent.helperCanvas.toDataURL('image/'+mime,0.5);
+						// o.startX = 0; 
+						// o.startY = 0; 
+						// o.width  = this.parent.width; 
+						// o.height = this.parent.height;
+					}
+
+				}
 				this.parent.temps = [];
 			},
 			mouseMove : function(){
+
 				if(this.parent.events.drag)
 				{
 					this.parent.events.movedX = this.parent.events.mouseX - this.parent.events.startMoveX;
 					this.parent.events.movedY = this.parent.events.mouseY - this.parent.events.startMoveY;
 					for(i in this.parent.selecteds)
 					{
-						var o = this.parent.selecteds[i];
+						var o    = this.parent.selecteds[i],
+							temp = this.parent.temps[i],
+							x    = this.parent.events.movedX,
+							y    = this.parent.events.movedY;
+
 						if( o.locked   ) return;
 						if( !o.visible ) return;
-						o.startX = this.parent.helpers.getClosestSnapCoords( this.parent.temps[i].startX + this.parent.events.movedX );
-						o.endX   = this.parent.helpers.getClosestSnapCoords( this.parent.temps[i].endX   + this.parent.events.movedX );
-						o.startY = this.parent.helpers.getClosestSnapCoords( this.parent.temps[i].startY + this.parent.events.movedY );
-						o.endY   = this.parent.helpers.getClosestSnapCoords( this.parent.temps[i].endY   + this.parent.events.movedY );
+
+						o.startX = this.parent.helpers.getClosestSnapCoords( temp.startX + x );
+						o.endX   = this.parent.helpers.getClosestSnapCoords( temp.endX   + x );
+						o.startY = this.parent.helpers.getClosestSnapCoords( temp.startY + y );
+						o.endY   = this.parent.helpers.getClosestSnapCoords( temp.endY   + y );
 					}	
 				}
 			}
