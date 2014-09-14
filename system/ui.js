@@ -228,15 +228,6 @@ $.extend( true, editor, {
 					},
 					onLoad  : function(){},
 					render  : function(){
-
-						$('.dropItem.ui-draggable').css('position','relative').css('left','initial').css('top','initial');
-
-						flags = [];
-						$('.toolbox.resources .resourceItem').each($.proxy(function( i,e ) {
-							var name = $('.resourceName',e).html();
-							for(i in this.parent.resources) if(name == this.parent.resources[i].name) flags.push(true);
-						},this));
-						if(this.parent.resources.length && flags.length == this.parent.resources.length) return;
 						
 						$('.toolbox.resources .resourceItem').remove();
 						$('.menu',this.el).remove();
@@ -244,6 +235,7 @@ $.extend( true, editor, {
 						for(i in this.parent.resources)
 						{
 							resource = $.extend(true,{},this.parent.resources[i]);
+							('.resourceItem',this.el).each(function() { name = $('.resourceName',this).html(); });
 							this.prepend('.body','.resourceItem',resource);
 							$('.resourceImage:eq(0)',this.el).attr('src',resource.src);
 						};

@@ -12,7 +12,6 @@ $.extend( true, editor, {
 		$('.stage').empty();
 		$('.stage').append('<canvas id="canvas"></canvas>');
 		$('.stage').append('<canvas id="gridCanvas"></canvas>');
-		$('.stage').append('<canvas id="helperCanvas" class="hidden"></canvas>');
 
 		if(this.debug) $('.debugger').show();
 
@@ -20,8 +19,8 @@ $.extend( true, editor, {
 		this.width  = data.width;
 		this.height = data.height;
 
-		$('#canvas, #gridCanvas, #helperCanvas').attr( 'width',  this.width );
-		$('#canvas, #gridCanvas, #helperCanvas').attr( 'height', this.height );
+		$('#canvas, #gridCanvas').attr( 'width',  this.width );
+		$('#canvas, #gridCanvas').attr( 'height', this.height );
 
 		this.helpers.positionCanvas();
 
@@ -34,7 +33,6 @@ $.extend( true, editor, {
 		this.gridCtx    = this.gridCanvas.getContext("2d");
 
 		this.helperCanvas = document.getElementById("helperCanvas");
-		this.helperCtx    = this.helperCanvas.getContext("2d");
 
 		this.menu.init();
 		this.ui.toolbar.init();
