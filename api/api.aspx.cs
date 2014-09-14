@@ -5,6 +5,8 @@ using System;
 using Satec.eXpertPower.Utilities;
 using System.Web.Script.Serialization;
 using System.Data.SqlClient;
+using Satec.eXpertPowerPlus.BL;
+using HtmlAgilityPack;
 
 namespace Satec.eXpertPowerPlus.Web
 {
@@ -13,149 +15,41 @@ namespace Satec.eXpertPowerPlus.Web
         private static SessionHandler sessionHandler = new SessionHandler();
         private static JavaScriptSerializer js       = new JavaScriptSerializer();
         private static DBUtils dbUtils               = new DBUtils();
-
+        
+        // <invoiceLayout.aspx>
+        // --------------------
         [WebMethod]
-        public static object init()
+        public static object initLayout()
         {
-            DataTable templatesDt;
-            DataTable designsDt;
-
-            templatesDt = dbUtils.FillDataSetTable("select * from test_billTemplates", "billTemplates").Tables[0];
-            designsDt = dbUtils.FillDataSetTable("select * from test_BillTemplatesDesigns", "test_BillTemplatesDesigns").Tables[0];
-
-            List<Dictionary<string, object>> templates = formatDataTable(templatesDt);
-            List<Dictionary<string, object>> designs   = formatDataTable(designsDt);
-
-            var d = new { 
-                templates = templates,
-                designs   = designs 
-            };
-
-            return js.Serialize(d);
+            return js.Serialize(new BillTemplateBL(sessionHandler.LangID).initLayout(sessionHandler.CustomerID));
         }
 
         [WebMethod]
-        public static object getDesigns() {
-            DataTable designsDt;
-            js.MaxJsonLength = Int32.MaxValue;
-            designsDt = dbUtils.FillDataSetTable("select * from test_BillTemplatesDesigns", "test_BillTemplatesDesigns").Tables[0];
-            List<Dictionary<string, object>> designs = formatDataTable(designsDt);
-            return js.Serialize(designs);
+        public static object getTemplateData(string type, int id, int isAudited)
+        {
+            DataTable dt = new BillTemplateBL(sessionHandler.LangID).getTemplateData(sessionHandler.CustomerID, type, id, isAudited);
+            List<Dictionary<string, object>> data = formatDataTable(dt);
+            return js.Serialize(data);
         }
 
         [WebMethod]
-        public static object getDesign( string id )
+        public static object setTemplate(string type, int id)
         {
-            DataTable designDt;
-            designDt = dbUtils.FillDataSetTable("select * from test_BillTemplatesDesigns where ID = "+id, "test_BillTemplatesDesigns").Tables[0];
-            List<Dictionary<string, object>> design = formatDataTable(designDt);
-            return js.Serialize(design);
+            return js.Serialize(new { 
+                success = new BillTemplateBL(sessionHandler.LangID).setTemplate(sessionHandler.CustomerID, type, id) 
+            });
         }
+        //</invoiceLayout.aspx>
 
+        // <Template Editor>
+        // -----------------
         [WebMethod]
-        public static object setupTemplate(String name, String height, String type, String designId)
+        public static object getTemplate(int id, string type, int isAudited)
         {
-            string data = "";
+            DataTable dt = new DataTable();
+            if (isAudited == 0) dt = new BillTemplateBL(sessionHandler.LangID).getDesign(type, id); 
+            else                dt = new BillTemplateBL(sessionHandler.LangID).getTemplate(sessionHandler.CustomerID, type);
 
-            if (designId != "0")
-            {
-                DataTable designDt;
-                designDt = dbUtils.FillDataSetTable("select * from test_BillTemplatesDesigns where ID = " + designId, "test_BillTemplatesDesigns").Tables[0];
-                List<Dictionary<string, object>> design = formatDataTable(designDt);
-                data = designDt.Rows[0]["Data"].ToString();
-            }
-
-            string query = @"insert into test_BillTemplates (UserId,Name,Height,Type,Data,Active) VALUES (" + sessionHandler.UserID + ",'" + name + "'," + height + ",'" + type + "',N'" + data + "',0);";
-            int result;
-            result = dbUtils.ExecNonQuery(query);
-            return js.Serialize(result);
-        }
-
-        [WebMethod]
-        public static object setupDesign(String name,String type,String height)
-        {
-            string query = @"insert into test_BillTemplatesDesigns (Name,Height,Type,Data,Active) VALUES ('" + name + "'," + height + ",'" + type + "','',1);";
-            int result;
-            result = dbUtils.ExecNonQuery(query);
-            return js.Serialize(result);
-        }
-
-        [WebMethod]
-        public static object removeDesign(String id)
-        {
-            string query = @"delete from test_BillTemplatesDesigns WHERE ID="+id+";";
-            int result;
-            result = dbUtils.ExecNonQuery(query);
-            return js.Serialize(result);
-        }
-
-        [WebMethod]
-        public static object removeTemplate(String id)
-        {
-            string query = @"delete from test_BillTemplates WHERE ID="+id+";";
-            int result;
-            result = dbUtils.ExecNonQuery(query);
-            return js.Serialize(result);
-        }
-
-        [WebMethod]
-        public static object saveDesign(String id, String data, String html)
-        {
-            string query = @"update test_BillTemplatesDesigns SET Data = N'"+data+"', Html = N'"+html+"' WHERE ID=" + id + ";";
-            int result;
-            result = dbUtils.ExecNonQuery(query);
-            return js.Serialize(result);
-        }
-
-        [WebMethod]
-        public static object setActiveTemplate(String id, String type, String active)
-        {
-            string query = @"update test_billTemplates set Active = 0 where Type='" + type + "';";
-            int result1;
-            result1 = dbUtils.ExecNonQuery(query);
-
-            query = @"update test_BillTemplates SET Active = "+active+" where ID = "+id+" ;";
-            int result2;
-            result2 = dbUtils.ExecNonQuery(query);
-            return js.Serialize(result2);
-        }
-
-        /* New api */
-
-        [WebMethod]
-        public static Object StringsByIDLang(int id)
-        {
-            string query = @"select 
-	                        st.Text,
-	                        ISNULL(st2.Text, Description) Description
-                        from StringsText st 
-	                        join ListOfLanguages lol on st.Language = lol.ID
-	                        left join  StringsText st2 on st2.StringId = lol.StringId and st2.Language = " + sessionHandler.LangID + @"
-                        where st.StringId = " +id.ToString();
-
-            DataTable dt;
-
-            dt = dbUtils.FillDataSetTable(query, "strings").Tables[0];
-            List<Dictionary<string, object>> template = formatDataTable(dt);
-            return js.Serialize(template);
-        }
-
-        [WebMethod]
-        public static object getTemplate(string id, string type, string isAudited)
-        {
-            string query;
-            DataTable dt;
-
-            if (isAudited == "0")
-            {
-                //return the design
-                query = "select * from test_BillTemplatesDesigns where Type = '" + type + "' and ID = " + id;
-            }
-            else { 
-                query = "select * from test_BillTemplates where Type = '" + type + "' and CustomerId = " + sessionHandler.CustomerID;
-            }
-            
-            dt = dbUtils.FillDataSetTable(query, "test_BillTemplates").Tables[0];
             List<Dictionary<string, object>> template = formatDataTable(dt);
             return js.Serialize(template);
         }
@@ -186,150 +80,77 @@ namespace Satec.eXpertPowerPlus.Web
         }
 
         [WebMethod]
-        public static object initLayout()
+        public static object getHtml(string html)
         {
-            // check tables for data
-            DataTable dtHeader, dtFooter, dtGrid, dtHeaderDesigns,dtGridDesigns,dtFooterDesigns;
-
-            int initialSetup = 0;
-
-            dtHeader = dbUtils.FillDataSetTable("select DesignId, CASE WHEN Html IS NULL THEN 0 ELSE 1 END AS Audited from test_BillTemplates where CustomerId = "+sessionHandler.CustomerID+" and Type = 'header'", "test_BillTemplates").Tables[0];
-            dtGrid   = dbUtils.FillDataSetTable("select DesignId, CASE WHEN Cell IS NULL THEN 0 ELSE 1 END AS Audited from test_BillTemplateGrids where CustomerId = " + sessionHandler.CustomerID, "test_BillTemplateGrids").Tables[0];
-            dtFooter = dbUtils.FillDataSetTable("select DesignId, CASE WHEN Html IS NULL THEN 0 ELSE 1 END AS Audited from test_BillTemplates where CustomerId = " + sessionHandler.CustomerID + " and Type = 'footer'", "test_BillTemplates").Tables[0];
-
-            List<Dictionary<string, object>> header = formatDataTable(dtHeader);
-            List<Dictionary<string, object>> grid   = formatDataTable(dtGrid);
-            List<Dictionary<string, object>> footer = formatDataTable(dtFooter);
-
-            //if nothing found setup initial values
-            if (dtHeader.Rows.Count == 0)
-            {
-                string query = "insert into test_BillTemplates (Type,CustomerId) Values ('header'," + sessionHandler.CustomerID + ");";
-                initialSetup = dbUtils.ExecNonQuery(query);
-            }
-            if (dtGrid.Rows.Count == 0)
-            {
-                string query = "insert into test_BillTemplateGrids (CustomerId) Values (" + sessionHandler.CustomerID + ");";
-                initialSetup = dbUtils.ExecNonQuery(query);
-            }
-            if (dtFooter.Rows.Count == 0)
-            {
-                string query = "insert into test_BillTemplates (Type,CustomerId) Values ('footer'," + sessionHandler.CustomerID + ");";
-                initialSetup = dbUtils.ExecNonQuery(query);
-            }
-
-            //get design options
-
-            dtHeaderDesigns = dbUtils.FillDataSetTable("select ID, Type, Name, IsDefault from test_BillTemplatesDesigns where Type = 'header' AND Active = 1 order by IsDefault DESC", "test_BillTemplatesDesigns").Tables[0];
-            dtGridDesigns   = dbUtils.FillDataSetTable("select ID, Name, IsDefault from test_BillTemplateGridsDesigns where Active = 1 order by IsDefault DESC", "test_BillTemplateGridsDesigns").Tables[0];
-            dtFooterDesigns = dbUtils.FillDataSetTable("select ID, Type, Name, IsDefault from test_BillTemplatesDesigns where Type = 'footer' AND Active = 1 order by IsDefault DESC", "test_BillTemplatesDesigns").Tables[0];
-
-            List<Dictionary<string, object>> headerDesigns = formatDataTable(dtHeaderDesigns);
-            List<Dictionary<string, object>> gridDesigns   = formatDataTable(dtGridDesigns);
-            List<Dictionary<string, object>> footerDesigns = formatDataTable(dtFooterDesigns);
-
-            //if none create from default template
-            return js.Serialize(new 
-            {
-                header        = header,
-                footer        = footer,
-                grid          = grid,
-                headerDesigns = headerDesigns,
-                gridDesigns   = gridDesigns,
-                footerDesigns = footerDesigns,
-                initialSetup  = initialSetup
-            });
+            return js.Serialize(new { html = html });
         }
 
         [WebMethod]
-        public static object switchTemplate(String type, String id)
+        public static Object StringsByIDLang(int id)
         {
-            String t = "";
-            String nullify = "";
-            String typeString = " and Type='" + type + "'";
-            String customerString = " WHERE CustomerId = " + sessionHandler.CustomerID;
+            string query = @"select 
+	                        st.Text,
+	                        ISNULL(st2.Text, Description) Description
+                        from StringsText st 
+	                        join ListOfLanguages lol on st.Language = lol.ID
+	                        left join  StringsText st2 on st2.StringId = lol.StringId and st2.Language = " + sessionHandler.LangID + @"
+                        where st.StringId = " + id.ToString();
 
-            if (type == "header" || type == "footer") {
-                t = "test_BillTemplates";
-                nullify = ", Html = null, Data = null, Height = null";
-            } 
-            if (type == "grid") { 
-                t = "test_BillTemplateGrids"; typeString = "";
-                nullify = ", Cell = null, CellText = null, Header = null, HeaderText = null, Total = null, TotalText = null, Border = null";
-            }
+            DataTable dt;
 
-            string query = "update " + t + " set DesignId = " + id + nullify + customerString + typeString;
+            dt = dbUtils.FillDataSetTable(query, "strings").Tables[0];
+            List<Dictionary<string, object>> template = formatDataTable(dt);
+            return js.Serialize(template);
+        }
+        //</Template Editor>
 
-            int result = dbUtils.ExecNonQuery(query);
-            return js.Serialize(new{success = result});
+        //<Template Editor - Admin>
+        //-------------------------
+        [WebMethod]
+        public static object getDesigns()
+        {
+            DataTable designsDt;
+            js.MaxJsonLength = Int32.MaxValue;
+            designsDt = dbUtils.FillDataSetTable("select * from test_BillTemplatesDesigns", "test_BillTemplatesDesigns").Tables[0];
+            List<Dictionary<string, object>> designs = formatDataTable(designsDt);
+            return js.Serialize(designs);
         }
 
         [WebMethod]
-        public static object getTemplateData(String type, String id, String isAudited)
+        public static object getDesign(string type, int id)
         {
-            String queryDefault;
-            String queryDesign;
-            String query;
-            DataTable dt = new DataTable();
-            List<Dictionary<string, object>> data;
-
-            if(type == "header" || type == "footer")
-            {
-                queryDefault = "select top 1 Html from test_BillTemplatesDesigns where isDefault = '1' and Type = '" + type + "';";
-                query        = "select top 1 Html from test_BillTemplates where Type = '" + type + "' AND CustomerId = " + sessionHandler.CustomerID;
-                queryDesign  = "select top 1 Html from test_BillTemplatesDesigns where ID = " + id + " and Type='" + type + "'";
-                if (isAudited != "0")
-                {
-                    // get user data
-                    if (id != "0")
-                    {
-                        dt = dbUtils.FillDataSetTable(query, "test_BillTemplates").Tables[0];
-                        if (dt.Rows[0]["Html"].ToString() == "") dt = dbUtils.FillDataSetTable(queryDefault, "test_BillTemplates").Tables[0];
-                    }
-                    else dt = dbUtils.FillDataSetTable(queryDefault, "test_BillTemplates").Tables[0];
-                }
-                else
-                {
-                    if (id != "0") 
-                    {
-                        dt = dbUtils.FillDataSetTable(queryDesign, "test_BillTemplates").Tables[0];
-                    }
-                    else dt = dbUtils.FillDataSetTable(query, "test_BillTemplates").Tables[0];
-                }
-                
-            }
-            if (type == "grid") 
-            {
-                queryDefault = "select top 1 * from test_BillTemplateGridsDesigns where isDefault = '1'";
-                query        = "select top 1 * from test_BillTemplateGrids where CustomerId = " + sessionHandler.CustomerID;
-                queryDesign  = "select top 1 * from test_BillTemplateGridsDesigns where ID = " + id;
-                if (isAudited != "0")
-                {
-                    if (id != "0")
-                    {
-                        dt = dbUtils.FillDataSetTable(query, "test_BillTemplateGrids").Tables[0];
-                        if (dt.Rows[0]["Cell"].ToString() == "") dt = dbUtils.FillDataSetTable(queryDefault, "test_BillTemplateGridsDesigns").Tables[0];
-                    }
-                    else dt = dbUtils.FillDataSetTable(queryDefault, "test_BillTemplateGridsDesigns").Tables[0];
-                }
-                else
-                {
-                    if (id != "0") {
-                        dt = dbUtils.FillDataSetTable(queryDesign, "test_BillTemplateGrids").Tables[0];
-                    }
-                    else dt = dbUtils.FillDataSetTable(queryDefault, "test_BillTemplateGrids").Tables[0];
-                }
-                
-            }
-            data = formatDataTable(dt);
-            return js.Serialize(data);
+            DataTable dt = new BillTemplateBL(sessionHandler.LangID).getDesign(type, id);
+            List<Dictionary<string, object>> template = formatDataTable(dt);
+            return js.Serialize(template);
         }
 
         [WebMethod]
-        public static object getTemplateHtml(String id)
+        public static object saveDesign(String id, String data, String html)
         {
-            return js.Serialize(id);
+            string query = @"update test_BillTemplatesDesigns SET Data = N'" + data + "', Html = N'" + html + "' WHERE ID=" + id + ";";
+            int result;
+            result = dbUtils.ExecNonQuery(query);
+            return js.Serialize(result);
         }
+
+        [WebMethod]
+        public static object setupDesign(String name, String type, String height)
+        {
+            string query = @"insert into test_BillTemplatesDesigns (Name,Height,Type,Data,Active) VALUES ('" + name + "'," + height + ",'" + type + "','',1);";
+            int result;
+            result = dbUtils.ExecNonQuery(query);
+            return js.Serialize(result);
+        }
+
+        [WebMethod]
+        public static object removeDesign(String id)
+        {
+            string query = @"delete from test_BillTemplatesDesigns WHERE ID=" + id + ";";
+            int result;
+            result = dbUtils.ExecNonQuery(query);
+            return js.Serialize(result);
+        }
+        //</Template Editor - Admin>
 
         public static List<Dictionary<string, object>> formatDataTable(DataTable dt)
         {

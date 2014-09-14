@@ -19,17 +19,25 @@ templateEditor = {
 		this.events();
 		this.load();
 
+		$('#new,#save,#load').hide();
+
 	},
 
 	getData : function(){
 
-		//get available dynamic fields from server
+		//todo :: get available dynamic fields from server
 		this.dynamicFields = [
-			{ label : 'User Name',     value : 'valueUserName', display : '<userName>', type : 'dynamic' },
-			{ label : 'User Address',  value : 'valueUserAddress', display : '<userAddress>', type : 'dynamic' },
-			{ label : 'Serial Number', value : 'valueSerialNumber', display : '<serialNumber>', type : 'dynamic' },
-			{ label : 'Meter Number',  value : 'valueMeterNumber', display : '<meterNumber>', type : 'dynamic' },
-			{ label : 'Bill Period',   value : 'valueBillPeriod', display : '<billPeriod>', type : 'dynamic' }
+			{ label : 'Computation Number',       value : 'computationNumber' },
+			{ label : 'Client Address',  		  value : 'clientAddress' },
+			{ label : 'Device Name', 			  value : 'deviceName' },
+			{ label : 'Site Name',  			  value : 'siteName' },
+			{ label : 'Meter Number',             value : 'meterNumber' },
+			{ label : 'Billing Month',            value : 'billingMonth' },
+			{ label : 'Number of days in period', value : 'noDaysInPeriod' },
+			{ label : 'Metering Period - From',   value : 'meteringPeriod' },
+			{ label : 'Metering Period - To',     value : 'meteringPeriod' },
+			{ label : 'Invoice Date',             value : 'invoiceDate' },
+			{ label : 'Method of Charge',         value : 'methodOfCharge' }
 		]
 
 	},
@@ -55,6 +63,8 @@ templateEditor = {
 	},
 
 	events : function(){
+
+		$('.previewHtml').click($.proxy(function(){ this.getHtml(); },this));
 
 		$('.closeDesigner').click(function(){
 			window.parent.$('html').css('height','initial').css('overflow','initial');
@@ -208,6 +218,44 @@ templateEditor = {
 
 	},
 
+	getHtml : function(){
+
+		objects = $.extend(true,{},editor.objects);
+		
+		this.api('getHtml',$.proxy(function( data ){
+
+			data = $.parseJSON(data.d);
+
+			previewContent = $('<div class="previewContent"></div>');
+			previewHtml = $('<div class="htmlPreview">'+data.html+'</div>');
+
+			previewMenu       = $('<div class="htmlPreviewMenu"></div>');
+			previewLang       = $('<div class="left previewLang"></div>');
+			previewLangSelect = $('<select id="previewLang"><option value="hebrew">Hebrew</option><option value="english">English</option><option value="russian">Russian</option><option value="chinese">Chinese</option></div>');
+			previewButton     = $('<div class="left button goPreview">Refresh</div>');
+			clearer           = $('<div class="clear"></div>');
+
+			previewLang.append(previewLangSelect);
+			previewMenu.append(previewLang);
+			previewMenu.append(previewButton);
+			previewMenu.append(clearer);
+
+			previewContent.append(previewMenu);
+			previewContent.append(previewHtml);
+
+			htmlPopup = new Popup({
+				header    : "Preview...",
+				closeText : "Close",
+				content   : previewContent,
+				addClass  : 'htmlPreview'
+			});
+
+		},this),{
+			html : editor.file.getHtml( {objects:objects} )
+		});
+
+	},
+
 	load : function( id ){
 
 		this.api('getTemplate',$.proxy(function( data ){
@@ -223,7 +271,6 @@ templateEditor = {
 				data    : template.Data
 			});
 
-			$('#new,#save,#load').hide();
 			this.reposition();
 
 		}),{
@@ -280,7 +327,18 @@ templateEditor = {
 
 }
 
-$('body').append('<div class="closeDesignerWrapper"><div class="saveTemplate left button">'+getString('save2')+'</div><div class="closeDesigner left button">'+getString('Close')+'</div><div class="clear"></div></div>');
+var closeDesigner = $('<div class="closeDesignerWrapper"></div>'),
+	previewHtml   = $('<div class="previewHtml left button">Preview</div>'),
+	saveTemplate  = $('<div class="saveTemplate left button">'+getString('save2')+'</div>'),
+	closeButton   = $('<div class="closeDesigner left button">'+getString('Close')+'</div>'),
+	clearDiv      = $('<div class="clear"></div>');
+
+closeDesigner.append(previewHtml);
+closeDesigner.append(saveTemplate);
+closeDesigner.append(closeButton);
+closeDesigner.append(clearDiv);
+
+$('body').append(closeDesigner);
 
 window.parent.scrollTo(0,0);
 window.parent.$('html').css('height','100%').css('overflow','hidden')

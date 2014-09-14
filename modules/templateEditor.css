@@ -369,3 +369,29 @@
     width: 240px;
     color: #2D507E;
 }
+
+.popup.htmlPreview .popupInner{
+	width: 1074px;
+}
+
+#previewLang{
+	padding: 3px;
+	position: relative;
+	left: -2px;
+}
+
+.previewContent .button{
+	padding: 5px;
+	background: #B6B6B6;
+	margin-bottom: 10px;
+	margin-left: 10px;
+	padding-left: 20px;
+	padding-right: 20px;
+	float: right;
+	border-radius: 2px;
+	color: #fff;
+}
+
+.previewContent .button:hover{
+	background: #000;
+};

@@ -18,6 +18,7 @@ $(document).ready(function(){
 		enlarge	   : (boolean)    - OPTIONAL enlarges popup
 		onLoad     : (function)   - a function to be called once popup is rendered
 		enable     : (boolean)    - OPTIONAL keep buttons enabled on click (for further actions)
+		addClass   : (string)     - OPTIONAL class to add to popup
 
 		inputs	   : [		      - OPTIONAL inputs mode
 			{
@@ -62,7 +63,7 @@ $(document).ready(function(){
 		init : function(data)
 		{
 
-			$('.popup').removeClass('transparent');
+			$('.popup').attr('class','popup');
 
 			if(data.transparent) $('.popup').addClass('transparent');
 			if(data.preloader)   $('.popup').addClass('preloader');
@@ -91,6 +92,7 @@ $(document).ready(function(){
 			}
 
 			if(data.enlarge) $('.popupInner').addClass('enlarge');
+			if(data.addClass) $('.popup').addClass(data.addClass);
 
 			if(data.onLoad) data.onLoad();
 

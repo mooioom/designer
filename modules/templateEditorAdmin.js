@@ -16,7 +16,12 @@ new editor.toolbox({
 	designs : [],
 
 	preLoad : function(){ this.getData(); },
-	onLoad  : function(){ this.reposition(); },
+	onLoad  : function(){
+
+		this.reposition(); 
+		$('#new,#save,#load').show();
+
+	},
 
 	redraw  : function(){
 		this.render();
@@ -96,9 +101,10 @@ new editor.toolbox({
 	
 	load : function( e ){
 
-		var item = $(e.target),
-			id   = Number(item.attr('id'));
-
+		var item = $(e.target).closest('.item'),
+			id   = Number(item.attr('id')),
+			type = $('.type',item).attr('type').toLowerCase();
+			
 		this.api(
 			'getDesign',
 			function( data ){
@@ -117,7 +123,7 @@ new editor.toolbox({
 					this.redraw();
 				}
 			}, 
-			{ id : id } 
+			{ type : type, id : id } 
 		);
 
 	},
