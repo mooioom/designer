@@ -15,8 +15,8 @@ $(document).ready(function()
 
 		editor.init({
 			name    : getString("UntitledProject"),
-		    width   : $('.stage').width(),
-			height  : $('.stage').height()
+		    width   : 1024,//$('.stage').width(),
+			height  : 320//$('.stage').height()
 		});
 
 	},20);

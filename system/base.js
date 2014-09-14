@@ -75,7 +75,7 @@ $.extend( true, editor, {
 			},
 
 			text : {
-				text          : 'Hello Canvas',//getString('HelloCanvas'),
+				text          : 'Hello Canvas',
 				color         : '#000',
 				font          : 'Arial',
 				fontSize      : 30,
@@ -91,11 +91,15 @@ $.extend( true, editor, {
 				shadowOffsetX : 0,
 				shadowOffsetY : 0,
 				feather       : 4
-			}
+			},
+
+
+			displayImageCompressionRate : 0.75
 
 		},
 
-		actionPointSize : 5
+		actionPointSize : 5,
+
 
 	},
 

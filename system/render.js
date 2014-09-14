@@ -33,9 +33,10 @@ $.extend( true, editor, {
 
 	draw : {
 
-		clearCanvas : function()
+		clearCanvas : function( ctx )
 		{
-			this.parent.ctx.clearRect(0, 0, this.parent.canvas.width, this.parent.canvas.height);
+			if(!ctx) ctx = this.parent.ctx;
+			ctx.clearRect(0, 0, this.parent.canvas.width, this.parent.canvas.height);
 		},
 
 		Debugger : function()
