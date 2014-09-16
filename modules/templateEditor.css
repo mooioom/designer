@@ -268,11 +268,10 @@
 	padding: 5px;
 	color: #FFF;
 	cursor: pointer;
-	padding-right: 30px;
-	padding-left: 30px;
+	padding-right: 20px;
+	padding-left: 20px;
 	border-radius: 3px;
 	z-index: 1000;
-	border: 1px solid #B97536;
 	box-shadow: 0px 0px 10px rgba(0,0,0,0.4);
 	margin-left: 5px;
 }
@@ -380,6 +379,11 @@
 	left: -2px;
 }
 
+.previewLang{
+	font-size: 12px;
+	margin-bottom: 10px;
+}
+
 .previewContent .button{
 	padding: 5px;
 	background: #B6B6B6;
@@ -387,11 +391,19 @@
 	margin-left: 10px;
 	padding-left: 20px;
 	padding-right: 20px;
-	float: right;
+	float: left;
 	border-radius: 2px;
 	color: #fff;
 }
 
 .previewContent .button:hover{
 	background: #000;
-};
+}
+
+.htmlPreviewData.previewMode{
+	background: #ccc;
+}
+
+.loadingPreview{
+	text-align: center;
+}

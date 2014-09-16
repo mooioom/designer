@@ -7,6 +7,7 @@ using System.Web.Script.Serialization;
 using System.Data.SqlClient;
 using Satec.eXpertPowerPlus.BL;
 using HtmlAgilityPack;
+using System.Linq;
 
 namespace Satec.eXpertPowerPlus.Web
 {
@@ -80,9 +81,83 @@ namespace Satec.eXpertPowerPlus.Web
         }
 
         [WebMethod]
-        public static object getHtml(string html)
+        public static object getPreviewData()
         {
-            return js.Serialize(new { html = html });
+            string query = @"select Text,ID from ListOfLanguages lol
+	                            join StringsText st on st.StringId = lol.StringId and Language = " + sessionHandler.LangID + @"
+                             where Supported = 1";
+            DataTable dt;
+            dt = dbUtils.FillDataSetTable(query, "previewData").Tables[0];
+            List<Dictionary<string, object>> previewData = formatDataTable(dt);
+            return js.Serialize(new { previewData = previewData, langId = sessionHandler.LangID });
+        }
+
+        [WebMethod]
+        public static object getHtml(int langId, string html)
+        {
+            return js.Serialize(new { 
+                html = generateHtml(langId,html) 
+            });
+        }
+
+        public static String generateHtml(int langId, string html)
+        {
+            string data;
+
+            HtmlAgilityPack.HtmlDocument htmlDoc = new HtmlAgilityPack.HtmlDocument();
+
+            htmlDoc.LoadHtml(html);
+
+            var list = Enumerable.Empty<object>().Select(r => new { xpath="",id=0 }).ToList();
+
+            if (htmlDoc.DocumentNode != null)
+            {
+                foreach (HtmlNode node in htmlDoc.DocumentNode.Descendants())
+                {
+                    if (node.Name == "glb") 
+                    {
+                        list.Add(new
+                        {
+                            xpath = node.XPath,
+                            id    = Int32.Parse(node.Attributes[0].Value)
+                        });
+                    }
+
+                    // rtl
+                    if (langId == 1037) foreach (HtmlAttribute attr in node.Attributes) if (attr.Name == "style") attr.Value = attr.Value.Replace("left", "right");
+
+                }
+            }
+
+            string whereIn = "";
+
+            for (var i = 0; i < list.Count; i++) whereIn = whereIn + list[i].id + ",";
+
+            whereIn = whereIn.Remove(whereIn.Length - 1);
+
+            string query = @"select * from StringsText where StringId in (" + whereIn + ") and Language = " + langId.ToString();
+
+            DataTable dt;
+
+            dt = dbUtils.FillDataSetTable(query, "strings").Tables[0];
+
+            //select * from StringsText where StringId in (2981,2982) and Language = 1037
+
+            for (var i = 0; i < list.Count; i++)
+            {
+                var id = list[i].id.ToString();
+                DataRow[] foundRow;
+                string q = "StringId = " + id;
+                foundRow = dt.Select(q);
+
+                var a = htmlDoc.DocumentNode.SelectSingleNode(list[i].xpath);
+                HtmlNode newNode = HtmlNode.CreateNode(foundRow[0].ItemArray[2].ToString());
+                a.ParentNode.ReplaceChild(newNode, a);
+            }
+
+            data = htmlDoc.DocumentNode.OuterHtml;
+
+            return data;
         }
 
         [WebMethod]

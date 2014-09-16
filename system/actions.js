@@ -127,14 +127,14 @@ $.extend( true, editor, {
 						// }
 						// else if(o.startX > 0 && o.startY < 0 && o.endX < w && o.endY > h) // case 2
 
-						this.parent.draw.clearCanvas(this.parent.helperCtx);
-						this.parent.draw.drawObject(o,this.parent.helperCtx);
+						// this.parent.draw.clearCanvas(this.parent.helperCtx);
+						// this.parent.draw.drawObject(o,this.parent.helperCtx);
 
-						o.src = this.parent.helperCanvas.toDataURL('image/'+mime,0.5);
-						o.startX = 0; 
-						o.startY = 0; 
-						o.width  = this.parent.width; 
-						o.height = this.parent.height;
+						// o.src = this.parent.helperCanvas.toDataURL('image/'+mime,0.5);
+						// o.startX = 0; 
+						// o.startY = 0; 
+						// o.width  = this.parent.width; 
+						// o.height = this.parent.height;
 					}
 
 				}

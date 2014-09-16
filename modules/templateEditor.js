@@ -64,8 +64,6 @@ templateEditor = {
 
 	events : function(){
 
-		$('.previewHtml').click($.proxy(function(){ this.getHtml(); },this));
-
 		$('.closeDesigner').click(function(){
 			window.parent.$('html').css('height','initial').css('overflow','initial');
 			window.parent.closeDesigner();
@@ -200,6 +198,10 @@ templateEditor = {
 			$('.globalizedString').show();
 		});
 
+		$('.previewHtml').click($.proxy(function(){ this.preview(); },this));
+
+		$(document).on('change','#previewLang',$.proxy(this.previewAction,this));
+
 	},
 
 	api : function( action, callback, data ){
@@ -218,26 +220,28 @@ templateEditor = {
 
 	},
 
-	getHtml : function(){
+	preview : function(){
 
-		objects = $.extend(true,{},editor.objects);
-		
-		this.api('getHtml',$.proxy(function( data ){
+		this.api('getPreviewData',$.proxy(function( data ){
 
 			data = $.parseJSON(data.d);
 
-			previewContent = $('<div class="previewContent"></div>');
-			previewHtml = $('<div class="htmlPreview">'+data.html+'</div>');
+			previewContent    = $('<div class="previewContent"></div>');
+			previewHtml       = $('<div class="htmlPreviewData previewMode" style="width:'+$('#canvas').width()+'px; height:'+$('#canvas').height()+'px"></div>');
 
 			previewMenu       = $('<div class="htmlPreviewMenu"></div>');
-			previewLang       = $('<div class="left previewLang"></div>');
-			previewLangSelect = $('<select id="previewLang"><option value="hebrew">Hebrew</option><option value="english">English</option><option value="russian">Russian</option><option value="chinese">Chinese</option></div>');
-			previewButton     = $('<div class="left button goPreview">Refresh</div>');
+			previewLang       = $('<div class="left previewLang">Choose Language : </div>');
+			previewLangSelect = $('<select id="previewLang"></select>');
 			clearer           = $('<div class="clear"></div>');
+
+			for(i in data.previewData) {
+				var lang = data.previewData[i], selected = '';
+				if(lang.ID == data.langId) selected = 'selected="selected"';
+				previewLangSelect.append('<option value="'+lang.ID+'" '+selected+'>'+lang.Text+'</option>');
+			}
 
 			previewLang.append(previewLangSelect);
 			previewMenu.append(previewLang);
-			previewMenu.append(previewButton);
 			previewMenu.append(clearer);
 
 			previewContent.append(previewMenu);
@@ -247,11 +251,41 @@ templateEditor = {
 				header    : "Preview...",
 				closeText : "Close",
 				content   : previewContent,
-				addClass  : 'htmlPreview'
+				addClass  : 'htmlPreview',
+				onLoad    : function(){ $('#previewLang').trigger('change'); }
 			});
 
-		},this),{
-			html : editor.file.getHtml( {objects:objects} )
+		},this),{});
+
+	},
+
+	previewAction : function( e ){
+
+		$('.htmlPreviewData').addClass('previewMode');
+		$('.htmlPreviewData').html('<div class="loadingPreview" style="line-height:'+$('#canvas').height()+'px">Generating Preview...</div>')
+
+		var item    = $(e.target),
+			objects = $.extend(true,{},editor.objects);
+
+		for(i in objects){
+
+			o = objects[i];
+
+			if(o.globalized){
+				o.text = '<glb id="'+o.globalized.id+'" />';
+			}
+
+		}		
+
+		html = editor.file.getHtml( {objects:objects} );
+
+		this.api('getHtml',function(data){
+			$('.htmlPreviewData').removeClass('previewMode');
+			data = $.parseJSON(data.d);
+			$('.htmlPreviewData').html(data.html);
+		},{
+			langId : Number(item.val()),
+			html   : html
 		});
 
 	},
