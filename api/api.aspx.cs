@@ -29,6 +29,30 @@ namespace Satec.eXpertPowerPlus.Web
         public static object getTemplateData(string type, int id, int isAudited)
         {
             DataTable dt = new BillTemplateBL(sessionHandler.LangID).getTemplateData(sessionHandler.CustomerID, type, id, isAudited);
+
+            if (dt.Rows.Count == 1 && (type=="header"||type=="footer")) 
+            {
+
+                //stub
+                DataTable dynamicData = new DataTable();
+
+                dynamicData.Columns.Add("Property", typeof(string));
+                dynamicData.Columns.Add("Value", typeof(string));
+
+                dynamicData.Rows.Add("computationNumber", "54397");
+                dynamicData.Rows.Add("deviceName", "11754-BFM136-05");
+                dynamicData.Rows.Add("siteName", "Test_QA");
+                dynamicData.Rows.Add("methodOfCharge", "TOU Import");
+                dynamicData.Rows.Add("invoiceDate", "July 2014");
+                dynamicData.Rows.Add("noDaysInPeriod", "13");
+                dynamicData.Rows.Add("meteringPeriodFrom", "6/30/2014");
+                dynamicData.Rows.Add("meteringPeriodTo", "7/13/2014");
+                dynamicData.Rows.Add("billingMonth", "7/31/2014");
+                dynamicData.Rows.Add("meterNumber", "1002082-5");
+
+                dt.Rows[0][0] = new BillTemplateBL(sessionHandler.LangID).generateHtml(sessionHandler.LangID, dt.Rows[0].ItemArray[0].ToString(), dynamicData);
+
+            }
             List<Dictionary<string, object>> data = formatDataTable(dt);
             return js.Serialize(data);
         }
@@ -95,69 +119,26 @@ namespace Satec.eXpertPowerPlus.Web
         [WebMethod]
         public static object getHtml(int langId, string html)
         {
-            return js.Serialize(new { 
-                html = generateHtml(langId,html) 
+            //stub
+            DataTable dt = new DataTable();
+
+            dt.Columns.Add("Property", typeof(string));
+            dt.Columns.Add("Value", typeof(string));
+
+            dt.Rows.Add("computationNumber", "54397");
+            dt.Rows.Add("deviceName", "11754-BFM136-05");
+            dt.Rows.Add("siteName", "Test_QA");
+            dt.Rows.Add("methodOfCharge", "TOU Import");
+            dt.Rows.Add("invoiceDate", "July 2014");
+            dt.Rows.Add("noDaysInPeriod", "13");
+            dt.Rows.Add("meteringPeriodFrom", "6/30/2014");
+            dt.Rows.Add("meteringPeriodTo", "7/13/2014");
+            dt.Rows.Add("billingMonth", "7/31/2014");
+            dt.Rows.Add("meterNumber", "1002082-5");
+
+            return js.Serialize(new {
+                html = new BillTemplateBL(sessionHandler.LangID).generateHtml(langId, html, dt) 
             });
-        }
-
-        public static String generateHtml(int langId, string html)
-        {
-            string data;
-
-            HtmlAgilityPack.HtmlDocument htmlDoc = new HtmlAgilityPack.HtmlDocument();
-
-            htmlDoc.LoadHtml(html);
-
-            var list = Enumerable.Empty<object>().Select(r => new { xpath="",id=0 }).ToList();
-
-            if (htmlDoc.DocumentNode != null)
-            {
-                foreach (HtmlNode node in htmlDoc.DocumentNode.Descendants())
-                {
-                    if (node.Name == "glb") 
-                    {
-                        list.Add(new
-                        {
-                            xpath = node.XPath,
-                            id    = Int32.Parse(node.Attributes[0].Value)
-                        });
-                    }
-
-                    // rtl
-                    if (langId == 1037) foreach (HtmlAttribute attr in node.Attributes) if (attr.Name == "style") attr.Value = attr.Value.Replace("left", "right");
-
-                }
-            }
-
-            string whereIn = "";
-
-            for (var i = 0; i < list.Count; i++) whereIn = whereIn + list[i].id + ",";
-
-            whereIn = whereIn.Remove(whereIn.Length - 1);
-
-            string query = @"select * from StringsText where StringId in (" + whereIn + ") and Language = " + langId.ToString();
-
-            DataTable dt;
-
-            dt = dbUtils.FillDataSetTable(query, "strings").Tables[0];
-
-            //select * from StringsText where StringId in (2981,2982) and Language = 1037
-
-            for (var i = 0; i < list.Count; i++)
-            {
-                var id = list[i].id.ToString();
-                DataRow[] foundRow;
-                string q = "StringId = " + id;
-                foundRow = dt.Select(q);
-
-                var a = htmlDoc.DocumentNode.SelectSingleNode(list[i].xpath);
-                HtmlNode newNode = HtmlNode.CreateNode(foundRow[0].ItemArray[2].ToString());
-                a.ParentNode.ReplaceChild(newNode, a);
-            }
-
-            data = htmlDoc.DocumentNode.OuterHtml;
-
-            return data;
         }
 
         [WebMethod]

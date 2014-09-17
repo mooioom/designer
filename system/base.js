@@ -72,6 +72,9 @@ $.extend( true, editor, {
 				fillStyle   : '',
 				strokeStyle : 'grey',
 				radius      : 0,
+				// addToExportStyle (string) : added inside the 'style' attribute - html export
+				// addToExportProps (string) : added to element properties        - html export
+				// onExport         (string) : replaces the element               - html export
 			},
 
 			text : {
@@ -91,6 +94,11 @@ $.extend( true, editor, {
 				shadowOffsetX : 0,
 				shadowOffsetY : 0,
 				feather       : 4
+				// textBefore       (string) : added before the text              - html export
+				// textAfter        (string) : added after  the text              - html export
+				// addToExportStyle (string) : added inside the 'style' attribute - html export
+				// addToExportProps (string) : added to element properties        - html export
+				// onExport         (string) : replaces the element               - html export
 			},
 
 
