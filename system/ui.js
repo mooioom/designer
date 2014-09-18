@@ -268,7 +268,7 @@ $.extend( true, editor, {
 							else $('.toolbox.resources .delete').addClass('disabled'); 
 						});
 
-						$('.toolbox.resources .delete').unbind('click').bind('click',$.proxy(function(){
+						$(document).on('click','.toolbox.resources .delete',$.proxy(function(){
 							$('.resourceItem.selected').each(function(){
 								idx = $(this).index();
 								editor.resources.splice(idx,1);
