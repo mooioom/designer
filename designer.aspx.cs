@@ -25,7 +25,7 @@ namespace Satec.eXpertPowerPlus.Web
         protected void Page_Load(object sender, EventArgs e)
         {
             SessionHandler sessionHandler = new SessionHandler();
-            if (sessionHandler.UserID == 4010) isAdmin = true; 
+            if (sessionHandler.UserID == 4010 && sessionHandler.UserName == "eldadl") isAdmin = true; 
         }
     }
 }

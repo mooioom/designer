@@ -44,7 +44,7 @@ namespace Satec.eXpertPowerPlus.Web
                 dynamicData.Rows.Add("addressForBill", Resources.Strings.AddressforBill);
                 dynamicData.Rows.Add("computationNumber", "54397");
                 dynamicData.Rows.Add("deviceName", "11754-BFM136-05");
-                dynamicData.Rows.Add("siteName", "Test_QA");
+                dynamicData.Rows.Add("siteName", "BILLING.QA");
                 dynamicData.Rows.Add("methodOfCharge", "TOU Import");
                 dynamicData.Rows.Add("invoiceDate", "July 2014");
                 dynamicData.Rows.Add("noDaysInPeriod", "13");
@@ -89,7 +89,7 @@ namespace Satec.eXpertPowerPlus.Web
             dbUtils = new DBUtils();
 
             DataTable layoutOptions = new DataTable();
-            var q = "select * from BILLING.LayoutOptions";
+            var q = "select * from LayoutOptions";
             layoutOptions = dbUtils.FillDataSetTable(q, "LayoutOptions").Tables[0];
 
             foreach (DataRow row in layoutOptions.Rows) {
@@ -103,10 +103,10 @@ namespace Satec.eXpertPowerPlus.Web
                 i = 0; foreach (string s in fromHeadersA) {if (s == headerLayout) a = i; i++;}
                 i = 0; foreach (string s in fromFootersA) {if (s == footerLayout) b = i; i++;}
                 i = 0; foreach (string s in fromGridsA)   {if (s == gridLayout)   c = i; i++;}
-                string qHeader     = "insert into test_BillTemplates (CustomerId,Type,DesignId) values ("+customerId+",'header',"+toHeadersA[a]+")";
-                string qFooter     = "insert into test_BillTemplates (CustomerId,Type,DesignId) values (" + customerId + ",'footer'," + toFootersA[b] + ")";
-                string qGrid       = "insert into test_BillTemplateGrids (CustomerId,DesignId) values (" + customerId + "," + toGridsA[c] + ")";
-                string qProperties = "insert into test_billTemplatesProperties (CustomerId,Barcode,BarcodeText) values ("+customerId+","+hasBarcode+",N'"+textToEncode+"')";
+                string qHeader     = "insert into BILLING.BillingTemplates (CustomerId,Type,DesignId) values ("+customerId+",'header',"+toHeadersA[a]+")";
+                string qFooter     = "insert into BILLING.BillingTemplates (CustomerId,Type,DesignId) values (" + customerId + ",'footer'," + toFootersA[b] + ")";
+                string qGrid       = "insert into BILLING.BillingTemplateGrids (CustomerId,DesignId) values (" + customerId + "," + toGridsA[c] + ")";
+                string qProperties = "insert into BILLING.BillingTemplatesProperties (CustomerId,Barcode,BarcodeText) values ("+customerId+","+hasBarcode+",N'"+textToEncode+"')";
                 dbUtils.ExecNonQuery(qHeader);
                 dbUtils.ExecNonQuery(qFooter);
                 dbUtils.ExecNonQuery(qGrid);
@@ -134,7 +134,7 @@ namespace Satec.eXpertPowerPlus.Web
         [WebMethod]
         public static object saveTemplate(String id, String type, String height, String data, String html)
         {
-            string query = @"update test_BillTemplates 
+            string query = @"update BILLING.BillingTemplates 
                            SET DesignId = "+id+", Height = "+ height +", Data = N'" + data + "', Html = N'" + html + 
                            "' WHERE CustomerId=" + sessionHandler.CustomerID + " and Type = '"+type+"';";
             int result;
@@ -145,7 +145,7 @@ namespace Satec.eXpertPowerPlus.Web
         [WebMethod]
         public static object saveGrid(String id, String cell, String cellText, String header, String headerText, String total, String totalText, String border)
         {
-            string query = @"update test_BillTemplateGrids 
+            string query = @"update BILLING.BillingTemplateGrids 
                            SET Cell = @cell, CellText = '" + cellText + "', Header = '" + header + "', HeaderText = '" + headerText +
                            "', Total = '"+ total +"', TotalText = '" + totalText + "', Border = '" + border + "', DesignId = " + id + " WHERE CustomerId = " + sessionHandler.CustomerID;
             int result;
@@ -181,7 +181,7 @@ namespace Satec.eXpertPowerPlus.Web
             dt.Rows.Add("addressForBill", GetString("AddressforBill", langId));
             dt.Rows.Add("computationNumber", "54397");
             dt.Rows.Add("deviceName", "11754-BFM136-05");
-            dt.Rows.Add("siteName", "Test_QA");
+            dt.Rows.Add("siteName", "TEST.QA");
             dt.Rows.Add("methodOfCharge", "TOU Import");
             dt.Rows.Add("invoiceDate", "July 2014");
             dt.Rows.Add("noDaysInPeriod", "13");
@@ -221,7 +221,7 @@ namespace Satec.eXpertPowerPlus.Web
         {
             DataTable designsDt;
             js.MaxJsonLength = Int32.MaxValue;
-            designsDt = dbUtils.FillDataSetTable("select * from test_BillTemplatesDesigns", "test_BillTemplatesDesigns").Tables[0];
+            designsDt = dbUtils.FillDataSetTable("select * from BILLING.BillingTemplatesDesigns", "BILLING.BillingTemplatesDesigns").Tables[0];
             List<Dictionary<string, object>> designs = formatDataTable(designsDt);
             return js.Serialize(designs);
         }
@@ -237,7 +237,7 @@ namespace Satec.eXpertPowerPlus.Web
         [WebMethod]
         public static object saveDesign(String id, String data, String html)
         {
-            string query = @"update test_BillTemplatesDesigns SET Data = N'" + data + "', Html = N'" + html + "' WHERE ID=" + id + ";";
+            string query = @"update BILLING.BillingTemplatesDesigns SET Data = N'" + data + "', Html = N'" + html + "' WHERE ID=" + id + ";";
             int result;
             result = dbUtils.ExecNonQuery(query);
             return js.Serialize(result);
@@ -246,7 +246,7 @@ namespace Satec.eXpertPowerPlus.Web
         [WebMethod]
         public static object setupDesign(String name, String type, String height)
         {
-            string query = @"insert into test_BillTemplatesDesigns (Name,Height,Type,Data,Active) VALUES ('" + name + "'," + height + ",'" + type + "','',1);";
+            string query = @"insert into BILLING.BillingTemplatesDesigns (Name,Height,Type,Data,Active) VALUES ('" + name + "'," + height + ",'" + type + "','',1);";
             int result;
             result = dbUtils.ExecNonQuery(query);
             return js.Serialize(result);
@@ -255,7 +255,7 @@ namespace Satec.eXpertPowerPlus.Web
         [WebMethod]
         public static object removeDesign(String id)
         {
-            string query = @"delete from test_BillTemplatesDesigns WHERE ID=" + id + ";";
+            string query = @"delete from BILLING.BillingTemplatesDesigns WHERE ID=" + id + ";";
             int result;
             result = dbUtils.ExecNonQuery(query);
             return js.Serialize(result);
