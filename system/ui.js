@@ -38,8 +38,8 @@ $.extend( true, editor, {
 						$('.toolbox.objects').append('<div class="menu"></div>');
 						$('.menu',this.el).append('<div class="item add right">'+getString('new')+'</div>');
 						$('.menu',this.el).append('<div class="item delete disabled right"></div>');
-						$('.menu',this.el).append('<div class="item shadow disabled left">Shadow</div>');
-						$('.menu',this.el).append('<div class="item transform disabled left">Transform</div>');
+						$('.menu',this.el).append('<div class="item shadow disabled left">'+getString('shadow')+'</div>');
+						$('.menu',this.el).append('<div class="item transform disabled left">'+getString('transform')+'</div>');
 						$('.menu',this.el).append('<div class="item fx disabled left">fx</div>');
 						$('.menu',this.el).append('<div class="clear"></div>');
 					},
@@ -146,8 +146,8 @@ $.extend( true, editor, {
 					title   : getString('resources'),
 					visible : true,
 
-					redraw  : function(){
-						this.render();
+					redraw  : function( refresh ){
+						this.render( refresh );
 						this.events();
 					},
 
@@ -226,17 +226,28 @@ $.extend( true, editor, {
 						},this));
 
 					},
-					onLoad  : function(){},
-					render  : function(){
+					onLoad  : function()
+					{
+						$(document).on('click','.toolbox.resources .delete',$.proxy(function(){
+							$('.resourceItem.selected').each($.proxy(function(a,b){
+								idx = $(b).index();
+								this.parent.resources.splice(((this.parent.resources.length - 1) - idx),1);
+							},this));
+							this.redraw( 'refresh' );
+						},this));
+					},
+					render  : function( refresh ){
 
 						$('.dropItem.ui-draggable').css('position','relative').css('left','initial').css('top','initial');
 
-						flags = [];
-						$('.toolbox.resources .resourceItem').each($.proxy(function( i,e ) {
-							var name = $('.resourceName',e).html();
-							for(i in this.parent.resources) if(name == this.parent.resources[i].name) flags.push(true);
-						},this));
-						if(this.parent.resources.length && flags.length == this.parent.resources.length) return;
+						if(!refresh){
+							flags = [];
+							$('.toolbox.resources .resourceItem').each($.proxy(function( i,e ) {
+								var name = $('.resourceName',e).html();
+								for(i in this.parent.resources) if(name == this.parent.resources[i].name) flags.push(true);
+							},this));
+							if(this.parent.resources.length && flags.length == this.parent.resources.length) return;
+						}
 						
 						$('.toolbox.resources .resourceItem').remove();
 						$('.menu',this.el).remove();
@@ -262,19 +273,12 @@ $.extend( true, editor, {
 
 						$('.resourceItem .resourceDisplay').draggable({ revert: "invalid", revertDuration:10 })
 
-						$('.resourceItem').click(function(){ 
+						$('.resourceItem').click(function()
+						{ 
 							$(this).toggleClass('selected');
 							if($('.resourceItem.selected').length) $('.toolbox.resources .delete').removeClass('disabled');
 							else $('.toolbox.resources .delete').addClass('disabled'); 
 						});
-
-						$(document).on('click','.toolbox.resources .delete',$.proxy(function(){
-							$('.resourceItem.selected').each(function(){
-								idx = $(this).index();
-								editor.resources.splice(idx,1);
-							})
-							this.redraw();
-						},this));
 					}
 				});
 
@@ -297,9 +301,12 @@ $.extend( true, editor, {
 
 					events : function(){
 
-						$('input[type="text"]',this.el).keyup($.proxy(function(){
-							if(!$(this).val()) return;
-							this.parent.grid[$(this).attr('id')] = $(this).val();
+						$('input[type="text"]',this.el).keyup($.proxy(function(e){
+							if(!$(e.target).val()) return;
+							var v;
+							if($(e.target).attr('id') == "strokeStyle") v = $(e.target).val();
+							else v = Number($(e.target).val());
+							this.parent.grid[$(e.target).attr('id')] = v;
 							this.parent.draw.grid();
 						},this));
 
@@ -313,6 +320,91 @@ $.extend( true, editor, {
 							this.parent.grid.snap = $('#snap',this.el).prop('checked');
 						},this));
 
+					}
+
+				});
+
+				new this.parent.parent.toolbox({
+
+					name    : 'text',
+					title   : getString('text'),
+					visible : false,
+
+					render : function(){
+						$('.body',this.el).empty();
+						$('.body',this.el).append('<div class="item"><textarea id="text"></textarea></div>');
+					},
+
+					events : function(){
+						$('.toolbox.text #text').bind('keyup change keydown',function(){ editor.functions.changeText( $(this).val() ); });
+					}
+
+				});
+
+				new this.parent.parent.toolbox({
+
+					name    : 'transform',
+					title   : getString('transform'),
+					visible : false,
+
+					render : function(){
+						$('.body',this.el).empty();
+						$('.body',this.el).append('<div class="item"><div class="title">'+getString('rotate')+'</div><input type="range" class="rotate" min="0" max="360" step="5" value="0"></div>');
+					},
+
+					events : function(){
+						$('.toolbox input[type="range"]',this.el).change(function(){
+							var prop = $(this).attr('class');
+							o = editor.selecteds[0];
+							if( !o ) return;
+							if( o.locked || !o.visible ) return;
+							o[prop] = $(this).val();
+							editor.render();
+						});
+					}
+
+				});
+
+				new this.parent.parent.toolbox({
+
+					name    : 'shadow',
+					title   : getString('shadow'),
+					visible : false,
+
+					render : function(){
+						$('.body',this.el).empty();
+						$('.body',this.el).append('<div class="item">'+getString('color')+' <input type="text" class="shadowColor"></div>');
+						$('.body',this.el).append('<div class="item">'+getString('blur')+'<br/><input type="range" class="shadowBlur" min="0" max="20" step="0.1" value="0"></div>');
+						$('.body',this.el).append('<div class="item">'+getString('offsetX')+'<br/><input type="range" class="shadowOffsetX" min="-20" max="20" step="0.1" value="0"></div>');
+						$('.body',this.el).append('<div class="item">'+getString('offsetY')+'<br/><input type="range" class="shadowOffsetY" min="-20" max="20" step="0.1" value="0"></div>');
+					},
+
+					events : function(){
+						$('.toolbox input[type="range"]',this.el).change(function(){
+							var prop = $(this).attr('class');
+							o = editor.selecteds[0];
+							if( !o ) return;
+							if( o.locked || !o.visible ) return;
+							o[prop] = $(this).val();
+							editor.render();
+						});
+					}
+
+				});
+
+				new this.parent.parent.toolbox({
+
+					name    : 'fx',
+					title   : getString('fx'),
+					visible : false,
+
+					render : function(){
+						$('.body',this.el).empty();
+						$('.body',this.el).append('<div class="item"><textarea id="text"></textarea></div>');
+					},
+
+					events : function(){
+						$('.toolbox.text #text').bind('keyup change keydown',function(){ editor.functions.changeText( $(this).val() ); });
 					}
 
 				});
@@ -343,8 +435,8 @@ $.extend( true, editor, {
 				});
 
 				//text
-				$('.toolbox.text').hide();
-				$('.toolbox.text #text').bind('keyup change keydown',function(){ editor.functions.changeText( $(this).val() ); });
+				//$('.toolbox.text').hide();
+				//$('.toolbox.text #text').bind('keyup change keydown',function(){ editor.functions.changeText( $(this).val() ); });
 
 			},
 

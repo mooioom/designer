@@ -19,7 +19,7 @@ $.extend( true, editor, {
 	temp      : null,
 	toolboxes : [],
 
-	action : "box", // select, move, rotate, scale, box, line, colorpick etc...
+	action : "select", // select, move, rotate, scale, box, line, colorpick etc...
 
 	selectAndMove : false,
 

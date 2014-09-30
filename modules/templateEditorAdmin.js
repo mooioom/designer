@@ -35,7 +35,7 @@ new editor.toolbox({
 		for(i in this.designs)
 		{
 			item      = $.extend(true,{},this.designs[i]);
-			item.type = getString(item.type);
+			//item.type = getString(item.type);
 			this.append('.body','.item',item);
 		}
 
@@ -104,7 +104,7 @@ new editor.toolbox({
 		var item = $(e.target).closest('.item'),
 			id   = Number(item.attr('id')),
 			type = $('.type',item).attr('type').toLowerCase();
-			
+
 		this.api(
 			'getDesign',
 			function( data ){
@@ -137,14 +137,70 @@ new editor.toolbox({
 	},
 	save : function( e ){
 		e.preventDefault(); e.stopPropagation();
-		//todo edit objects before save
+		objects = $.extend(true,{},editor.objects);
+		//depends on templateEditor.js
 		this.api(
 			'saveDesign',
 			function( data ){
 				if(data) console.log('saved');
 			},
-			{ id : this.hasSelected(), data : editor.file.getData(), html : editor.file.getHtml( {objects:editor.objects} )  }
+			{ id : this.hasSelected(), data : editor.file.getData(), html : editor.file.getHtml( {objects:templateEditor.transformObjects(objects)} )  }
 		)
+	},
+	transformObjects : function(objects)
+	{
+
+		for(i in objects)
+		{
+
+			o = objects[i];
+
+			var absCoords = editor.helpers.getAbsCoords(o.startX,o.startY,o.width,o.height),
+				x = absCoords.x,y = absCoords.y,w = absCoords.w,h = absCoords.h,cx = x + (w/2),cy = y + (h/2),
+				sx = o.shadowOffsetX, sy = o.shadowOffsetY, sb = o.shadowBlur, sc = o.shadowColor;
+
+			if(!sx) sx = '0'; if(!sy) sy = '0'; if(!sb) sb = '0'; if(!sc) sc = 'rgba(0,0,0,1)';
+
+			color       = $.parseColor(sc);
+			colorString = "rgb("+color[0]+","+color[1]+","+color[2]+")";
+			opacity     = color[3];
+
+			if(!o.shadowOffsetX) o.shadowOffsetX = 0;
+			if(!o.shadowOffsetY) o.shadowOffsetY = 0;
+			if(!o.shadowBlur)    o.shadowBlur    = 0;
+
+			if(o.dynamic || o.globalized)
+			{
+				if(o.dynamic)    o.text = '<dyn id="'+o.dynamic+'" />';
+				if(o.globalized) o.text = '<glb id="'+o.globalized.id+'" />';
+
+				if(o.textAlign != 'center') continue;
+
+				o.addToExportStyle = 'width : 0px; text-align : '+o.textAlign;
+
+				if(!o.fill) fill = "#000"; else fill = o.fill;
+				var str = '<div style="';
+					str+= ' position:absolute;';
+					str+= ' left:'		    + Number(x + ( Math.abs(o.width) / 2)) + 'px;';
+					str+= ' top:'		    + y + 'px;';
+					str+= ' color:'		    + o.fillStyle + ';';
+					str+= ' font-size:'	    + o.fontSize + 'px;';
+					str+= ' font-family:'	+ o.font + ';';
+					if(o.addToExportStyle) str += o.addToExportStyle + ';';
+					if(o.shadowOffsetX || o.shadowOffsetY || o.shadowBlur || o.shadowColor) str+= ' text-shadow: '+o.shadowOffsetX+'px '+o.shadowOffsetY+'px '+o.shadowBlur+'px '+o.shadowColor+';';
+					if(o.rotate)   str+= ' -ms-transform: rotate('+o.rotate+'deg); -webkit-transform: rotate('+o.rotate+'deg); transform: rotate('+o.rotate+'deg);'; 
+					if(o.isBold)   str+= ' font-weight:bold;';
+					if(o.isItalic) str+= ' font-style:italic;';
+					str+= ' alignment-baseline:before-edge';
+					str+= '" ><div keepDirection="1" style="display:inline-block;position:relative;left:50%;"><div keepDirection="1" style="margin-left:-50%;white-space:nowrap;text-align:left;">'+o.text+'</div></div></div>';
+
+				o.onExport = str;
+
+			}
+
+		}
+
+		return objects;
 	},
 	delete : function( e ){
 		e.preventDefault(); e.stopPropagation();

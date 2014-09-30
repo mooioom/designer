@@ -10,7 +10,6 @@ $.extend( true, editor, {
 		var inputHasFocus = false;
 		if (focusedInputs != null && focusedInputs.length > 0) { inputHasFocus = true; }
 
-		this.draw.Debugger();
 		this.draw.clearCanvas();
 		this.draw.objects();
 		this.draw.selectedBox();
@@ -26,7 +25,6 @@ $.extend( true, editor, {
 		this.render(); 
 		this.draw.ui();
 		this.draw.toolbar();
-		//this.draw.reOrderByUi( true );
 		this.ui.toolbar.init();
 		this.ui.toolbox.init();
 	},
@@ -37,33 +35,6 @@ $.extend( true, editor, {
 		{
 			if(!ctx) ctx = this.parent.ctx;
 			ctx.clearRect(0, 0, this.parent.canvas.width, this.parent.canvas.height);
-		},
-
-		Debugger : function()
-		{
-			if(!this.debug) return;
-			$('#x').html( this.mouseX );
-			$('#y').html( this.mouseY );
-
-			$('#mouseDown').html( this.mouseDown );
-
-			$('#drag').html( this.drag );
-
-			$('#objects').empty();
-			this.forEachObjects(function( obj ){
-				$('#objects').append( obj.id + ' : ('+obj.startX+','+obj.startY+' - '+obj.endX+','+obj.endY+') <br/>');
-			});
-
-			$('#action').html(this.action);
-
-			var selectedObjects = '';
-			for(i in this.parent.selecteds) selectedObjects += this.parent.selecteds[i].id + ', ';
-			selectedObjects = selectedObjects.substring(0, selectedObjects.length - 2);
-			$('#selected').html(selectedObjects);
-
-			$('#movedX').html( this.movedX );
-			$('#movedY').html( this.movedY );
-
 		},
 
 		grid : function()

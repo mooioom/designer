@@ -165,63 +165,15 @@
 			<canvas id="gridCanvas"></canvas>
 		</div>
 
-		<div class="toolbox text hidden">
-			<div class="header"><%=Resources.Strings.Text %></div>
-			<div class="close">X</div>
-			<div class="body">
-				<div class="item"><textarea id="text"></textarea></div>
-			</div>
-		</div>
-
-		<div class="toolbox shadow hidden">
-			<div class="header"><%=Resources.Strings.Shadow %></div>
-			<div class="close">X</div>
-			<div class="body">
-				<div class="item"><%=Resources.Strings.Color %> <input type="text" class="shadowColor"></div>
-				<div class="item"><%=Resources.Strings.Blur %><br/><input type="range" class="shadowBlur" min="0" max="20" step="0.1" value="0"></div>
-				<div class="item"><%=Resources.Strings.Offset %> X<br/><input type="range" class="shadowOffsetX" min="-20" max="20" step="0.1" value="0"></div>
-				<div class="item"><%=Resources.Strings.Offset %> Y<br/><input type="range" class="shadowOffsetY" min="-20" max="20" step="0.1" value="0"></div>
-			</div>
-		</div>
-
-		<div class="toolbox transform hidden">
-			<div class="header"><%=Resources.Strings.Transform %></div>
-			<div class="close">X</div>
-			<div class="body">
-				<div class="item">
-					  <div class="title"><%=Resources.Strings.Rotate %></div>
-					  <input type="range" class="rotate" min="0" max="360" step="5" value="0">
-				</div>
-			</div>
-		</div>
-
-		<div class="toolbox fx hidden">
-			<div class="header">FX</div>
-			<div class="close">X</div>
-			<div class="body"></div>
-		</div>
-
 		<div class="tools">
-			<div class="button select"     id="select"></div>
-			<div class="button move"       id="move"></div>
+			<div class="button select active" id="select"></div>
+			<div class="button move" id="move"></div>
+			<div class="button box" id="box"></div>
+			<div class="button text" id="text"></div>
 			<!-- <div class="button transform"  id="transform"></div> -->
-			<div class="button box active" id="box"></div>
-			<div class="button text"       id="text"></div>
 		</div>
 
 		<div class="sideBar"></div>
-		
-		<div class="debugger hidden">
-			<span id="x">0</span>, <span id="y">0</span><br />
-			mouseDown : <span id="mouseDown">off</span><br/ >
-			drag : <span id="drag">off</span><br/>
-			objects : <br />
-			<span id="objects"></span><br/>
-			action : <span id="action">box</span><br />
-			selected : <span id="selected"></span><br />
-			movedX : <span id="movedX">0</span><br/>
-			movedY : <span id="movedY">0</span><br/>
-		</div>
 
 		<div class="clear"></div>
 
@@ -266,7 +218,7 @@
 			<string resource="file"            value="<%=Resources.Strings.File %>"></string>
 			<string resource="new"             value="<%=Resources.Strings.New %>"></string>
 			<string resource="save"            value="<%=Resources.Strings.SaveAs2 %>"></string>
-			<string resource="save2"            value="<%=Resources.Strings.Save %>"></string>
+			<string resource="save2"           value="<%=Resources.Strings.Save %>"></string>
 			<string resource="load"            value="<%=Resources.Strings.Load %>"></string>
 			<string resource="exportHtml"      value="<%=Resources.Strings.ExportHtml %>"></string>
 			<string resource="exportSvg"       value="<%=Resources.Strings.ExportSvg %>"></string>
@@ -284,11 +236,20 @@
 			<string resource="grid"            value="<%=Resources.Strings.Grid2 %>"></string>
 			<string resource="objects"         value="<%=Resources.Strings.Objects %>"></string>
 			<string resource="resources"       value="<%=Resources.Strings.Resources %>"></string>
-			<string resource="visible"         value="Visible"></string>
-			<string resource="snap"            value="Snap"></string>
-			<string resource="size"            value="Size"></string>
-			<string resource="lineWidth"       value="LineWidth"></string>
-			<string resource="style"           value="Style"></string>
+			<string resource="visible"         value="<%=Resources.Strings.Visible %>"></string>
+			<string resource="snap"            value="<%=Resources.Strings.Snap %>"></string>
+			<string resource="size"            value="<%=Resources.Strings.Size %>"></string>
+			<string resource="lineWidth"       value="<%=Resources.Strings.LineWidth %>"></string>
+			<string resource="style"           value="<%=Resources.Strings.Style %>"></string>
+			<string resource="text"            value="<%=Resources.Strings.Text %>"></string>
+			<string resource="transform"       value="<%=Resources.Strings.Transform %>"></string>
+			<string resource="rotate"          value="<%=Resources.Strings.Rotate %>"></string>
+			<string resource="shadow"          value="<%=Resources.Strings.Shadow %>"></string>
+			<string resource="fx"              value="FX"></string>
+			<string resource="color"           value="<%=Resources.Strings.Color %>"></string>
+			<string resource="blur"            value="<%=Resources.Strings.Blur %>"></string>
+			<string resource="offsetX"         value="<%=Resources.Strings.Offset %> X"></string>
+			<string resource="offsetY"         value="<%=Resources.Strings.Offset %> Y"></string>
 
 			<!-- Template Editor -->
 			<string resource="LoadingTemplates" value="<%=Resources.Strings.LoadingTemplates %>"></string>
@@ -315,8 +276,13 @@
 			<string resource="Saving"   		value="<%=Resources.Strings.Saving %>"></string>
 			<string resource="SuccessfullySaved"value="<%=Resources.Strings.SuccessfullySaved %>"></string>
 			<string resource="Close"            value="<%=Resources.Strings.Close %>"></string>
-			
-			
+			<string resource="Preview"          value="<%=Resources.Strings.Preview %>"></string>
+			<string resource="MakeStaticText"   value="<%=Resources.Strings.MakeStaticText %>"></string>
+			<string resource="MakeDynamicData"  value="<%=Resources.Strings.MakeDynamicData %>"></string>
+			<string resource="MakeGlobalized"   value="<%=Resources.Strings.MakeGlobalized %>"></string>
+			<string resource="GlobalText"       value="<%=Resources.Strings.GlobalText %>"></string>
+			<string resource="DynamicData"      value="<%=Resources.Strings.DynamicData %>"></string>
+			<string resource="ChooseLanguage"   value="<%=Resources.Strings.ChooseLanguage %>"></string>
 		</div>
 
 	</body>

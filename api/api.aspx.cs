@@ -40,6 +40,9 @@ namespace Satec.eXpertPowerPlus.Web
                 dynamicData.Columns.Add("Value", typeof(string));
 
                 dynamicData.Rows.Add("computationNumber", "54397");
+                dynamicData.Rows.Add("customerName", Resources.Strings.CustomerName);
+                dynamicData.Rows.Add("addressForBill", Resources.Strings.AddressforBill);
+                dynamicData.Rows.Add("computationNumber", "54397");
                 dynamicData.Rows.Add("deviceName", "11754-BFM136-05");
                 dynamicData.Rows.Add("siteName", "Test_QA");
                 dynamicData.Rows.Add("methodOfCharge", "TOU Import");
@@ -64,6 +67,54 @@ namespace Satec.eXpertPowerPlus.Web
                 success = new BillTemplateBL(sessionHandler.LangID).setTemplate(sessionHandler.CustomerID, type, id) 
             });
         }
+        [WebMethod]
+        public static object saveProperties(int headerOnly, int readingsTable, int barcode, string barcodeText) 
+        {
+            return js.Serialize(new
+            {
+                success = new BillTemplateBL(sessionHandler.LangID).saveProperties(sessionHandler.CustomerID, headerOnly, readingsTable, barcode, barcodeText)
+            });
+        }
+        [WebMethod]
+        public static object transformLayoutOptions(string fromHeaders, string toHeaders, string fromGrids, string toGrids, string fromFooters, string toFooters) 
+        {
+            //todo: dont forget to change table names
+            string[] fromHeadersA = fromHeaders.Split(',');
+            string[] toHeadersA   = toHeaders.Split(',');
+            string[] fromGridsA   = fromGrids.Split(',');
+            string[] toGridsA     = toGrids.Split(',');
+            string[] fromFootersA = fromFooters.Split(',');
+            string[] toFootersA   = toFooters.Split(',');
+
+            dbUtils = new DBUtils();
+
+            DataTable layoutOptions = new DataTable();
+            var q = "select * from BILLING.LayoutOptions";
+            layoutOptions = dbUtils.FillDataSetTable(q, "LayoutOptions").Tables[0];
+
+            foreach (DataRow row in layoutOptions.Rows) {
+                string headerLayout = row["HeaderLayout"].ToString();
+                string gridLayout   = row["GridLayout"].ToString();
+                string footerLayout = row["FooterLayout"].ToString();
+                int hasBarcode      = (row["HasBarcode"] != DBNull.Value) ? Convert.ToInt32(row["HasBarcode"]) : 0;
+                string textToEncode = row["TextToEncode"].ToString();
+                string customerId   = row["SourceID"].ToString();
+                int a = 0, b = 0, c = 0, i = 0;
+                i = 0; foreach (string s in fromHeadersA) {if (s == headerLayout) a = i; i++;}
+                i = 0; foreach (string s in fromFootersA) {if (s == footerLayout) b = i; i++;}
+                i = 0; foreach (string s in fromGridsA)   {if (s == gridLayout)   c = i; i++;}
+                string qHeader     = "insert into test_BillTemplates (CustomerId,Type,DesignId) values ("+customerId+",'header',"+toHeadersA[a]+")";
+                string qFooter     = "insert into test_BillTemplates (CustomerId,Type,DesignId) values (" + customerId + ",'footer'," + toFootersA[b] + ")";
+                string qGrid       = "insert into test_BillTemplateGrids (CustomerId,DesignId) values (" + customerId + "," + toGridsA[c] + ")";
+                string qProperties = "insert into test_billTemplatesProperties (CustomerId,Barcode,BarcodeText) values ("+customerId+","+hasBarcode+",N'"+textToEncode+"')";
+                dbUtils.ExecNonQuery(qHeader);
+                dbUtils.ExecNonQuery(qFooter);
+                dbUtils.ExecNonQuery(qGrid);
+                dbUtils.ExecNonQuery(qProperties);
+            }
+
+            return js.Serialize(new { a = 1 });
+        }
         //</invoiceLayout.aspx>
 
         // <Template Editor>
@@ -72,6 +123,7 @@ namespace Satec.eXpertPowerPlus.Web
         public static object getTemplate(int id, string type, int isAudited)
         {
             DataTable dt = new DataTable();
+            js.MaxJsonLength = Int32.MaxValue;
             if (isAudited == 0) dt = new BillTemplateBL(sessionHandler.LangID).getDesign(type, id); 
             else                dt = new BillTemplateBL(sessionHandler.LangID).getTemplate(sessionHandler.CustomerID, type);
 
@@ -124,7 +176,9 @@ namespace Satec.eXpertPowerPlus.Web
 
             dt.Columns.Add("Property", typeof(string));
             dt.Columns.Add("Value", typeof(string));
-
+            
+            dt.Rows.Add("customerName", GetString("CustomerName", langId));
+            dt.Rows.Add("addressForBill", GetString("AddressforBill", langId));
             dt.Rows.Add("computationNumber", "54397");
             dt.Rows.Add("deviceName", "11754-BFM136-05");
             dt.Rows.Add("siteName", "Test_QA");

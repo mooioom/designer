@@ -25,10 +25,10 @@ templateEditor = {
 
 	getData : function(){
 
-		//todo :: get available dynamic fields from server
 		this.dynamicFields = [
 			{ label : 'Computation Number',       value : 'computationNumber' },
-			{ label : 'Client Address',  		  value : 'clientAddress' },
+			{ label : 'Customer Name',  		  value : 'customerName' },
+			{ label : 'Address For Bill',  		  value : 'addressForBill' },
 			{ label : 'Device Name', 			  value : 'deviceName' },
 			{ label : 'Site Name',  			  value : 'siteName' },
 			{ label : 'Meter Number',             value : 'meterNumber' },
@@ -46,14 +46,14 @@ templateEditor = {
 
 		$('.toolbar.text .clear').remove();
 		$('.toolbar.text').append('<div class="sep dynamicInput hidden"></div>');
-		$('.toolbar.text').append('<div class="item dynamicInput hidden"><div class="left">Dynamic Data : <select id="dynamicFields"></select></div><div class="left"><div class="toolbarButtonB removeDynamicData">Make Static Text</div></div><div class="clear"></div></div>');
+		$('.toolbar.text').append('<div class="item dynamicInput hidden"><div class="left">'+getString('DynamicData')+' : <select id="dynamicFields"></select></div><div class="left"><div class="toolbarButtonB removeDynamicData">'+getString('MakeStaticText')+'</div></div><div class="clear"></div></div>');
 		$('.toolbar.text').append('<div class="sep chooseDataType hidden"></div>');
-		$('.toolbar.text').append('<div class="item chooseDataType hidden"><div class="toolbarButtonB left dynamicData">Make Dynamic Data</div><div class="toolbarButtonB left globalizedStringButton">Make Globalized String</div><div class="clear"></div></div>');
+		$('.toolbar.text').append('<div class="item chooseDataType hidden"><div class="toolbarButtonB left dynamicData">'+getString('MakeDynamicData')+'</div><div class="toolbarButtonB left globalizedStringButton">'+getString('MakeGlobalized')+'</div><div class="clear"></div></div>');
 		$('.toolbar.text').append('<div class="sep globalizedString hidden"></div>');
-		$('.toolbar.text').append('<div class="item globalizedString hidden"><div class="left globalHolder">Global Text : <input type="text" id="globalizedString" /><div id="globalizedStringChooser" class="hidden"></div></div><div class="left globalizedGlobe disabled"></div><div class="left"><div class="toolbarButtonB removeDynamicData">Make Static Text</div></div><div class="clear"></div></div>');
+		$('.toolbar.text').append('<div class="item globalizedString hidden"><div class="left globalHolder">'+getString('GlobalText')+' : <input type="text" id="globalizedString" /><div id="globalizedStringChooser" class="hidden"></div></div><div class="left globalizedGlobe disabled"></div><div class="left"><div class="toolbarButtonB removeDynamicData">'+getString('MakeStaticText')+'</div></div><div class="clear"></div></div>');
 		$('.toolbar.text').append('<div class="clear"></div>');
 
-		$('.toolbarButtonB').before('<div class="left textAlignButtons"><div class="textAlignButton selected textAlignLeft" textAlign="left"></div><div class="textAlignButton textAlignCenter" textAlign="center"></div><div class="textAlignButton textAlignRight" textAlign="right"></div><div class="clear"></div></div>');
+		$('.toolbarButtonB').before('<div class="left textAlignButtons hidden"><div class="textAlignButton selected textAlignLeft" textAlign="left"></div><div class="textAlignButton textAlignCenter" textAlign="center"></div><div class="textAlignButton textAlignRight" textAlign="right"></div><div class="clear"></div></div>');
 
 		for(i in this.dynamicFields){
 
@@ -183,12 +183,14 @@ templateEditor = {
 				text = editor.selecteds[0];
 				if(text.dynamic){
 					$('.dynamicInput').show();
+					$('.item.dynamicInput .textAlignButtons').show();
 					$('#dynamicFields').val(text.dynamic);
 					$('.textAlignButton').removeClass('selected');
 					$('.textAlignButton[textAlign="'+text.textAlign+'"]').addClass('selected');
 				}
 				else if(text.globalized){
 					$('.globalizedString').show();
+					$('.item.globalizedString .textAlignButtons').show();
 					$('#globalizedString').val(text.globalized.text);
 					$('.globalizedGlobe').removeClass('disabled');
 					$('.textAlignButton').removeClass('selected');
@@ -202,6 +204,7 @@ templateEditor = {
 			$('.chooseDataType').hide();
 
 			editor.selecteds[0].textAlign = 'left';
+			$('.item.dynamicInput .textAlignButtons').show();
 			$('.textAlignButton').removeClass('selected');
 			$('.textAlignButton[textAlign="left"]').addClass('selected');
 
@@ -212,6 +215,7 @@ templateEditor = {
 			$('.chooseDataType').hide();
 
 			editor.selecteds[0].textAlign = 'left';
+			$('.item.globalizedString .textAlignButtons').show();
 			$('.textAlignButton').removeClass('selected');
 			$('.textAlignButton[textAlign="left"]').addClass('selected');
 			$('#globalizedString').val('');
@@ -251,7 +255,7 @@ templateEditor = {
 			previewHtml       = $('<div class="htmlPreviewData previewMode" style="width:'+$('#canvas').width()+'px; height:'+$('#canvas').height()+'px"></div>');
 
 			previewMenu       = $('<div class="htmlPreviewMenu"></div>');
-			previewLang       = $('<div class="left previewLang">Choose Language : </div>');
+			previewLang       = $('<div class="left previewLang">'+getString('ChooseLanguage')+' : </div>');
 			previewLangSelect = $('<select id="previewLang"></select>');
 			clearer           = $('<div class="clear"></div>');
 
@@ -269,8 +273,8 @@ templateEditor = {
 			previewContent.append(previewHtml);
 
 			htmlPopup = new Popup({
-				header    : "Preview...",
-				closeText : "Close",
+				header    : getString('Preview')+"...",
+				closeText : getString('Close'),
 				content   : previewContent,
 				addClass  : 'htmlPreview',
 				onLoad    : function(){ $('#previewLang').trigger('change'); }
@@ -423,7 +427,7 @@ templateEditor = {
 }
 
 var closeDesigner = $('<div class="closeDesignerWrapper"></div>'),
-	previewHtml   = $('<div class="previewHtml left button">Preview</div>'),
+	previewHtml   = $('<div class="previewHtml left button">'+getString('Preview')+'</div>'),
 	saveTemplate  = $('<div class="saveTemplate left button">'+getString('save2')+'</div>'),
 	closeButton   = $('<div class="closeDesigner left button">'+getString('Close')+'</div>'),
 	clearDiv      = $('<div class="clear"></div>');
