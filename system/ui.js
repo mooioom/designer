@@ -1,5 +1,5 @@
 
-$.extend( true, editor, {
+$.extend( true, designer, {
 
 	ui : {
 
@@ -336,7 +336,7 @@ $.extend( true, editor, {
 					},
 
 					events : function(){
-						$('.toolbox.text #text').bind('keyup change keydown',function(){ editor.functions.changeText( $(this).val() ); });
+						$('.toolbox.text #text').bind('keyup change keydown',function(){ designer.functions.changeText( $(this).val() ); });
 					}
 
 				});
@@ -355,11 +355,11 @@ $.extend( true, editor, {
 					events : function(){
 						$('.toolbox input[type="range"]',this.el).change(function(){
 							var prop = $(this).attr('class');
-							o = editor.selecteds[0];
+							o = designer.selecteds[0];
 							if( !o ) return;
 							if( o.locked || !o.visible ) return;
 							o[prop] = $(this).val();
-							editor.render();
+							designer.render();
 						});
 					}
 
@@ -382,11 +382,11 @@ $.extend( true, editor, {
 					events : function(){
 						$('.toolbox input[type="range"]',this.el).change(function(){
 							var prop = $(this).attr('class');
-							o = editor.selecteds[0];
+							o = designer.selecteds[0];
 							if( !o ) return;
 							if( o.locked || !o.visible ) return;
 							o[prop] = $(this).val();
-							editor.render();
+							designer.render();
 						});
 					}
 
@@ -404,7 +404,7 @@ $.extend( true, editor, {
 					},
 
 					events : function(){
-						$('.toolbox.text #text').bind('keyup change keydown',function(){ editor.functions.changeText( $(this).val() ); });
+						$('.toolbox.text #text').bind('keyup change keydown',function(){ designer.functions.changeText( $(this).val() ); });
 					}
 
 				});
@@ -423,20 +423,20 @@ $.extend( true, editor, {
 
 				$('.toolbox input[type="range"]').change(function(){
 					var prop = $(this).attr('class');
-					o = editor.selecteds[0];
+					o = designer.selecteds[0];
 					if( !o ) return;
 					if( o.locked || !o.visible ) return;
 					o[prop] = $(this).val();
-					editor.render();
+					designer.render();
 				});
 
 				$('.toolbox input[type="range"]').mousedown(function(){
-					editor.history.save();
+					designer.history.save();
 				});
 
 				//text
 				//$('.toolbox.text').hide();
-				//$('.toolbox.text #text').bind('keyup change keydown',function(){ editor.functions.changeText( $(this).val() ); });
+				//$('.toolbox.text #text').bind('keyup change keydown',function(){ designer.functions.changeText( $(this).val() ); });
 
 			},
 
@@ -462,11 +462,11 @@ $.extend( true, editor, {
 
 			init : function(){
 
-				$('#selectAndMove').click(function(){ editor.selectAndMove = $(this).prop('checked'); });
+				$('#selectAndMove').click(function(){ designer.selectAndMove = $(this).prop('checked'); });
 
 				$('.toolbar .link').click(function(){
 					$(this).toggleClass('unlinked');
-					editor.resizeLinked = !$(this).hasClass('unlinked');
+					designer.resizeLinked = !$(this).hasClass('unlinked');
 				})
 
 				$('.toolbar input, .toolbar select').bind('keyup change',function( e ){
@@ -474,19 +474,19 @@ $.extend( true, editor, {
 					if($(this).attr('data')!='string')
 					{
 						if (e.keyCode == 37) {} //left
-						if (e.keyCode == 38) { $(this).val( Number( $(this).val() )+ editor.grid.size ) } // up
+						if (e.keyCode == 38) { $(this).val( Number( $(this).val() )+ designer.grid.size ) } // up
 						if (e.keyCode == 39) {} //right
-						if (e.keyCode == 40) { $(this).val( Number( $(this).val() )- editor.grid.size ) } // down
+						if (e.keyCode == 40) { $(this).val( Number( $(this).val() )- designer.grid.size ) } // down
 					}
 					var val = $(this).val();
 					if( $(this).attr('type') == 'checkbox' ) val = $(this).prop('checked');
-					editor.helpers.updateSelectedObjProp( $(this).attr('class'), val, $(this).attr('data'));
-					editor.render();
+					designer.helpers.updateSelectedObjProp( $(this).attr('class'), val, $(this).attr('data'));
+					designer.render();
 				});
 
 				$('.toolbarButton.align').click(function(){
 					var type = $(this).attr('type');
-					editor.functions['align'+type]();
+					designer.functions['align'+type]();
 				});
 
 			},

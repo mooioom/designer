@@ -1,5 +1,5 @@
-<%@ Page Language="C#" AutoEventWireup="true" CodeFile="CircuitEditor.aspx.cs" 
-         Inherits="Satec.eXpertPowerPlus.Web.CircuitEditor" %>
+<%@ Page Language="C#" AutoEventWireup="true" CodeFile="designer.aspx.cs" 
+         Inherits="Satec.eXpertPowerPlus.Web.Designer" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -34,7 +34,7 @@
 		<script type="text/javascript" src="system/actions.js"></script>
 		<script type="text/javascript" src="system/helpers.js"></script>
 
-		<!-- <script type="text/javascript" src="CircuitEditor.js"></script> -->
+		<!-- <script type="text/javascript" src="designer.js"></script> -->
 
 		<script type="text/javascript">
 
@@ -44,7 +44,7 @@
 			setTimeout(function()
 			{
 
-				editor.init({
+				designer.init({
 					name    : getString("UntitledProject"),
 				    width   : 1024,
 					height  : 253,
@@ -58,7 +58,7 @@
 		</script>
 
 		<link rel="stylesheet" type="text/css" href="css/spectrum.css">
-		<link rel="stylesheet" type="text/css" href="css/CircuitEditor.css">
+		<link rel="stylesheet" type="text/css" href="css/designer.css">
 		<link rel="stylesheet" type="text/css" href="css/popup.css">
 
 	</head>

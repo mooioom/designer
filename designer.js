@@ -13,7 +13,7 @@ $(document).ready(function()
 	setTimeout(function()
 	{
 
-		editor.init({
+		designer.init({
 			name    : getString("UntitledProject"),
 		    width   : 1024,//$('.stage').width(),
 			height  : 320//$('.stage').height()

@@ -1,7 +1,7 @@
 
-var editor = editor || {};
+var designer = designer || {};
 
-$.extend( true, editor, {
+$.extend( true, designer, {
 
 	debug : false,
 

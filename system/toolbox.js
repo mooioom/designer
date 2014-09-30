@@ -6,8 +6,8 @@ jQuery.fn.outerHTML = function(s) {
         : jQuery("<p>").append(this.eq(0).clone()).html();
 };
 
-editor.toolbox = function( data ){ return this.init( data) }
-editor.toolbox.prototype = {
+designer.toolbox = function( data ){ return this.init( data) }
+designer.toolbox.prototype = {
 
 	name      : "",
 	title     : "",
@@ -29,7 +29,7 @@ editor.toolbox.prototype = {
 		for(var i in data) this[i] = data[i];
 		if(!this.name) return;
 
-		this.parent = editor; // static name
+		this.parent = designer; // static name
 
 		if(this.parent.getToolbox(this.name)) return;
 

@@ -1,9 +1,9 @@
 
-$.extend( true, editor, {
+$.extend( true, designer, {
 	
 	init : function( data )
 	{
-		console.log('Editor', data);
+		console.log('Designer', data);
 
 		for(var i in this.defaults) this[i] = this.defaults[i];
 

@@ -1,5 +1,5 @@
 
-$.extend( true, editor, {
+$.extend( true, designer, {
 
 	file : {
 
@@ -44,7 +44,7 @@ $.extend( true, editor, {
 						label      : getString("ProjectName"),
 						varName    : "projectName",
 						type       : "text",
-						value      : editor.name,
+						value      : designer.name,
 						longText   : true,
 					},
 					{
@@ -65,11 +65,11 @@ $.extend( true, editor, {
 				action : $.proxy(function( ret ){
 					var w,h;
 					a = ret['canvasSize'];
-					editor.name = ret['projectName'];
+					designer.name = ret['projectName'];
 					this.parent.reset();
 					if(a == 'full') { w = $('.stage').width(); h = $('.stage').height(); }
 					else{ b=a.split('h');c=b[0];d=c.split('w');h=Number(b[1]);w=Number(d[1]); }
-					editor.init({
+					designer.init({
 						width  : w,
 						height : h,
 						name   : ret['projectName']

@@ -4,7 +4,7 @@ console.log('templateEditorAdmin');
 
 // admin for creating template designs
 
-new editor.toolbox({
+new designer.toolbox({
 
 	templateUrl : 'modules/templateEditorAdmin.html',
 
@@ -113,8 +113,8 @@ new editor.toolbox({
 				this.select( design.ID );
 				if( design )
 				{
-					editor.reset();
-					editor.init({
+					designer.reset();
+					designer.init({
 						name    : design.Name,
 					    width   : 1024,
 						height  : Number(design.Height),
@@ -137,14 +137,14 @@ new editor.toolbox({
 	},
 	save : function( e ){
 		e.preventDefault(); e.stopPropagation();
-		objects = $.extend(true,{},editor.objects);
+		objects = $.extend(true,{},designer.objects);
 		//depends on templateEditor.js
 		this.api(
 			'saveDesign',
 			function( data ){
 				if(data) console.log('saved');
 			},
-			{ id : this.hasSelected(), data : editor.file.getData(), html : editor.file.getHtml( {objects:templateEditor.transformObjects(objects)} )  }
+			{ id : this.hasSelected(), data : designer.file.getData(), html : designer.file.getHtml( {objects:templateEditor.transformObjects(objects)} )  }
 		)
 	},
 	transformObjects : function(objects)
@@ -155,7 +155,7 @@ new editor.toolbox({
 
 			o = objects[i];
 
-			var absCoords = editor.helpers.getAbsCoords(o.startX,o.startY,o.width,o.height),
+			var absCoords = designer.helpers.getAbsCoords(o.startX,o.startY,o.width,o.height),
 				x = absCoords.x,y = absCoords.y,w = absCoords.w,h = absCoords.h,cx = x + (w/2),cy = y + (h/2),
 				sx = o.shadowOffsetX, sy = o.shadowOffsetY, sb = o.shadowBlur, sc = o.shadowColor;
 

@@ -17,16 +17,15 @@ using Satec.eXpertPower.Utilities;
 
 namespace Satec.eXpertPowerPlus.Web
 {
-    public partial class CircuitEditor : Page
+    public partial class Designer : AbstractEnergyPage
     {
         private static SessionHandler sessionHandler;
+        public bool isAdmin = false;
 
-        [WebMethod]
-        public static object init()
+        protected void Page_Load(object sender, EventArgs e)
         {
             SessionHandler sessionHandler = new SessionHandler();
-            var obj = new{ init = true };
-            return obj;
+            if (sessionHandler.UserID == 4010) isAdmin = true; 
         }
     }
 }

@@ -1,5 +1,5 @@
 
-$.extend( true, editor, {
+$.extend( true, designer, {
 	
 	sidebar : {
 

@@ -1,6 +1,6 @@
 //@ sourceURL=templateEditor.js
 
-console.log('templateEditor',editor);
+console.log('templateEditor');
 
 templateEditor = {
 
@@ -77,14 +77,14 @@ templateEditor = {
 
 		$('#dynamicFields').change(function(){
 
-			if(editor.selecteds.length) editor.selecteds[0].dynamic = $(this).val();
+			if(designer.selecteds.length) designer.selecteds[0].dynamic = $(this).val();
 
 		});
 
 		$('.removeDynamicData').click(function(){
-			if(editor.selecteds.length) {
-				if(editor.selecteds[0].dynamic) delete editor.selecteds[0].dynamic;
-				if(editor.selecteds[0].globalized) delete editor.selecteds[0].globalized;
+			if(designer.selecteds.length) {
+				if(designer.selecteds[0].dynamic) delete designer.selecteds[0].dynamic;
+				if(designer.selecteds[0].globalized) delete designer.selecteds[0].globalized;
 				$('.chooseDataType').show();
 				$('.dynamicInput').hide();
 				$('.globalizedString').hide();
@@ -125,7 +125,7 @@ templateEditor = {
 		$('.textAlignButton').click(function(){
 			$('.textAlignButton').removeClass('selected');
 			$(this).addClass('selected');
-			editor.selecteds[0].textAlign = $(this).attr('textAlign');
+			designer.selecteds[0].textAlign = $(this).attr('textAlign');
 		});
 
 		$(document).on('click', '#globalizedStringChooser .chooserItem', $.proxy(function( e ){
@@ -137,7 +137,7 @@ templateEditor = {
 			$('#globalizedString').val(text);
 			$('.globalizedGlobe').removeClass('disabled');
 
-			editor.selecteds[0].globalized = {
+			designer.selecteds[0].globalized = {
 				id   : id,
 				text : text
 			};
@@ -158,29 +158,29 @@ templateEditor = {
 						divs.append('<div class="lang"><div class="left langTitle">'+lang.Lang+'</div><div class="left langText">'+lang.Text+'</div><div class="clear"></div></div>');
 					}
 					langPop = new Popup({
-						header  : 'Variations of ' + editor.selecteds[0].globalized.text,
+						header  : 'Variations of ' + designer.selecteds[0].globalized.text,
 						content : divs.html(),
 						closeText : 'Close'
 					})
 				}
-			},{id  : editor.selecteds[0].globalized.id})
+			},{id  : designer.selecteds[0].globalized.id})
 
 		},this));
 
-		editor.onSelect = function(){
+		designer.onSelect = function(){
 			//console.log('onSelect');
 		}
 
-		editor.onToolChange = function(){
-			if(editor.action == 'text') $('.chooseDataType, .dynamicInput, .globalizedString').hide();
-			else editor.onMouseUp();
+		designer.onToolChange = function(){
+			if(designer.action == 'text') $('.chooseDataType, .dynamicInput, .globalizedString').hide();
+			else designer.onMouseUp();
 		}
 
-		editor.onMouseUp = function(){
+		designer.onMouseUp = function(){
 			$('.chooseDataType, .dynamicInput, .globalizedString').hide();
-			if( editor.helpers.selectedIsText() )
+			if( designer.helpers.selectedIsText() )
 			{
-				text = editor.selecteds[0];
+				text = designer.selecteds[0];
 				if(text.dynamic){
 					$('.dynamicInput').show();
 					$('.item.dynamicInput .textAlignButtons').show();
@@ -203,7 +203,7 @@ templateEditor = {
 		$('.dynamicData').click(function(){
 			$('.chooseDataType').hide();
 
-			editor.selecteds[0].textAlign = 'left';
+			designer.selecteds[0].textAlign = 'left';
 			$('.item.dynamicInput .textAlignButtons').show();
 			$('.textAlignButton').removeClass('selected');
 			$('.textAlignButton[textAlign="left"]').addClass('selected');
@@ -214,7 +214,7 @@ templateEditor = {
 		$('.globalizedStringButton').click(function(){
 			$('.chooseDataType').hide();
 
-			editor.selecteds[0].textAlign = 'left';
+			designer.selecteds[0].textAlign = 'left';
 			$('.item.globalizedString .textAlignButtons').show();
 			$('.textAlignButton').removeClass('selected');
 			$('.textAlignButton[textAlign="left"]').addClass('selected');
@@ -290,9 +290,9 @@ templateEditor = {
 							 .html('<div class="loadingPreview" style="line-height:' + $('#canvas').height() + 'px">Generating Preview...</div>')
 
 		var item    = $(e.target),
-			objects = $.extend(true,{},editor.objects);
+			objects = $.extend(true,{},designer.objects);
 
-		html = editor.file.getHtml( { objects : this.transformObjects(objects) } );
+		html = designer.file.getHtml( { objects : this.transformObjects(objects) } );
 
 		this.api('getHtml',function(data){
 			$('.htmlPreviewData').removeClass('previewMode');
@@ -312,8 +312,8 @@ templateEditor = {
 			data     = $.parseJSON(data.d);
 			template = data[0];
 
-			editor.reset();
-			editor.init({
+			designer.reset();
+			designer.init({
 				name    : template.Name,
 			    width   : 1024,
 				height  : Number(template.Height),
@@ -334,21 +334,21 @@ templateEditor = {
 
 		height = $('#canvas').height();
 
-		editor.ui.indicator.show( getString('Saving')+'...' );
-		objects = $.extend(true,{},editor.objects);
+		designer.ui.indicator.show( getString('Saving')+'...' );
+		objects = $.extend(true,{},designer.objects);
 
 		this.api(
 			'saveTemplate',
 			$.proxy(function( data ){
 				if(data) {
-					editor.ui.indicator.hide();
-					editor.ui.indicator.show( getString('SuccessfullySaved')+'!' );
-					editor.ui.indicator.hide();
+					designer.ui.indicator.hide();
+					designer.ui.indicator.show( getString('SuccessfullySaved')+'!' );
+					designer.ui.indicator.hide();
 					window.parent.invoiceLayout.refreshCurrent(this.type, this.id, true);
 					$('.closeDesigner').trigger('click');
 				}
 			},this),
-			{ id : this.id, type : this.type, height : height, data : editor.file.getData(), html : editor.file.getHtml( { objects:this.transformObjects(objects) } ) }
+			{ id : this.id, type : this.type, height : height, data : designer.file.getData(), html : designer.file.getHtml( { objects:this.transformObjects(objects) } ) }
 		)
 	},
 
@@ -360,7 +360,7 @@ templateEditor = {
 
 			o = objects[i];
 
-			var absCoords = editor.helpers.getAbsCoords(o.startX,o.startY,o.width,o.height),
+			var absCoords = designer.helpers.getAbsCoords(o.startX,o.startY,o.width,o.height),
 				x = absCoords.x,y = absCoords.y,w = absCoords.w,h = absCoords.h,cx = x + (w/2),cy = y + (h/2),
 				sx = o.shadowOffsetX, sy = o.shadowOffsetY, sb = o.shadowBlur, sc = o.shadowColor;
 
