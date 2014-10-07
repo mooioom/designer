@@ -44,7 +44,7 @@ namespace Satec.eXpertPowerPlus.Web
                 dynamicData.Rows.Add("addressForBill", Resources.Strings.AddressforBill);
                 dynamicData.Rows.Add("computationNumber", "54397");
                 dynamicData.Rows.Add("deviceName", "11754-BFM136-05");
-                dynamicData.Rows.Add("siteName", "BILLING.QA");
+                dynamicData.Rows.Add("siteName", Resources.Strings.SiteName);
                 dynamicData.Rows.Add("methodOfCharge", "TOU Import");
                 dynamicData.Rows.Add("invoiceDate", "July 2014");
                 dynamicData.Rows.Add("noDaysInPeriod", "13");
@@ -181,7 +181,7 @@ namespace Satec.eXpertPowerPlus.Web
             dt.Rows.Add("addressForBill", GetString("AddressforBill", langId));
             dt.Rows.Add("computationNumber", "54397");
             dt.Rows.Add("deviceName", "11754-BFM136-05");
-            dt.Rows.Add("siteName", "TEST.QA");
+            dt.Rows.Add("siteName", "Site Name");
             dt.Rows.Add("methodOfCharge", "TOU Import");
             dt.Rows.Add("invoiceDate", "July 2014");
             dt.Rows.Add("noDaysInPeriod", "13");

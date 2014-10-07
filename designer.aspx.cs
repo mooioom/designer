@@ -21,11 +21,13 @@ namespace Satec.eXpertPowerPlus.Web
     {
         private static SessionHandler sessionHandler;
         public bool isAdmin = false;
+        //public string Module;
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            //Module = Request.Querystring["module"];
             SessionHandler sessionHandler = new SessionHandler();
-            if (sessionHandler.UserID == 4010 && sessionHandler.UserName == "eldadl") isAdmin = true; 
+            if (sessionHandler.UserID == 4010 && sessionHandler.UserName == "eldadl") isAdmin = true;
         }
     }
 }

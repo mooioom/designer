@@ -444,6 +444,7 @@ window.parent.$('html').css('height','100%').css('overflow','hidden')
 
 templateEditor.init();
 
+window.onbeforeunload = function() { return getString('unsavedData'); };
 
 /* HELPERS */
 

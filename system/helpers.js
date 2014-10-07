@@ -163,22 +163,64 @@ $.extend( true, designer, {
 			return { x: globalPoint.x - $('#canvas').offset().left, y: globalPoint.y - $('#canvas').offset().top };
 		},
 
+		getAngleBetweenTwoPoints : function(p1,p2){
+			// radians
+			var angleRadians = Math.atan2(p2.y - p1.y, p2.x - p1.x);
+			// degrees
+			var angleDeg = Math.atan2(p2.y - p1.y, p2.x - p1.x) * 180 / Math.PI;
+
+			return angleDeg;
+		},
+
+		getLineDistance : function(p1,p2){
+			var xs = 0,
+				ys = 0;
+
+			xs = p2.x - p1.x;
+			xs = xs * xs;
+
+			ys = p2.y - p1.y;
+			ys = ys * ys;
+
+			return Math.sqrt( xs + ys );
+		},
+
 		getObjectInPoint : function( point )
 		{
 			var target = null;
 			this.forEachObjects( $.proxy(function( object ){
 
-				if(!target)
+				if(!target && object.visible && !object.locked)
 				{
 					var x  = object.startX, y = object.startY, w = object.width, h = object.height,
 						cx = w/2, cy = h/2, r = object.rotate;
 
+					if(object.type == 'line')
+					{
+
+						r = this.getAngleBetweenTwoPoints({x:object.startX,y:object.startY},{x:object.endX,y:object.endY});
+						d = this.getLineDistance({x:object.startX,y:object.startY},{x:object.endX,y:object.endY});
+
+						w = d;
+						h = object.lineWidth;
+
+						cx = 0, cy = 0;
+
+					}
+
 					this.parent.ctx.save();
 					this.parent.ctx.translate( x + cx, y + cy );
-					x = 0 - cx; y = 0 - cy;
 					this.parent.ctx.rotate(r*Math.PI/180);
+					this.parent.ctx.translate( -(x + cx), -(y + cy) );
 					this.parent.ctx.beginPath();
-					this.parent.ctx.rect(x,y,w,h);
+					if(object.type == 'line') y = y - object.lineWidth / 2;
+					if(object.type != 'path') this.parent.ctx.rect(x,y,w,h);
+					else{
+						var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+						$(path).attr('d',object.path);
+						this.parent.draw.path(this.parent.ctx,path);
+						this.parent.ctx.closePath();
+					}
 					if (this.parent.ctx.isPointInPath(point.x,point.y)) target = object;
 					this.parent.ctx.closePath();
 					this.parent.ctx.restore();
@@ -305,6 +347,42 @@ $.extend( true, designer, {
 			}
 			for (var a in obj1) if (obj1.hasOwnProperty(a)) --aMemberCount;
 			return aMemberCount ? false : true;
+		},
+
+		getSvgPathInfo : function( path ){
+
+			var sx = 0,
+				sy = 0,
+				lx = 0,
+				ly = 0,
+				cx = 0,
+				cy = 0;
+
+			for(i in path.pathSegList){
+				seg = path.pathSegList[i];
+				if(seg.x) cx = cx + seg.x;
+				if(seg.y) cy = cy + seg.y;
+				if(i==0){sx = cx; sy = cy;}
+				if(seg.x){
+					if(cx < sx) sx = cx;
+					if(cx > lx) lx = cx;
+				}
+				if(seg.y){
+					if(cy < sy) sy = cy;
+					if(cy > ly) ly = cy;
+				}
+			}
+
+			w = Math.abs(lx - sx);
+			h = Math.abs(ly - sy);
+
+			return {
+				x : sx,
+				y : sy,
+				w : w,
+				h : h 
+			}
+
 		}
 
 	}

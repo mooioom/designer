@@ -601,7 +601,8 @@ input[type='range'] {
 
 .toolbox.resources{
 	right: 20px;
-	min-width: 238px;
+	min-width: initial;
+	width: 119px;
 }
 .rtl .toolbox.resources{
 	right: initial;
@@ -640,15 +641,23 @@ input[type='range'] {
 	vertical-align: middle;
 }
 .resourceName{
-	line-height: 70px;
     color: #000;
-	padding-right: 13px;
-	padding-left: 3px;
-	width: 75px;
+	
+	
+	
 	overflow: hidden;
-	display: inline-block;
-	text-overflow: ellipsis;
-	height: 75px;
+	
+	
+	
+    height: 14px;
+    margin-bottom: -14px;
+    position: relative;
+    z-index: 1;
+    background: rgba(255, 255, 255, 0.81);
+    width: 99px;
+    top: 54px;
+    left: 8px;
+    text-align: center;
 }
 .resourceItem.noResources{
 	text-align: center;

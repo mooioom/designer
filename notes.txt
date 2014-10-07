@@ -2,21 +2,14 @@ TODOS :
 
 - save currentObject identifier
 - point to resources (do not draw src each time)
-- resources delete
 - scale & rotate tool
-- dynamic properties (text / button)
 - save file name
-- resources drag into object but do not replace image
-- update transform, shadow, text according to selected object
 - select align target
-- canvas size
 - zoom
-- save toolboxes position, hidden / shown etc.
 - image filters
 - image resize
 - animation
 - tools should move to ui
-- toolboxes should be upgraded to fit new toolbox object
 - object fill color should allow selection from Solid, Gradient and Image
 
 
@@ -36,4 +29,3 @@ FEATURES :
 CHANGELOG : 
 
 3/8/14 - Editor is now modular
-12

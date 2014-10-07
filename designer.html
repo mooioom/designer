@@ -1,9 +1,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html>
-	<head runat="server">
+	<head>
 
-		<title></title>
+		<title>Designer</title>
 		
 		<script type="text/javascript" src="libs/jq.js"></script>
 		<script type="text/javascript" src="libs/multisortable.js"></script>
@@ -152,12 +152,11 @@
 		<div id="ceTemplates" class="hidden">
 			<!-- Resources toolbox item -->
 			<div class="resourceItem dropItem">
-				<div class="left resourceDisplay dropItem">
+				<div class="resourceName dropItem">{{name}}</div>
+				<div class="resourceDisplay dropItem">
 					<span class="helper"></span>
 					<img class="resourceImage dropItem" />
 				</div>
-				<div class="left resourceName dropItem">{{name}}</div>
-				<div class="clear"></div>
 			</div>
 			<!-- Objects toolbox item -->
 			<div class="objectsItem {{#selected}}selected{{/selected}}" objectid="{{id}}">

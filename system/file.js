@@ -26,7 +26,6 @@ $.extend( true, designer, {
 				        this.parent.render();
 				        this.parent.draw.ui();
 						this.parent.draw.toolbar();
-						//this.parent.draw.reOrderByUi( true );
 						this.parent.getToolbox('resources').redraw();
 				    },this)
 				}
@@ -206,7 +205,117 @@ $.extend( true, designer, {
 			return html;
 		},
 
-		html : function(){
+		getSvg : function( data )
+		{
+			svg = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="'+this.parent.width+'px" height="'+this.parent.height+'px">';
+
+			var counter = 0;
+			
+			for(x in data.objects)
+			{
+
+				o = data.objects[x];
+
+				var absCoords = this.parent.helpers.getAbsCoords(o.startX,o.startY,o.width,o.height),
+					x = absCoords.x,y = absCoords.y,w = absCoords.w,h = absCoords.h,cx = x + (w/2),cy = y + (h/2),
+					sx = o.shadowOffsetX, sy = o.shadowOffsetY, sb = o.shadowBlur, sc = o.shadowColor, addShadow = false;
+
+				counter ++ ;
+
+				if(!sc) sc = 'rgba(0,0,0,1)';
+
+				color       = $.parseColor(sc);
+				colorString = "rgb("+color[0]+","+color[1]+","+color[2]+")";
+				opacity     = color[3];
+
+				if(!sx) sx = '0'; if(!sy) sy = '0'; if(!sb) sb = '0';
+
+				if(sx != "0" || sy != "0" || sb != "0")
+				{
+
+					str+= '<filter id="f'+counter+'" height="150%" width="150%">';
+					str+= '<feGaussianBlur in="SourceAlpha" stdDeviation="'+(sb/3)+'"/>';
+					str+= '<feOffset dx="'+(sx/1.5)+'" dy="'+(sy/1.5)+'" result="offsetblur"/>';
+					str+= '<feFlood flood-opacity="'+opacity+'" flood-color="'+colorString+'"/>';
+					str+= '<feComposite in2="offsetblur" operator="in"/>';
+					str+= '<feMerge>';
+					str+= '<feMergeNode/>';
+					str+= '<feMergeNode in="SourceGraphic"/>';
+					str+= '</feMerge>';
+					str+= '</filter>';
+
+					svg+=str;
+
+					addShadow = true;
+
+				}
+
+				if(w == 0) w = '0.1';
+				if(h == 0) h = '0.1';
+
+				if(o.type == 'box')
+				{
+					if(o.src)
+					{
+						var str = '<image ';
+						str+= ' x="'		  + x + '"';
+						str+= ' y="'		  + y + '"';
+						str+= ' width="'	  + w + '"';
+						str+= ' height="'	  + h + '"';
+						if(o.rotate) str+= ' transform="rotate('+o.rotate+','+cx+','+cy+')"';
+						if(addShadow) str+= ' style="filter:url(#f'+counter+')"';
+						str+= ' xlink:href="' + o.src + '"';
+						str+= ' />';
+					}else
+					{
+						if(!o.fill) fill = "rgba(0,0,0,0)"; else fill = o.fill;
+						var str = '<rect ';
+						str+= ' x="'		    + x + '"';
+						str+= ' y="'		    + y + '"';
+						str+= ' width="'	    + w + '"';
+						str+= ' height="'	    + h + '"';
+						if(o.radius) str+= ' rx="' + o.radius + '"';
+						if(o.radius) str+= ' ry="' + o.radius + '"';
+						str+= ' stroke="'	    + o.strokeStyle + '"';
+						str+= ' stroke-width="' + (o.lineWidth / 2) + '"';
+						if(o.rotate) str+= ' transform="rotate('+o.rotate+','+cx+','+cy+')"';
+						if(addShadow) str+= ' style="filter:url(#f'+counter+')"';
+						str+= ' fill="'		    + fill + '"';
+						str+= ' />';
+					}
+					svg+=str;
+				}
+				if(o.type == 'text')
+				{
+					if(!o.fill) fill = "#000"; else fill = o.fill;
+					//todo fontsize compensation
+					fontComp = o.fontSize/10; // arial type
+					var str = '<text ';
+						str+= ' xml:space="preserve"';
+						str+= ' text-anchor="start"';
+						str+= ' x="'		    + x + '"';
+						str+= ' y="'		    + (y + (o.fontSize - fontComp)) + '"';
+						str+= ' font-size="'	+ o.fontSize + '"';
+						str+= ' font-family="'	+ o.font + '"';
+						if(o.isBold)   str+= ' font-weight="bold"';
+						if(o.isItalic) str+= ' font-style="italic"';
+						str+= ' style="';
+						if(addShadow) str+= 'filter:url(#f'+counter+'); ';
+						str+= ' fill: ' + o.fillStyle + '; stroke: ' + o.strokeStyle + '; stroke-width: ' + o.lineWidth + '"';
+						//str+= ' alignment-baseline="before-edge"'; // equiv to Top
+						if(o.rotate) str+= ' transform="rotate('+o.rotate+','+cx+','+cy+')"';
+						str+= ' >'+o.text+'</text>';
+
+					svg+=str;
+				}
+			}
+
+			svg+='</svg>'
+
+			return svg;
+		},
+
+		html : function( filename ){
 			var blob = new Blob(
 				[
 					this.getHtml( { 
@@ -220,97 +329,17 @@ $.extend( true, designer, {
 			saveAs(blob, "untitled.html");
 		},
 
-		svg : function()
+		svg : function( filename )
 		{
-			svg = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="'+this.parent.width+'px" height="'+this.parent.height+'px">';
-
-			var counter = 0;
-			
-			this.parent.helpers.forEachObjects( $.proxy(function( o )
-			{
-				var absCoords = this.parent.helpers.getAbsCoords(o.startX,o.startY,o.width,o.height),
-					x = absCoords.x,y = absCoords.y,w = absCoords.w,h = absCoords.h,cx = x + (w/2),cy = y + (h/2),
-					sx = o.shadowOffsetX, sy = o.shadowOffsetY, sb = o.shadowBlur, sc = o.shadowColor;
-
-				counter ++ ;
-
-				if(!sx) sx = '0'; if(!sy) sy = '0'; if(!sb) sb = '0'; if(!sc) sc = 'rgba(0,0,0,1)';
-
-				color       = $.parseColor(sc);
-				colorString = "rgb("+color[0]+","+color[1]+","+color[2]+")";
-				opacity     = color[3];
-
-				str+= '<filter id="f'+counter+'" height="150%" width="150%">';
-				str+= '<feGaussianBlur in="SourceAlpha" stdDeviation="'+(sb/3)+'"/>';
-				str+= '<feOffset dx="'+(sx/1.5)+'" dy="'+(sy/1.5)+'" result="offsetblur"/>';
-				str+= '<feFlood flood-opacity="'+opacity+'" flood-color="'+colorString+'"/>';
-				str+= '<feComposite in2="offsetblur" operator="in"/>';
-				str+= '<feMerge>';
-				str+= '<feMergeNode/>';
-				str+= '<feMergeNode in="SourceGraphic"/>';
-				str+= '</feMerge>';
-				str+= '</filter>';
-
-				svg+=str;
-
-				if(w == 0) w = '0.1';
-
-				if(o.type == 'box')
-				{
-					if(o.src)
-					{
-						var str = '<image ';
-						str+= ' x="'		  + x + '"';
-						str+= ' y="'		  + y + '"';
-						str+= ' width="'	  + w + '"';
-						str+= ' height="'	  + h + '"';
-						str+= ' transform="rotate('+o.rotate+','+cx+','+cy+')"';
-						if(o.shadowColor) str+= ' style="filter:url(#f'+counter+')"';
-						str+= ' xlink:href="' + o.src + '"';
-						str+= ' />';
-					}else
-					{
-						if(!o.fill) fill = "rgba(0,0,0,0)"; else fill = o.fill;
-						var str = '<rect ';
-						str+= ' x="'		    + x + '"';
-						str+= ' y="'		    + y + '"';
-						str+= ' width="'	    + w + '"';
-						str+= ' height="'	    + h + '"';
-						str+= ' rx="'		    + o.radius + '"';
-						str+= ' ry="'		    + o.radius + '"';
-						str+= ' stroke="'	    + o.strokeStyle + '"';
-						str+= ' stroke-width="' + (o.lineWidth / 2) + '"';
-						str+= ' transform="rotate('+o.rotate+','+cx+','+cy+')"';
-						if(o.shadowColor) str+= ' style="filter:url(#f'+counter+')"';
-						str+= ' fill="'		    + fill + '"';
-						str+= ' />';
-					}
-					svg+=str;
+			var blob = new Blob(
+				[
+					this.getSvg({
+						objects : this.parent.objects
+					})
+				], {
+					type: "text/plain;charset=utf-8"
 				}
-				if(o.type == 'text')
-				{
-					if(!o.fill) fill = "#000"; else fill = o.fill;
-					var str = '<text ';
-						str+= ' x="'		    + x + '"';
-						str+= ' y="'		    + y + '"';
-						str+= ' font-size="'	+ o.fontSize + '"';
-						str+= ' font-family="'	+ o.font + '"';
-						if(o.isBold)   str+= ' font-weight="bold"';
-						if(o.isItalic) str+= ' font-style="italic"';
-						str+= ' style="';
-						if(o.shadowColor) str+= 'filter:url(#f'+counter+'); ';
-						str+= ' fill: ' + o.fillStyle + '; stroke: ' + o.strokeStyle + '; stroke-width: ' + o.lineWidth + '"';
-						str+= ' alignment-baseline="before-edge"'; // equiv to Top
-						str+= ' transform="rotate('+o.rotate+','+cx+','+cy+')"';
-						str+= ' >'+o.text+'</text>';
-
-					svg+=str;
-				}
-			},this));
-
-			svg+='</svg>'
-
-			var blob = new Blob([svg], {type: "text/plain;charset=utf-8"});
+			);
 			saveAs(blob, "untitled.svg");
 		}
 

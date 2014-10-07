@@ -130,5 +130,12 @@ $.extend( true, designer, {
 
 	getToolbox : function( toolboxName ){
 		for(i in this.toolboxes) {t=this.toolboxes[i];if(t.name==toolboxName) return t}
+	},
+
+	where : function( q ){
+		q = q.split('=');
+		r = [];
+		for(i in this.objects) if(this.objects[i][q[0]] && this.objects[i][q[0]] == q[1]) r.push(this.objects[i]);
+		return r;
 	}
 })

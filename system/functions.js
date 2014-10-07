@@ -39,7 +39,7 @@ $.extend( true, designer, {
 			}
 
 			this.parent.selecteds = [];
-
+			
 			this.parent.render();
 			this.parent.draw.toolbar();
 			this.parent.draw.ui();
@@ -269,5 +269,4 @@ $.extend( true, designer, {
 
 	},
 
-	
 })

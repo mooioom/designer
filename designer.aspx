@@ -6,7 +6,14 @@
 <html>
 	<head runat="server">
 
-		<title></title>
+		<title>Satec Designer</title>
+
+		<!--
+			Dear Developer,
+			please note - the designer can be extended and modified easily using modules.
+			so any changes to the code within the 'system' folder should be cosidered.
+			for more information about how the designer works, feel free to contact me (eldad)
+		-->
 		
 		<script type="text/javascript" src="libs/jq.js"></script>
 		<script type="text/javascript" src="libs/multisortable.js"></script>
@@ -46,9 +53,9 @@
 
 				designer.init({
 					name    : getString("UntitledProject"),
-				    width   : 1024,
-					height  : 253,
-					modules : ['templateEditor'<% if(isAdmin) { %>,'templateEditorAdmin' <% } %>]
+				    width   : 0,
+					height  : 0,
+					modules : ['<%=Request.QueryString["module"] %>'<% if(isAdmin) { %>,'<%=Request.QueryString["module"] %>Admin' <% } %>]
 				});
 
 			},20);
@@ -183,12 +190,11 @@
 		<div id="ceTemplates" class="hidden">
 			<!-- Resources toolbox item -->
 			<div class="resourceItem dropItem">
-				<div class="left resourceDisplay dropItem">
+				<div class="resourceName dropItem">{{name}}</div>
+				<div class="resourceDisplay dropItem">
 					<span class="helper"></span>
 					<img class="resourceImage dropItem" />
 				</div>
-				<div class="left resourceName dropItem">{{name}}</div>
-				<div class="clear"></div>
 			</div>
 			<!-- Objects toolbox item -->
 			<div class="objectsItem {{#selected}}selected{{/selected}}" objectid="{{id}}">
@@ -265,6 +271,7 @@
 			<string resource="SelectADesign"    value="<%=Resources.Strings.SelectADesign %>"></string>
 			<string resource="FirstTimeUsing"   value="<%=Resources.Strings.FirstTimeUsing %>"></string>
 			<string resource="Height"           value="<%=Resources.Strings.Height %>"></string>
+			<string resource="Width"            value="<%=Resources.Strings.Width %>"></string>
 			<string resource="Continue"         value="<%=Resources.Strings.Continue2 %>"></string>
 			<string resource="TemplateName"     value="<%=Resources.Strings.TemplateName %>"></string>
 			<string resource="UntitledTemplate" value="<%=Resources.Strings.UntitledTemplate %>"></string>
@@ -283,6 +290,20 @@
 			<string resource="GlobalText"       value="<%=Resources.Strings.GlobalText %>"></string>
 			<string resource="DynamicData"      value="<%=Resources.Strings.DynamicData %>"></string>
 			<string resource="ChooseLanguage"   value="<%=Resources.Strings.ChooseLanguage %>"></string>
+
+			<!-- Map Wizard -->
+			<string resource="MapWizard"        value="<%=Resources.Strings.MapWizard %>"></string>
+			<string resource="CreateNewMap"     value="<%=Resources.Strings.CreateNewMap %>"></string>
+			<string resource="LoadMap"          value="<%=Resources.Strings.LoadMap %>"></string>
+			<string resource="Title"            value="<%=Resources.Strings.Title %>"></string>
+			<string resource="Customize"        value="<%=Resources.Strings.Customize %>"></string>
+			<string resource="FullScreen"       value="<%=Resources.Strings.FullScreen %>"></string>
+			<string resource="Submit"           value="<%=Resources.Strings.Submit %>"></string>
+			<string resource="Start"            value="<%=Resources.Strings.Start %>"></string>
+			<string resource="EnterTitle"       value="<%=Resources.Strings.EnterTitle %>"></string>
+			<string resource="TitleTooShort"    value="<%=Resources.Strings.TitleTooShort %>"></string>
+			<string resource="MapNameExists"    value="<%=Resources.Strings.MapNameExists %>"></string>
+		
 		</div>
 
 	</body>

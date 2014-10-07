@@ -12,7 +12,10 @@ $.extend( true, designer, {
 				this.parent.selectionBox.startY = this.parent.events.mouseY;
 			},
 			mouseUp : function(){
-				this.parent.selectionBox = {};
+				this.parent.selectionBox.startX = null;
+				this.parent.selectionBox.startY = null;
+				this.parent.selectionBox.endX = null;
+				this.parent.selectionBox.endY = null;
 				if(!this.parent.events.drag) {
 					this.parent.helpers.clickSelect();
 				}
@@ -58,6 +61,8 @@ $.extend( true, designer, {
 
 					var o = this.parent.selecteds[i];
 
+					o.onMove = true;
+
 					// if(o.src && !o.rotate) 
 					// {
 					// 	if(!o.originalSrc) {
@@ -85,6 +90,9 @@ $.extend( true, designer, {
 				{
 
 					var o = this.parent.selecteds[i];
+
+					o.onMove = true;
+					if(o.onDrop) o.onDrop();
 
 					if(o.src){
 

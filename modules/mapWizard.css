@@ -1,0 +1,195 @@
+.floatLeft{
+	float: left;
+	width: 48%;
+}
+
+.floatRight{
+	float: right;
+	width: 48%;
+}
+
+.marginBottom{
+	margin-bottom: 10px;
+}
+
+.mapWizardMenu{
+    width: 460px;
+    margin: 0px auto;
+    padding: 30px;
+    font-size: 26px;
+    position: relative;
+    top: 80px;
+    border-radius: 10px;
+    color: #fff;
+    z-index: 2;
+}
+
+.mapWizardMenuTitle{
+    font-weight: bold;
+    text-shadow: 0px 2px 0px #000;
+    margin-bottom: 13px;
+    color: #FF9611;
+    border-bottom: 1px solid #707070;
+    padding-bottom: 13px;
+    padding: 13px;
+    padding-left: 0px;
+    padding-right: 0px;
+    font-size: 36px;
+}
+
+.mapWizardMenuItem{
+    color: #646464;
+    padding-bottom: 2px;
+    padding-top: 0px;
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.mapWizardMenuItem.clickable:hover{
+	color: #FFFFFF;
+	cursor: pointer;
+}
+
+.mapWizardMenuItem input{
+    font-size: 27px;
+    width: 100%;
+    padding: 3px;
+    border: none;
+    text-indent: 5px;
+    background: #505050;
+    color: #fff;
+    margin: 0px;
+    box-sizing: border-box;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    text-align: center;
+}
+
+.mapWizardMenuItem input:hover{
+	outline: 1px solid #ccc;
+}
+
+.mapWizardMenuItem input:focus{
+	outline: 1px solid rgb(131, 131, 131);
+}
+
+.mapWizFloat{
+	box-sizing:border-box;
+	width: 49%;
+}
+
+.mapWizardMenuItem select{
+	width: 100%;
+	font-size: 27px;
+	text-align: center;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	background: #535353;
+	color: #fff;
+	border: none;
+	text-align: left;
+	direction: ltr;
+	padding-left: 5px;
+}
+
+.mapWizardMenuItem select:hover{
+	outline: 1px solid #ccc;
+}
+
+.mapWizardMenuItem select:focus{
+	outline: 1px solid #ccc;
+}
+
+.mapWizardDummy{
+	margin: 0px auto;
+	width: 1024px;
+	height: 768px;
+	border: 1px solid #646464;
+	position: absolute;
+	top: 40px;
+	left: 50%;
+	margin-left: -512px;
+	z-index: 1;
+	transition: all 0.5s ease-in-out;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+	border-bottom-right-radius: 10px;
+	border-bottom-left-radius: 10px;
+}
+
+.mapWizardButton{
+	cursor: pointer;
+	padding: 3px;
+	background: #424242;
+	text-align: center;
+	margin-bottom: 3px;
+}
+
+.mapWizardMenu #title{
+	direction: ltr !important;
+}
+
+.mapWizardButton:hover{
+	background: #6D6D6D;
+	color: #fff;
+}
+
+.validation{
+    padding: 3px;
+    background: #1C8324;
+    font-size: 12px;
+    padding-left: 20px;
+    padding-right: 20px;
+    color: #FFF;
+    float: left;
+}
+
+.ltr .validation{
+	float: right;
+}
+
+.validation.invalid{
+    background: #DA8B14;
+}
+
+.closeDesignerWrapper{
+	position: absolute;
+	top: 5px;
+	right: 5px;
+	z-index: 100;
+}
+
+.rtl .closeDesignerWrapper{
+	right: initial;
+	left : 5px;
+}
+
+.closeDesignerWrapper .button{
+	background: #FF9B05;
+	padding: 5px;
+	color: #FFF;
+	cursor: pointer;
+	padding-right: 20px;
+	padding-left: 20px;
+	z-index: 1000;
+	box-shadow: 0px 0px 10px rgba(0,0,0,0.4);
+	margin-left: 3px;
+}
+
+.rtl .closeDesignerWrapper .button{
+	margin-left: initial;
+	margin-right: 3px;
+}
+
+.mapPreviewCanvas {
+	width: 460px;
+	direction: ltr;
+	background: white;
+	cursor: initial;
+}
+
+.mapPreviewTitle{
+    font-size: 14px;
+
+    margin-bottom: 4px;
+}
