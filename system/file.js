@@ -262,8 +262,9 @@ $.extend( true, designer, {
 						str+= ' y="'		  + y + '"';
 						str+= ' width="'	  + w + '"';
 						str+= ' height="'	  + h + '"';
-						if(o.rotate) str+= ' transform="rotate('+o.rotate+','+cx+','+cy+')"';
+						if(o.rotate)  str+= ' transform="rotate('+o.rotate+','+cx+','+cy+')"';
 						if(addShadow) str+= ' style="filter:url(#f'+counter+')"';
+						if(o.opacity) str+= ' opacity = "'+o.opacity+'"';
 						str+= ' xlink:href="' + o.src + '"';
 						str+= ' />';
 					}else
@@ -277,10 +278,11 @@ $.extend( true, designer, {
 						if(o.radius) str+= ' rx="' + o.radius + '"';
 						if(o.radius) str+= ' ry="' + o.radius + '"';
 						str+= ' stroke="'	    + o.strokeStyle + '"';
-						str+= ' stroke-width="' + (o.lineWidth / 2) + '"';
+						str+= ' stroke-width="' + o.lineWidth + '"';
 						if(o.rotate) str+= ' transform="rotate('+o.rotate+','+cx+','+cy+')"';
 						if(addShadow) str+= ' style="filter:url(#f'+counter+')"';
-						str+= ' fill="'		    + fill + '"';
+						if(o.opacity) str+= ' opacity = "'+o.opacity+'"';
+						str+= ' fill="' + fill + '"';
 						str+= ' />';
 					}
 					svg+=str;
@@ -304,10 +306,66 @@ $.extend( true, designer, {
 						str+= ' fill: ' + o.fillStyle + '; stroke: ' + o.strokeStyle + '; stroke-width: ' + o.lineWidth + '"';
 						//str+= ' alignment-baseline="before-edge"'; // equiv to Top
 						if(o.rotate) str+= ' transform="rotate('+o.rotate+','+cx+','+cy+')"';
+						if(o.opacity) str+= ' opacity = "'+o.opacity+'"';
 						str+= ' >'+o.text+'</text>';
 
 					svg+=str;
 				}
+				if(o.type == 'path')
+				{
+					if(!o.fillStyle) fill = "#000"; else fill = o.fillStyle;
+					var str = '<path ';
+						str+= ' d="'+o.path+'"';
+						str+= ' stroke-width="'+o.lineWidth+'"';
+						str+= ' stroke="'+o.strokeStyle+'"';
+						str+= ' fill="'+fill+'"';
+						if(o.rotate) str+= ' transform="rotate('+o.rotate+','+(o.topLeftX + (o.width/2))+','+(o.topLeftY + (o.height/2))+')"';
+						str+= '></path>';
+						svg+=str;
+				}
+				if(o.type == 'ellipse')
+				{
+					if(!o.fill) fill = "#000"; else fill = o.fill;
+					var str = '<ellipse ';
+						str+= ' rx="'+(o.rx/2)+'"';
+						str+= ' ry="'+(o.ry/2)+'"';
+						str+= ' cx="'+o.cx+'"';
+						str+= ' cy="'+o.cy+'"';
+						str+= ' stroke-width="'+o.lineWidth+'"';
+						str+= ' stroke="'+o.strokeStyle+'"';
+						str+= ' fill="'+fill+'"';
+						if(o.rotate) str+= ' transform="rotate('+o.rotate+','+(o.startX + (o.width/2))+','+(o.startY + (o.height/2))+')"';
+						str+= '></ellipse>';
+						svg+=str;
+				}
+				if(o.type == 'line')
+				{
+					fill = "none";
+					var str = '<line ';
+						str+= ' x1="'+o.startX+'"';
+						str+= ' y1="'+o.startY+'"';
+						str+= ' x2="'+o.endX+'"';
+						str+= ' y2="'+o.endY+'"';
+						str+= ' stroke-width="'+o.lineWidth+'"';
+						str+= ' stroke="'+o.strokeStyle+'"';
+						str+= ' fill="'+fill+'"';
+						str+= '></line>';
+						svg+=str;
+				}
+				if(o.type == 'circle')
+				{
+					if(!o.fill) fill = "#000"; else fill = o.fill;
+					var str = '<circle ';
+						str+= ' r="'+(o.r)+'"';
+						str+= ' cx="'+o.cx+'"';
+						str+= ' cy="'+o.cy+'"';
+						str+= ' stroke-width="'+o.lineWidth+'"';
+						str+= ' stroke="'+o.strokeStyle+'"';
+						str+= ' fill="'+fill+'"';
+						str+= '></circle>';
+						svg+=str;
+				}
+
 			}
 
 			svg+='</svg>'

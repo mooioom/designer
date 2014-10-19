@@ -195,6 +195,12 @@ $.extend( true, designer, {
 					var x  = object.startX, y = object.startY, w = object.width, h = object.height,
 						cx = w/2, cy = h/2, r = object.rotate;
 
+					if(object.type == 'path')
+					{
+						x = object.topLeftX;
+						y = object.topLeftY;
+					}
+
 					if(object.type == 'line')
 					{
 
@@ -213,8 +219,10 @@ $.extend( true, designer, {
 					this.parent.ctx.rotate(r*Math.PI/180);
 					this.parent.ctx.translate( -(x + cx), -(y + cy) );
 					this.parent.ctx.beginPath();
+
 					if(object.type == 'line') y = y - object.lineWidth / 2;
 					if(object.type != 'path') this.parent.ctx.rect(x,y,w,h);
+
 					else{
 						var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
 						$(path).attr('d',object.path);
@@ -358,11 +366,17 @@ $.extend( true, designer, {
 				cx = 0,
 				cy = 0;
 
-			for(i in path.pathSegList){
+			for(i in path.pathSegList)
+			{
 				seg = path.pathSegList[i];
+
 				if(seg.x) cx = cx + seg.x;
 				if(seg.y) cy = cy + seg.y;
-				if(i==0){sx = cx; sy = cy;}
+
+				if(i==0){
+					sx = cx; 
+					sy = cy;
+				}
 				if(seg.x){
 					if(cx < sx) sx = cx;
 					if(cx > lx) lx = cx;

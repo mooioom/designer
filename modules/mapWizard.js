@@ -184,6 +184,7 @@ mapWizard = {
 
 						$('.saveMap').click($.proxy(this.save,this));
 						$('.closeDesigner').click($.proxy(this.firstMenu,this));
+						$('.previewSvg').click($.proxy(this.previewSvg,this));
 
 						//todo:uncomment
 						//window.onbeforeunload = function() { return getString('unsavedData'); };
@@ -250,6 +251,7 @@ mapWizard = {
 
 								$('.saveMap').click($.proxy(this.save,this));
 								$('.closeDesigner').click($.proxy(this.firstMenu,this));
+								$('.previewSvg').click($.proxy(this.previewSvg,this));
 
 								//todo:uncomment
 								//window.onbeforeunload = function() { return getString('unsavedData'); };
@@ -279,6 +281,20 @@ mapWizard = {
 
 	},
 
+	previewSvg : function(){
+
+		var svg = designer.file.getSvg({objects:designer.objects});
+
+		htmlPopup = new Popup({
+			header    : getString('Preview')+"...",
+			closeText : getString('Close'),
+			content   : svg,
+			addClass  : 'htmlPreview',
+			onLoad    : function(){ $('#previewLang').trigger('change'); }
+		});
+
+	},
+
 	parseSvg : function( svg ){
 
 		var data              = { objects : [], resources : [] },
@@ -288,7 +304,7 @@ mapWizard = {
 		if($('g',svg).length) PreviousMapWizard = true;
 
 		$('*',svg).each(function(){
-			//todo path? ellipse?
+
 			var found     = false,
 				newObject = {},
 				matrix    = '',
@@ -380,13 +396,14 @@ mapWizard = {
 					break;
 				case 'text' :
 					console.log('text',$(this));
+					fontSize = Number($(this).attr('font-size'));
 					if(PreviousMapWizard)
 					{
 						x = Number($(this).attr('x')) - (Number($(this).attr('font-size')) * 1.5);
 						y = Number($(this).attr('y')) - Number($(this).attr('font-size'));
 					}else{
 						x = Number($(this).attr('x'));
-						y = Number($(this).attr('y'));
+						y = Number($(this).attr('y')) - (fontSize - (fontSize / 10)); // comp from system/file.js
 					}
 					found = true;
 					newObject = 
@@ -395,7 +412,7 @@ mapWizard = {
 						layer  		  : 0,
 						type          : 'text',
 						startX 		  : x,
-						startY 		  : y, // todo:recomp font height
+						startY 		  : y,
 						endX   		  : 0,
 						endY   		  : 0,
 						width         : 0,
@@ -413,7 +430,7 @@ mapWizard = {
 						radius        : '',
 						text 		  : $(this).html(),
 						font          : $(this).attr('font-family'),
-						fontSize      : Number($(this).attr('font-size')),
+						fontSize      : fontSize,
 						lineHeight    : '',
 						isItalic      : '',
 						isBold        : '',
@@ -429,6 +446,7 @@ mapWizard = {
 					found = true;
 					if(stroke && !$(this).attr('stroke-width')) lineWidth = 1;
 					else if(stroke && $(this).attr('stroke-width')) lineWidth = Number($(this).attr('stroke-width'));
+					if(!$(this).attr('d')) found = false;
 					newObject = 
 					{
 						id     		  : current,
@@ -545,10 +563,12 @@ mapWizard = {
 var closeDesigner = $('<div class="closeDesignerWrapper hidden"></div>'),
 	saveMap       = $('<div class="saveMap  left button">'+getString('save2')+'</div>'),
 	closeButton   = $('<div class="closeDesigner left button">'+getString('Back')+'</div>'),
+	previewButton = $('<div class="previewSvg left button">'+getString('Preview')+'</div>'),
 	clearDiv      = $('<div class="clear"></div>');
 
 closeDesigner.append(saveMap);
 closeDesigner.append(closeButton);
+closeDesigner.append(previewButton);
 closeDesigner.append(clearDiv);
 
 $('body').append(closeDesigner);

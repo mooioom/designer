@@ -193,3 +193,20 @@
 
     margin-bottom: 4px;
 }
+
+.popup.htmlPreview .popupInner{
+	width: 1074px;
+}
+
+.popup.htmlPreview svg{
+	direction: ltr;
+	border: 1px solid #ccc;
+}
+
+.popup.htmlPreview .popupInner{
+	width: 1074px;
+}
+
+.popup.htmlPreview .popupContent {
+	text-align: center;
+}

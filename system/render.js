@@ -191,13 +191,15 @@ $.extend( true, designer, {
 				if(!o.startX)
 				{
 					init = true;
-					pathInfo = this.parent.helpers.getSvgPathInfo( path );
-					o.startX = pathInfo.x;
-					o.startY = pathInfo.y;
-					o.endX   = pathInfo.x + pathInfo.w;
-					o.endY   = pathInfo.y + pathInfo.h;
-					o.width  = pathInfo.w;
-					o.height = pathInfo.h;
+					pathInfo       = this.parent.helpers.getSvgPathInfo( path );
+					o.startX       = path.pathSegList[0].x;
+					o.startY       = path.pathSegList[0].y;
+					o.topLeftX     = pathInfo.x;
+					o.topLeftY     = pathInfo.y;
+					o.bottomRightX = pathInfo.x + pathInfo.w;
+					o.bottomRightY = pathInfo.y + pathInfo.h;
+					o.width        = pathInfo.w;
+					o.height       = pathInfo.h;
 				}
 
 				x = o.startX;
@@ -205,34 +207,28 @@ $.extend( true, designer, {
 				w = o.width;
 				h = o.height;
 
-				if(o.onMove) 
-				{
-					path.pathSegList[0].x = (x + w/2);
-					path.pathSegList[0].y = (y + h/2);
-				}
-				if(!o.onDrop)
-				{
-					o.onDrop = function(){
-						var p = document.createElementNS("http://www.w3.org/2000/svg", "path");
-						$(p).attr('d',this.path);
-						p.pathSegList[0].x = this.startX;
-						p.pathSegList[0].y = this.startY;
-						this.path = p.getAttribute('d');
-					}
-				}
+				pathInfo = this.parent.helpers.getSvgPathInfo( path );
+				o.topLeftX     = pathInfo.x;
+				o.topLeftY     = pathInfo.y;
+				o.bottomRightX = pathInfo.x + pathInfo.w;
+				o.bottomRightY = pathInfo.y + pathInfo.h;
+				o.width        = pathInfo.w;
+				o.height       = pathInfo.h;
 
 				ctx.save();
-				ctx.translate( x+(w/2),y+(h/2) );
+				ctx.translate( o.topLeftX+(w/2),o.topLeftY+(h/2) );
 				ctx.rotate(o.rotate*Math.PI/180);
-				ctx.translate( -(x+(w/2)),-(y+(h/2)) );
+				ctx.translate( -(o.topLeftX+(w/2)),-(o.topLeftY+(h/2)) );
+
+				path.pathSegList[0].x = x;
+				path.pathSegList[0].y = y;
+
+				o.path = path.getAttribute('d');
 
 				ctx.beginPath();
 				ctx.lineWidth   = o.lineWidth;
 				ctx.strokeStyle = o.strokeStyle;
 				ctx.fillStyle   = o.fillStyle;
-
-				cx = 0;
-				cy = 0;
 				
 				this.path(ctx,path);
 
@@ -244,20 +240,30 @@ $.extend( true, designer, {
 			if( o.type == 'ellipse' )
 			{
 				o = o;
-				if(!o.startX){
+
+				if(!o.startX)
+				{
 					o.startX = o.cx - o.rx/2;
 					o.endX   = o.cx + o.rx/2;
 					o.startY = o.cy - o.ry/2;
 					o.endY   = o.cy + o.ry/2;
 					o.width  = o.endX - o.startX;
 					o.height = o.endY - o.startY;
-				}else{
+				}else
+				{
 					o.cx = o.startX + o.width / 2;
 					o.cy = o.startY + o.height / 2;
 				}
-				if(o.drawByCenter){
+
+				ctx.save();
+				ctx.translate( o.cx,o.cy );
+				ctx.rotate(o.rotate*Math.PI/180);
+				ctx.translate( -o.cx,-o.cy );
+
+				if(o.drawByCenter) 
 					this.drawEllipseByCenter(ctx, o.cx, o.cy, o.rx, o.ry, o.lineWidth, o.strokeStyle, o.fill, o.stroke);	
-				}
+
+				ctx.restore();
 			}
 			if( o.type == 'circle' )
 			{
@@ -322,7 +328,7 @@ $.extend( true, designer, {
 			ctx.bezierCurveTo(xm + ox, y, xe, ym - oy, xe, ym);
 			ctx.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
 			ctx.bezierCurveTo(xm - ox, ye, x, ym + oy, x, ym);
-			ctx.lineWidth = Number(lineWidth);
+			ctx.lineWidth = Number(lineWidth) * 2;
 			ctx.strokeStyle = strokeStyle;
 			ctx.closePath(); // not used correctly, see comments (use to close off open path)
 			if (stroke && lineWidth) ctx.stroke();
