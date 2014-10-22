@@ -101,13 +101,20 @@ $.extend( true, designer, {
 				// onExport         (string) : replaces the element               - html export
 			},
 
+			actionPoint : {
+
+				size        : 5,
+				lineWidth   : 1,
+				strokeStyle : '#003300',
+				hoverColor  : 'orange'
+
+			},
+
+			actionPointSize : 5,
 
 			displayImageCompressionRate : 0.75
 
 		},
-
-		actionPointSize : 5,
-
 
 	},
 

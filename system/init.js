@@ -51,7 +51,8 @@ $.extend( true, designer, {
 
 		if(data.data)
 		{
-			d = JSON.parse(data.data);
+			d = data.data;
+			if(typeof d != 'object') d = JSON.parse(data.data);
 			this.objects   = d.objects;
 			this.resources = d.resources;
 			this.current   = this.helpers.getLastId() + 1;

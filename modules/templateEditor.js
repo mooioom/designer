@@ -178,7 +178,7 @@ templateEditor = {
 
 		designer.onMouseUp = function(){
 			$('.chooseDataType, .dynamicInput, .globalizedString').hide();
-			if( designer.helpers.selectedIsText() )
+			if( designer.helpers.selectedIs('text') )
 			{
 				text = designer.selecteds[0];
 				if(text.dynamic){

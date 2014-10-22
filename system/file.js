@@ -278,8 +278,8 @@ $.extend( true, designer, {
 						if(o.radius) str+= ' rx="' + o.radius + '"';
 						if(o.radius) str+= ' ry="' + o.radius + '"';
 						str+= ' stroke="'	    + o.strokeStyle + '"';
-						str+= ' stroke-width="' + o.lineWidth + '"';
-						if(o.rotate) str+= ' transform="rotate('+o.rotate+','+cx+','+cy+')"';
+						str+= ' stroke-width="' + o.lineWidth / 2 + '"';
+						if(o.rotate)  str+= ' transform="rotate('+o.rotate+','+cx+','+cy+')"';
 						if(addShadow) str+= ' style="filter:url(#f'+counter+')"';
 						if(o.opacity) str+= ' opacity = "'+o.opacity+'"';
 						str+= ' fill="' + fill + '"';
@@ -325,13 +325,13 @@ $.extend( true, designer, {
 				}
 				if(o.type == 'ellipse')
 				{
-					if(!o.fill) fill = "#000"; else fill = o.fill;
+					if(!o.fillStyle) fill = "#000"; else fill = o.fillStyle;
 					var str = '<ellipse ';
 						str+= ' rx="'+(o.rx/2)+'"';
 						str+= ' ry="'+(o.ry/2)+'"';
 						str+= ' cx="'+o.cx+'"';
 						str+= ' cy="'+o.cy+'"';
-						str+= ' stroke-width="'+o.lineWidth+'"';
+						str+= ' stroke-width="'+o.lineWidth / 2+'"';
 						str+= ' stroke="'+o.strokeStyle+'"';
 						str+= ' fill="'+fill+'"';
 						if(o.rotate) str+= ' transform="rotate('+o.rotate+','+(o.startX + (o.width/2))+','+(o.startY + (o.height/2))+')"';

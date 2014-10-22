@@ -7,6 +7,7 @@ $.extend( true, designer, {
 		{
 			mouseDown : function(){
 				if( !this.parent.events.ctrl ) this.parent.selecteds = [];
+				this.parent.events.exitEditMode();
 				this.parent.temp                = null;
 				this.parent.selectionBox.startX = this.parent.events.mouseX;
 				this.parent.selectionBox.startY = this.parent.events.mouseY;
@@ -16,9 +17,7 @@ $.extend( true, designer, {
 				this.parent.selectionBox.startY = null;
 				this.parent.selectionBox.endX = null;
 				this.parent.selectionBox.endY = null;
-				if(!this.parent.events.drag) {
-					this.parent.helpers.clickSelect();
-				}
+				if(!this.parent.events.drag)  this.parent.helpers.clickSelect();
 			},
 			mouseMove : function(){
 				if(this.parent.events.drag)
@@ -144,7 +143,6 @@ $.extend( true, designer, {
 						// o.width  = this.parent.width; 
 						// o.height = this.parent.height;
 					}
-
 				}
 				this.parent.temps = [];
 			},
@@ -163,6 +161,12 @@ $.extend( true, designer, {
 
 						if( o.locked   ) return;
 						if( !o.visible ) return;
+
+						if(o.type == 'ellipse'){
+							o.cx = this.parent.helpers.getClosestSnapCoords( temp.startX + o.rx / 2 + x );
+							o.cy = this.parent.helpers.getClosestSnapCoords( temp.startY + o.ry / 2 + y );
+							continue;
+						}
 
 						o.startX = this.parent.helpers.getClosestSnapCoords( temp.startX + x );
 						o.endX   = this.parent.helpers.getClosestSnapCoords( temp.endX   + x );
@@ -233,6 +237,7 @@ $.extend( true, designer, {
 			{
 				this.parent.history.save();
 				this.parent.selecteds = [];
+				this.parent.events.exitEditMode();
 				newObject 			  = this.parent.create.object();
 				this.parent.temp 	  = this.parent.current;
 				this.parent.functions.select( newObject );
@@ -266,6 +271,267 @@ $.extend( true, designer, {
 				else {
 					this.parent.current ++;
 				}
+			},
+			actionPointDown : function( p ){
+				//console.log('box actionPointDown')
+			},
+			actionPointMove : function( p ){
+				//console.log('box actionPointMove')
+			},
+			actionPointUp   : function( p ){
+				//console.log('box actionPointUp')
+			}
+		},
+
+		line : 
+		{
+			mouseDown : function(){
+				this.parent.history.save();
+				this.parent.selecteds = [];
+				this.parent.events.exitEditMode();
+				newObject 			  = this.parent.create.object();
+				this.parent.temp 	  = this.parent.current;
+				this.parent.functions.select( newObject );
+				this.parent.objects.push( newObject );
+			},
+			mouseMove : function(){
+				if(this.parent.events.drag)
+				{
+					var tempObject = this.parent.functions.getObject( this.parent.temp ),
+						point      = {
+							x : this.parent.helpers.getClosestSnapCoords( this.parent.events.mouseX ),
+							y : this.parent.helpers.getClosestSnapCoords( this.parent.events.mouseY )
+						}
+					tempObject.endX   = point.x;
+					tempObject.endY   = point.y;
+					tempObject.width  = (tempObject.endX - tempObject.startX);
+					tempObject.height = (tempObject.endY - tempObject.startY);
+				}
+			},
+			mouseUp : function(){
+				var tempObject = this.parent.functions.getObject( this.parent.temp );
+				if(!tempObject) return;
+				if(tempObject.startX == tempObject.endX && 
+				   tempObject.startY == tempObject.endY)
+				{
+					this.parent.functions.deleteObject( tempObject.id );
+					tempObject = null;
+				}
+				else {
+					this.parent.current ++;
+				}
+			},
+			actionPointDown : function( p ){
+
+			},
+			actionPointMove : function( p ){
+				if(this.parent.events.actionPointDrag)
+				{
+					if(p.pointIndex == 0) a = 'start';
+					if(p.pointIndex == 1) a = 'end';
+					this.parent.selecteds[0][a+'X'] = this.parent.helpers.getClosestSnapCoords( this.parent.events.mouseX );
+					this.parent.selecteds[0][a+'Y'] = this.parent.helpers.getClosestSnapCoords( this.parent.events.mouseY );	
+				}
+			},
+			actionPointUp   : function( p ){
+
+			}
+		},
+
+		ellipse : 
+		{
+			mouseDown : function(){
+				this.parent.history.save();
+				this.parent.selecteds = [];
+				this.parent.events.exitEditMode();
+				newObject 			  = this.parent.create.object();
+				this.parent.temp 	  = this.parent.current;
+				this.parent.functions.select( newObject );
+				this.parent.objects.push( newObject );
+			},
+			mouseMove : function(){
+				if(this.parent.events.drag)
+				{
+					var tempObject = this.parent.functions.getObject( this.parent.temp ),
+						point      = {
+							x : this.parent.helpers.getClosestSnapCoords( this.parent.events.mouseX ),
+							y : this.parent.helpers.getClosestSnapCoords( this.parent.events.mouseY )
+						}
+					tempObject.rx  = this.parent.helpers.getLineDistance(
+						{
+							x : tempObject.cx,
+							y : tempObject.cy
+						},{
+							x : point.x,
+							y : point.y
+						}
+					) * 2;
+					tempObject.ry = tempObject.rx;
+				}
+			},
+			mouseUp : function(){
+				var tempObject = this.parent.functions.getObject( this.parent.temp );
+				if(!tempObject) return;
+				if(tempObject.rx < 1)
+				{
+					this.parent.functions.deleteObject( tempObject.id );
+					tempObject = null;
+				}
+				else {
+					this.parent.current ++;
+				}
+			},
+			actionPointDown : function( p ){},
+			actionPointMove : function( p ){
+				if(this.parent.events.actionPointDrag)
+				{
+					o = this.parent.selecteds[0];
+					if(p.pointIndex == 0 || p.pointIndex == 1) a = 'ry'; 
+					if(p.pointIndex == 2 || p.pointIndex == 3) a = 'rx'; 
+					o[a] = this.parent.helpers.getLineDistance(
+						{
+							x : o.cx,
+							y : o.cy
+						},{
+							x : this.parent.helpers.getClosestSnapCoords( this.parent.events.mouseX ),
+							y : this.parent.helpers.getClosestSnapCoords( this.parent.events.mouseY )
+						}
+					) * 2
+				}
+			},
+			actionPointUp   : function( p ){}
+		},
+
+		path : 
+		{
+			currentPoint  : 0,
+			currentPointX : 0,
+			currentPointY : 0,
+			initX         : 0,
+			initY         : 0,
+			createNewSeg  : false,
+
+			movedX     : 0,
+			movedY     : 0,
+			initPointX : 0,
+			initPointY : 0,
+
+			mouseDown : function(){
+				if(!this.parent.events.createPathMode)
+				{
+					//create
+					this.parent.events.createPathMode = true;
+					this.parent.history.save();
+					this.parent.selecteds = [];
+					this.parent.events.exitEditMode();
+					newObject        = this.parent.create.object();
+					this.parent.temp = this.parent.current;
+					this.parent.objects.push( newObject );
+					this.path.currentPoint  = 0;
+					this.path.currentPointX = this.parent.helpers.getClosestSnapCoords( this.parent.events.mouseX );
+					this.path.currentPointY = this.parent.helpers.getClosestSnapCoords( this.parent.events.mouseY );
+					this.path.initX         = this.path.currentPointX;
+					this.path.initY         = this.path.currentPointY;
+					this.path.createNewSeg  = true;
+					this.parent.functions.select(newObject);
+					this.parent.current ++;
+				}else{
+					//add point
+					this.path.currentPoint ++ ;
+					x = this.parent.helpers.getClosestSnapCoords( this.parent.events.mouseX ) - this.path.currentPointX;
+					y = this.parent.helpers.getClosestSnapCoords( this.parent.events.mouseY ) - this.path.currentPointY;
+					this.path.currentPointX = this.path.currentPointX + x;
+					this.path.currentPointY = this.path.currentPointY + y;
+					this.path.createNewSeg  = true;
+				}
+			},
+			mouseMove : function(){
+				if(this.parent.events.createPathMode)
+				{
+					tempPath = this.parent.functions.getObject( this.parent.temp );
+					x = this.parent.helpers.getClosestSnapCoords( this.parent.events.mouseX ) - this.path.currentPointX;
+					y = this.parent.helpers.getClosestSnapCoords( this.parent.events.mouseY ) - this.path.currentPointY;
+					p = tempPath.getPath();
+					if(this.path.createNewSeg){
+						this.path.createNewSeg = false;
+						p.pathSegList.appendItem(p.createSVGPathSegLinetoRel(x,y));
+					}
+					p.pathSegList.getItem(p.pathSegList.length-1).x = x;
+					p.pathSegList.getItem(p.pathSegList.length-1).y = y;
+					tempPath.path = p.getAttribute('d');
+				}
+			},
+			removeLastSeg : function(){
+				if(this.parent.parent.events.createPathMode)
+				{
+					tempPath = this.parent.parent.functions.getObject( this.parent.parent.temp );
+					p = tempPath.getPath();
+					p.pathSegList.removeItem( p.pathSegList.length - 1 );
+					tempPath.path = p.getAttribute('d');
+					this.parent.parent.render();
+				}
+			},
+			mouseUp : function(){},
+
+			actionPointDown : function( p ){
+				o                    = this.parent.selecteds[0];
+				tempPath             = o.getPath();
+				this.path.initX      = this.parent.helpers.getClosestSnapCoords( this.parent.events.mouseX );
+				this.path.initY      = this.parent.helpers.getClosestSnapCoords( this.parent.events.mouseY );
+				this.path.initPoints = [];
+				for(i in tempPath.pathSegList)
+				{
+					if(typeof tempPath.pathSegList.getItem(i).x != 'undefined')
+					this.path.initPoints.push({
+						x : tempPath.pathSegList.getItem(i).x,
+						y : tempPath.pathSegList.getItem(i).y
+					})
+				}
+				this.parent.events.selectedActionPoint = p;
+			},
+			actionPointMove : function( p ){
+				if(this.parent.events.actionPointDrag)
+				{
+					
+					this.path.movedX = this.parent.helpers.getClosestSnapCoords( this.parent.events.mouseX - this.path.initX );
+					this.path.movedY = this.parent.helpers.getClosestSnapCoords( this.parent.events.mouseY - this.path.initY );
+
+					o = this.parent.selecteds[0];
+
+					tempPath = o.getPath();
+
+					if(tempPath.pathSegList.length > p.pointIndex+1)
+					{
+						tempPath.pathSegList.getItem(p.pointIndex+1).x = this.path.initPoints[p.pointIndex+1].x - this.path.movedX;
+						tempPath.pathSegList.getItem(p.pointIndex+1).y = this.path.initPoints[p.pointIndex+1].y - this.path.movedY;
+					}
+
+					tempPath.pathSegList.getItem(p.pointIndex).x = this.path.initPoints[p.pointIndex].x + this.path.movedX;
+					tempPath.pathSegList.getItem(p.pointIndex).y = this.path.initPoints[p.pointIndex].y + this.path.movedY;
+
+					if(p.pointIndex == 0){
+						o.startX = this.path.initPoints[p.pointIndex].x + this.path.movedX;
+						o.startY = this.path.initPoints[p.pointIndex].y + this.path.movedY;
+					}
+
+					o.path = tempPath.getAttribute('d');
+
+					actionPoints = this.parent.helpers.getActionPoints(o);
+
+					this.parent.events.selectedActionPoint = {
+						pointIndex : p.pointIndex,
+						objectType : o.type,
+						target : {
+							x : actionPoints[p.pointIndex].x,
+							y : actionPoints[p.pointIndex].y
+						}
+					}
+
+					this.parent.render();
+				}
+			},
+			actionPointUp   : function( p ){
+
 			}
 		},
 
@@ -274,6 +540,7 @@ $.extend( true, designer, {
 			mouseDown : function(){
 				this.parent.history.save();
 				this.parent.selecteds = [];
+				this.parent.events.exitEditMode();
 				newObject        = this.parent.create.object();
 				this.parent.temp = this.parent.current;
 				this.parent.objects.push( newObject );
@@ -295,13 +562,12 @@ $.extend( true, designer, {
 				this.parent.temp = null;
 				this.parent.current++;
 			}
-		},
-
-		line : 
-		{
-			mouseDown : function(){},
-			mouseUp : function(){},
-			mouseMove : function(){}
 		}
+	},
+
+	actionPoints : {
+
+
+
 	}
 })

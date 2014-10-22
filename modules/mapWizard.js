@@ -1,5 +1,7 @@
 //@ sourceURL=mapWizard.js
 
+// use mapWizard.modifyDesigner to modify designer code
+
 console.log('mapWizard');
 
 mapWizard = {
@@ -12,6 +14,8 @@ mapWizard = {
 
 		$('.resources').css('left','0px').hide();
 		$('.objects').css('left','0px').hide();
+
+		this.modifyDesigner();
 
 		this.load();
 		this.firstMenu();
@@ -27,7 +31,6 @@ mapWizard = {
 		objects = $.extend(true,{},designer.objects);
 
 		//designer.file.getSvg({objects:designer.objects});
-
 
 		if(!this.mapId){
 
@@ -331,12 +334,12 @@ mapWizard = {
 			switch($(this).prop("tagName"))
 			{
 				case 'rect' :
-					console.log('rect');
 					found = true;
-					
+					if(typeof $(this).attr('opacity') == 'undefined') $(this).attr('opacity','1');
 					newObject = 
 					{
 						id     		  : current,
+						dynamicData   : $(this).attr('id'),
 						layer  		  : 0,
 						type          : 'box',
 						startX 		  : Number($(this).attr('x')),
@@ -353,7 +356,7 @@ mapWizard = {
 						visible       : true,
 						locked        : false,
 						stroke 	  	  : '',
-						lineWidth     : $(this).attr('stroke-width'),
+						lineWidth     : $(this).attr('stroke-width') || 2,
 						strokeStyle   : stroke,
 						fill 	      : fill,
 						fillStyle     : '',
@@ -363,16 +366,16 @@ mapWizard = {
 					};
 					break;
 				case 'image' :
-					console.log('image');
 					found = true;
 					newObject = 
 					{
 						id     		  : current,
+						dynamicData   : $(this).attr('id'),
 						layer  		  : 0,
 						type          : 'box',
 						src           : $(this).attr('xlink:href'),
-						startX 		  : Number($(this).attr('x')),
-						startY 		  : Number($(this).attr('y')),
+						startX 		  : Number($(this).attr('x')) || 0,
+						startY 		  : Number($(this).attr('y')) || 0,
 						endX   		  : Number($(this).attr('x')) + Number($(this).attr('width')),
 						endY   		  : Number($(this).attr('y')) + Number($(this).attr('height')),
 						width         : Number($(this).attr('width')),
@@ -395,7 +398,6 @@ mapWizard = {
 					};
 					break;
 				case 'text' :
-					console.log('text',$(this));
 					fontSize = Number($(this).attr('font-size'));
 					if(PreviousMapWizard)
 					{
@@ -409,6 +411,7 @@ mapWizard = {
 					newObject = 
 					{
 						id     		  : current,
+						dynamicData   : $(this).attr('id'),
 						layer  		  : 0,
 						type          : 'text',
 						startX 		  : x,
@@ -450,6 +453,7 @@ mapWizard = {
 					newObject = 
 					{
 						id     		  : current,
+						dynamicData   : $(this).attr('id'),
 						type          : 'path',
 						opacity       : Number($(this).attr('opacity')),
 						matrix        : matrix,
@@ -459,7 +463,17 @@ mapWizard = {
 						lineWidth     : $(this).attr('stroke-width') ? Number($(this).attr('stroke-width')) : 2,
 						rotate        : rotate,
 						visible       : true,
-						locked        : false
+						locked        : false,
+						getPathSegs   : function(){
+							var p = document.createElementNS("http://www.w3.org/2000/svg", "path");
+							$(p).attr('d',this.path);
+							return p.pathSegList;
+						},
+						getPath       : function(){
+							var p = document.createElementNS("http://www.w3.org/2000/svg", "path");
+							$(p).attr('d',this.path);
+							return p;
+						}
 					}
 					break;
 				case 'ellipse' :
@@ -467,6 +481,7 @@ mapWizard = {
 					newObject = 
 					{
 						id     		  : current,
+						dynamicData   : $(this).attr('id'),
 						type          : 'ellipse',
 						opacity       : Number($(this).attr('opacity')),
 						matrix        : matrix,
@@ -479,7 +494,7 @@ mapWizard = {
 						cy			  : Number($(this).attr('cy')),
 						cx			  : Number($(this).attr('cx')),
 						strokeStyle   : stroke,
-						fill          : fill,
+						fillStyle     : fill,
 						lineWidth     : Number($(this).attr('stroke-width')),
 						stroke        : '#000'
 					}
@@ -489,6 +504,7 @@ mapWizard = {
 					newObject = 
 					{
 						id     		  : current,
+						dynamicData   : $(this).attr('id'),
 						type          : 'line',
 						opacity       : Number($(this).attr('opacity')),
 						matrix        : matrix,
@@ -501,7 +517,7 @@ mapWizard = {
 						endY		  : Number($(this).attr('y2')),
 						strokeStyle   : stroke,
 						fill          : fill,
-						lineWidth     : Number($(this).attr('stroke-width')),
+						lineWidth     : Number($(this).attr('stroke-width')) || 2,
 						stroke        : '#000'
 					}
 					break;
@@ -510,6 +526,7 @@ mapWizard = {
 					newObject = 
 					{
 						id     		  : current,
+						dynamicData   : $(this).attr('id'),
 						type          : 'circle',
 						opacity       : Number($(this).attr('opacity')),
 						matrix        : matrix,
@@ -536,7 +553,36 @@ mapWizard = {
 			if(found) {data.objects.push(newObject);current++;}
 		});
 
-		return JSON.stringify(data);
+		return data;
+	},
+
+	modifyDesigner : function(){
+
+		// use this to modify designer
+
+		designer.draw.rect = function( ctx, x, y, w, h, radius, lineWidth, strokeStyle, fill, stroke, opacity ) {
+
+			if (typeof stroke == "undefined" ) stroke = true;
+			if (typeof radius === "undefined") radius = 5;
+			ctx.beginPath();
+			ctx.moveTo(x + radius, y);
+			ctx.lineTo(x + w - radius, y);
+			ctx.quadraticCurveTo(x + w, y, x + w, y + radius);
+			ctx.lineTo(x + w, y + h - radius);
+			ctx.quadraticCurveTo(x + w, y + h, x + w - radius, y + h);
+			ctx.lineTo(x + radius, y + h);
+			ctx.quadraticCurveTo(x, y + h, x, y + h - radius);
+			ctx.lineTo(x, y + radius);
+			ctx.quadraticCurveTo(x, y, x + radius, y);
+			ctx.closePath();
+			ctx.globalAlpha = opacity;
+			ctx.lineWidth = Number(lineWidth);
+			ctx.strokeStyle = strokeStyle;
+			if (stroke && lineWidth) ctx.stroke();
+			if (fill) { ctx.fillStyle = fill; ctx.fill(); }
+
+		}
+
 	},
 
 	// helpers

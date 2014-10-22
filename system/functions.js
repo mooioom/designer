@@ -39,7 +39,7 @@ $.extend( true, designer, {
 			}
 
 			this.parent.selecteds = [];
-			
+
 			this.parent.render();
 			this.parent.draw.toolbar();
 			this.parent.draw.ui();
@@ -79,38 +79,40 @@ $.extend( true, designer, {
 			this.parent.draw.ui();
 		},
 
-		editText : function(){
+		escapeKey : function(){
+			if(this.parent.events.createPathMode){
+				this.parent.actions.path.removeLastSeg();
+				this.parent.events.createPathMode = false;
+			}
+		},
 
-			$('.toolbar.text').show();
-			$('.toolbox.box').hide();
-			$('.toolbox.text').show();
-			$('.toolbox.text #text').val( this.parent.selecteds[0].text );
+		edit : function( what ){
 
-			var text = this.parent.selecteds[0];
+			$('.toolbox.text').hide();
+			$('.toolbar').hide();
+			$('.toolbar.'+what).show();
 
-			// var textPositionTop  = ( text.startY - 100 ); if(textPositionTop<0) textPositionTop = 10;
-			// var textPositionLeft = ( text.startX + text.width  + 40 ); if(textPositionLeft>(this.parent.width - 300)) textPositionLeft = this.parent.width - 300;
+			if(what == 'text')
+			{
+				$('.toolbox.text').show();
+				$('.toolbox.text #text').val( this.parent.selecteds[0].text );
+			}
 
-			// $('.toolbox.text').css('right', 'initial' );
-			// $('.toolbox.text').css('left',( textPositionLeft ) + 'px' );
-			// $('.toolbox.text').css('top', ( textPositionTop ) + 'px' );
+			var o = this.parent.selecteds[0];
 
-			$('.toolbar.text').show();
+			this.parent.ui.toolbox.update( o );
+			this.parent.ui.toolbar.update( o );
 
-			this.parent.ui.toolbox.update( text );
-			this.parent.ui.toolbar.update( text );
+		},
+
+		exitEditMode : function(){
+
+			this.parent.editMode = false;
+			$('.toolbar .edit').removeClass('active');
+
 		},
 
 		changeText : function( newText ) { if(!this.parent.helpers.selectedIsText()) return; this.parent.selecteds[0].text = newText; this.parent.render(); },
-
-		editBox : function()
-		{
-			var box = this.parent.selecteds[0];
-			$('.toolbox.text').hide();
-			$('.toolbar.box').show();
-			this.parent.ui.toolbox.update( box );
-			this.parent.ui.toolbar.update( box );
-		},
 
 		align : function( to ){
 
@@ -171,18 +173,34 @@ $.extend( true, designer, {
 			for(i in this.parent.selecteds)
 			{
 				var o = this.parent.selecteds[i],
-					d;
+					d,
+					moveEndPoints  = (o.type == 'line'),
+					moveFromCenter = (o.type == 'ellipse');
 
 				if( this.parent.events.ctrl ) d = 1;
 				else d = this.parent.grid.size;
 
-				switch( direction )
+				if(moveFromCenter)
 				{
-					case 'left'  : o.startX = o.startX - d; break;
-					case 'up'    : o.startY = o.startY - d; break;
-					case 'right' : o.startX = o.startX + d; break;
-					case 'down'  : o.startY = o.startY + d; break;
+					switch( direction )
+					{
+						case 'left'  : o.cx = o.cx - d; break;
+						case 'up'    : o.cy = o.cy - d; break;
+						case 'right' : o.cx = o.cx + d; break;
+						case 'down'  : o.cy = o.cy + d; break;
+					}
+				}else
+				{
+					switch( direction )
+					{
+						case 'left'  : o.startX = o.startX - d; if(moveEndPoints) o.endX = o.endX - d; break;
+						case 'up'    : o.startY = o.startY - d; if(moveEndPoints) o.endY = o.endY - d; break;
+						case 'right' : o.startX = o.startX + d; if(moveEndPoints) o.endX = o.endX + d; break;
+						case 'down'  : o.startY = o.startY + d; if(moveEndPoints) o.endY = o.endY + d; break;
+					}
 				}
+
+				
 			}
 
 			//todo save undo
@@ -262,6 +280,46 @@ $.extend( true, designer, {
 					newObject.strokeStyle   = this.parent.defaults.text.strokeStyle;
 					newObject.fillStyle     = this.parent.defaults.text.fillStyle;
 					newObject.height        = this.parent.defaults.text.fontSize;
+					break;
+				case 'line' :
+					newObject.stroke 	  = this.parent.defaults.box.stroke;
+					newObject.lineWidth   = this.parent.defaults.box.lineWidth;
+					newObject.strokeStyle = this.parent.defaults.box.strokeStyle;
+					newObject.fill 	      = this.parent.defaults.box.fill;
+					newObject.fillStyle   = this.parent.defaults.box.fillStyle;
+					break;
+				case 'ellipse' :
+					newObject.stroke 	  = this.parent.defaults.box.lineWidth;
+					newObject.lineWidth   = this.parent.defaults.box.lineWidth;
+					newObject.strokeStyle = this.parent.defaults.box.strokeStyle;
+					newObject.fill 	      = this.parent.defaults.box.fill;
+					newObject.fillStyle   = this.parent.defaults.box.fillStyle;
+					newObject.rx          = 0;
+					newObject.ry          = 0;
+					newObject.cx          = point.x;
+					newObject.cy          = point.y;
+					newObject.startX      = null;
+					newObject.startX      = null;
+					break;
+				case 'path' :
+					newObject.stroke 	  = this.parent.defaults.box.lineWidth;
+					newObject.lineWidth   = this.parent.defaults.box.lineWidth;
+					newObject.strokeStyle = this.parent.defaults.box.strokeStyle;
+					newObject.fill 	      = this.parent.defaults.box.fill;
+					newObject.fillStyle   = this.parent.defaults.box.fillStyle;
+					newObject.startX      = point.x;
+					newObject.startY      = point.y;
+					newObject.path        = 'm '+point.x+' '+point.y;
+					newObject.getPathSegs = function(){
+						var p = document.createElementNS("http://www.w3.org/2000/svg", "path");
+						$(p).attr('d',this.path);
+						return p.pathSegList;
+					}
+					newObject.getPath     = function(){
+						var p = document.createElementNS("http://www.w3.org/2000/svg", "path");
+						$(p).attr('d',this.path);
+						return p;
+					}
 					break;
 			}
 			return newObject;

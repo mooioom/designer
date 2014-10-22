@@ -27,14 +27,23 @@ $.extend( true, designer, {
 		mousePressed : false,
 		drag         : false,
 
+		editMode       : false,
+		createPathMode : false,
+
+		selectedActionPoint : null,
+		activeActionPoint   : {},
+		actionPointHover    : false,
+		actionPointPress    : false,
+		actionPointDrag     : false,
+
 		init : function()
 		{
-			console.log('events init');
 
 			this.keyboardEvents.push({ action : this.parent.functions.move, scope : this.parent.functions, shortcut : 'left',  args : 'left'  });
 			this.keyboardEvents.push({ action : this.parent.functions.move, scope : this.parent.functions, shortcut : 'up',    args : 'up'    });
 			this.keyboardEvents.push({ action : this.parent.functions.move, scope : this.parent.functions, shortcut : 'right', args : 'right' });
 			this.keyboardEvents.push({ action : this.parent.functions.move, scope : this.parent.functions, shortcut : 'down',  args : 'down'  });
+			this.keyboardEvents.push({ action : this.parent.functions.escapeKey, scope : this.parent.functions, shortcut : 'escape' });
 
 			this.parent.canvas.addEventListener("mousemove",$.proxy(this.mouseMove,this),false);
 			this.parent.canvas.addEventListener("mousedown",$.proxy(this.mouseDown,this),false);
@@ -54,7 +63,8 @@ $.extend( true, designer, {
 
 			$(window).resize( $.proxy(this.parent.helpers.positionCanvas,this));
 
-			$('.tools .button').click( $.proxy(this.toolButton,this) );
+			$('.tools .button').unbind('click').bind('click', $.proxy(this.toolButton,this) );
+			$('.toolbar .edit').unbind('click').bind('click', $.proxy(this.editMode,this) );
 
 			for(i in this.clickEvents){
 				var clickEvent = this.clickEvents[i];
@@ -72,10 +82,13 @@ $.extend( true, designer, {
 		{
 			this.parent.helpers.getMousePosition( e );
 			this.mousePressed = true;
-			this.parent.actions[ this.parent.action ].mouseDown.call(this);
+			if(this.editMode && this.parent.helpers.isOverActionPoint() )
+			{
+				this.actionPointPress = true;
+				this.parent.actions[ this.activeActionPoint.objectType ].actionPointDown.call(this.parent.actions,this.activeActionPoint);
+			}else this.parent.actions[ this.parent.action ].mouseDown.call(this.parent.actions);
 			this.parent.render();
 			this.parent.draw.ui();
-			//this.parent.draw.reOrderByUi();
 			this.parent.draw.toolbar();
 			this.parent.onMouseDown();
 		},
@@ -83,12 +96,16 @@ $.extend( true, designer, {
 		mouseUp : function( e )
 		{
 			this.parent.helpers.getMousePosition( e );
-			this.parent.actions[ this.parent.action ].mouseUp.call(this);
-			this.mousePressed = false;
-			this.drag      = false;
+			if(this.editMode && (this.parent.helpers.isOverActionPoint() || this.actionPointPress) )
+			{
+				this.parent.actions[ this.activeActionPoint.objectType ].actionPointUp.call(this.parent.actions,this.activeActionPoint);
+			}else this.parent.actions[ this.parent.action ].mouseUp.call(this.parent.actions);
+			this.mousePressed 	  = false;
+			this.drag 			  = false;
+			this.actionPointPress = false;
+			this.actionPointDrag  = false;
 			this.parent.render();
 			this.parent.draw.ui();
-			//this.parent.draw.reOrderByUi();
 			this.parent.draw.toolbar();
 			this.parent.onMouseUp();
 		},
@@ -104,7 +121,11 @@ $.extend( true, designer, {
 			this.prevMoveY = this.mouseY;
 
 			if( this.mousePressed ) this.drag = true; else this.drag = false;
-			this.parent.actions[ this.parent.action ].mouseMove.call(this);
+			if(this.editMode && (this.actionPointPress) )
+			{
+				if(this.actionPointPress) this.actionPointDrag = true;
+				this.parent.actions[ this.activeActionPoint.objectType ].actionPointMove.call(this.parent.actions,this.activeActionPoint);
+			}else this.parent.actions[ this.parent.action ].mouseMove.call(this.parent.actions);
 			this.parent.render();
 			this.parent.onMouseMove();
 		},
@@ -199,15 +220,38 @@ $.extend( true, designer, {
 			if(keyCode == 18) this.alt   = on;
 		},
 
+		editMode : function( e ){
+
+			b = $(e.target);
+			b.toggleClass('active');
+			this.editMode = b.hasClass('active');
+			this.parent.render();
+
+		},
+
+		exitEditMode : function(){
+
+			this.editMode       = false;
+			selectedActionPoint = null;
+			activeActionPoint   = {};
+			$('.toolbar .edit').removeClass('active');
+
+		},
+
 		toolButton : function( e ){
 			$('.tools .button').removeClass('active');
 			$(e.target).addClass('active');
+			this.exitEditMode();
+			this.endCreatePath();
 			this.parent.action = $(e.target).attr('id');
 			this.parent.render();
 			this.parent.draw.ui();
 			this.parent.draw.toolbar();
 			this.parent.onToolChange();
-			//this.parent.draw.reOrderByUi();
+		},
+
+		endCreatePath : function(){
+			this.createPathMode = false;
 		},
 
 		browserDrop : function( e ){         for(i in this.browserDropEvents) this.browserDropEvents[i]( e ); },

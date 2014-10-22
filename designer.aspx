@@ -87,6 +87,11 @@
 			<div class="item"><%=Resources.Strings.Fill %> <input type="text" class="fill" data="string" /></div>
 			<div class="sep"></div>
 			<div class="item"><%=Resources.Strings.Stroke %> <input type="text" class="lineWidth" /> &nbsp;<%=Resources.Strings.Color %> <input type="text" class="strokeStyle" data="string" /></div>
+			<!--<div class="sep"></div>
+			<div class="item">
+				<div class="left toolbarBigButton edit"><%=Resources.Strings.ChangeNOUN %></div>
+				<div class="clear"></div>
+			</div>-->
 			<div class="clear"></div>
 		</div>
 
@@ -157,6 +162,46 @@
 			<div class="clear"></div>
 		</div>
 
+		<div class="toolbar ellipse hidden">
+			<div class="item">Circle / Ellipse</div>
+			<div class="sep"></div>
+			<div class="item"><%=Resources.Strings.Fill %> <input type="text" class="fillStyle" data="string" /></div>
+			<div class="sep"></div>
+			<div class="item"><%=Resources.Strings.Stroke %> <input type="text" class="lineWidth" /> &nbsp;<%=Resources.Strings.Color %> <input type="text" class="strokeStyle" data="string" /></div>
+			<div class="sep"></div>
+			<div class="item">
+				<div class="left toolbarBigButton edit"><%=Resources.Strings.ChangeNOUN %></div>
+				<div class="clear"></div>
+			</div>
+			<div class="clear"></div>
+		</div>
+
+		<div class="toolbar line hidden">
+			<div class="item">Line</div>
+			<div class="sep"></div>
+			<div class="item"><input type="checkbox" id="selectAndMove" /> <%=Resources.Strings.SelectAndMove %></div>
+			<div class="sep"></div>
+			<div class="item">
+				<div class="left toolbarBigButton edit"><%=Resources.Strings.ChangeNOUN %></div>
+				<div class="clear"></div>
+			</div>
+			<div class="clear"></div>
+		</div>
+
+		<div class="toolbar path hidden">
+			<div class="item">Path</div>
+			<div class="sep"></div>
+			<div class="item"><%=Resources.Strings.Fill %> <input type="text" class="fillStyle" data="string" /></div>
+			<div class="sep"></div>
+			<div class="item"><%=Resources.Strings.Stroke %> <input type="text" class="lineWidth" /> &nbsp;<%=Resources.Strings.Color %> <input type="text" class="strokeStyle" data="string" /></div>
+			<div class="sep"></div>
+			<div class="item">
+				<div class="left toolbarBigButton edit"><%=Resources.Strings.ChangeNOUN %></div>
+				<div class="clear"></div>
+			</div>
+			<div class="clear"></div>
+		</div>
+
 		<div class="toolbar transform hidden">
 			<div class="item"><%=Resources.Strings.Transform %></div>
 			<div class="sep"></div>
@@ -173,6 +218,9 @@
 			<div class="button select active" id="select"></div>
 			<div class="button move" id="move"></div>
 			<div class="button box" id="box"></div>
+			<div class="button ellipse" id="ellipse"></div>
+			<div class="button line" id="line"></div>
+			<div class="button path" id="path"></div>
 			<div class="button text" id="text"></div>
 			<!-- <div class="button transform"  id="transform"></div> -->
 		</div>

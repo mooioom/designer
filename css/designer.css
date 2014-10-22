@@ -121,6 +121,9 @@ input[type='range'] {
 .stage.rotate{
 	cursor: url(../images/rotate.png),url(../images/rotate.cur),auto;
 }
+.stage.pointer{
+	cursor: pointer;
+}
 
 #indicator{
 	position: absolute;
@@ -297,6 +300,7 @@ input[type='range'] {
 	font-size: 11px;
 	text-indent: 3px;
 	border: 1px solid #ccc;
+	text-align: center;
 }
 .toolbar input[type="checkbox"] {
 	margin: 0px;
@@ -309,6 +313,29 @@ input[type='range'] {
 	height: 20px;
 	position: relative;
 	font-size: 11px;
+}
+.toolbarBigButton{
+	border: 1px solid #ccc;
+	cursor: pointer;
+	color: #ADADAD;
+	box-sizing: border-box;
+	margin-right: 4px;
+	height: 20px;
+	line-height: 18px;
+	position: relative;
+	top: 2px;
+	width: 70px;
+	text-align: center;
+	border-radius: 2px;
+}
+.toolbarBigButton:hover{
+	border: 1px solid #9EBFE9;
+	color: #525252;
+}
+.toolbarBigButton.active{
+	background-color: #0060FF;
+	color: #FEFFFF;
+	border: 1px solid #2372BB;
 }
 .toolbarButton{
     width: 22px;
@@ -357,7 +384,7 @@ input[type='range'] {
 	height: 100%;
 	background: #eee;
 	position: absolute;
-	height: 128px;
+	height: 224px;
 	top: 74px;
 	z-index: 3;
 }
@@ -392,6 +419,18 @@ input[type='range'] {
 }
 .button.text{
 	background-image: url(../images/text.png);
+	background-size: 45%;
+}
+.button.ellipse{
+	background-image: url(../images/circle.png);
+	background-size: 65%;
+}
+.button.line{
+	background-image: url(../images/line.png);
+}
+.button.path{
+	background-image: url(../images/path.png);
+	background-size: 60%;
 }
 
 
@@ -642,13 +681,7 @@ input[type='range'] {
 }
 .resourceName{
     color: #000;
-	
-	
-	
 	overflow: hidden;
-	
-	
-	
     height: 14px;
     margin-bottom: -14px;
     position: relative;

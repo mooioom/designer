@@ -14,6 +14,7 @@ $.extend( true, designer, {
 		this.draw.objects();
 		this.draw.selectedBox();
 		this.draw.selectionBox();
+		if(this.events.editMode) this.draw.actionPoints();
 
 		if( this.action == 'transform' ) this.draw.actionPoints();
 
@@ -75,6 +76,8 @@ $.extend( true, designer, {
 
 		drawObject : function( object, ctx ){
 
+			this.current = object;
+
 			if(object.visible == false) return;
 
 			if(!ctx) ctx = this.parent.ctx;
@@ -121,7 +124,7 @@ $.extend( true, designer, {
 					image.src = o.src;
 					ctx.drawImage(image, x, y, width, height);
 				}
-				else this.rect( ctx, x, y, width, height, radius, lineWidth, strokeStyle, fill, true );
+				else this.rect( ctx, x, y, width, height, radius, lineWidth, strokeStyle, fill, true, opacity );
 
 				ctx.restore();
 
@@ -215,13 +218,15 @@ $.extend( true, designer, {
 				o.width        = pathInfo.w;
 				o.height       = pathInfo.h;
 
+				if(o.opacity) ctx.globalAlpha = o.opacity;
+
 				ctx.save();
 				ctx.translate( o.topLeftX+(w/2),o.topLeftY+(h/2) );
 				ctx.rotate(o.rotate*Math.PI/180);
 				ctx.translate( -(o.topLeftX+(w/2)),-(o.topLeftY+(h/2)) );
 
-				path.pathSegList[0].x = x;
-				path.pathSegList[0].y = y;
+				path.pathSegList.getItem(0).x = x;
+				path.pathSegList.getItem(0).y = y;
 
 				o.path = path.getAttribute('d');
 
@@ -241,27 +246,19 @@ $.extend( true, designer, {
 			{
 				o = o;
 
-				if(!o.startX)
-				{
-					o.startX = o.cx - o.rx/2;
-					o.endX   = o.cx + o.rx/2;
-					o.startY = o.cy - o.ry/2;
-					o.endY   = o.cy + o.ry/2;
-					o.width  = o.endX - o.startX;
-					o.height = o.endY - o.startY;
-				}else
-				{
-					o.cx = o.startX + o.width / 2;
-					o.cy = o.startY + o.height / 2;
-				}
+				o.startX = o.cx - o.rx/2;
+				o.endX   = o.cx + o.rx/2;
+				o.startY = o.cy - o.ry/2;
+				o.endY   = o.cy + o.ry/2;
+				o.width  = o.endX - o.startX;
+				o.height = o.endY - o.startY;
 
 				ctx.save();
 				ctx.translate( o.cx,o.cy );
 				ctx.rotate(o.rotate*Math.PI/180);
 				ctx.translate( -o.cx,-o.cy );
 
-				if(o.drawByCenter) 
-					this.drawEllipseByCenter(ctx, o.cx, o.cy, o.rx, o.ry, o.lineWidth, o.strokeStyle, o.fill, o.stroke);	
+				this.drawEllipseByCenter(ctx, o.cx, o.cy, o.rx, o.ry, o.lineWidth, o.strokeStyle, o.fillStyle, o.stroke);	
 
 				ctx.restore();
 			}
@@ -291,7 +288,7 @@ $.extend( true, designer, {
 			}
 		},
 
-		rect : function( ctx, x, y, w, h, radius, lineWidth, strokeStyle, fill, stroke ) {
+		rect : function( ctx, x, y, w, h, radius, lineWidth, strokeStyle, fill, stroke, opacity ) {
 
 			if (typeof stroke == "undefined" ) stroke = true;
 			if (typeof radius === "undefined") radius = 5;
@@ -306,6 +303,7 @@ $.extend( true, designer, {
 			ctx.lineTo(x, y + radius);
 			ctx.quadraticCurveTo(x, y, x + radius, y);
 			ctx.closePath();
+			ctx.globalAlpha = opacity;
 			ctx.lineWidth = Number(lineWidth);
 			ctx.strokeStyle = strokeStyle;
 			if (stroke && lineWidth) ctx.stroke();
@@ -328,7 +326,7 @@ $.extend( true, designer, {
 			ctx.bezierCurveTo(xm + ox, y, xe, ym - oy, xe, ym);
 			ctx.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
 			ctx.bezierCurveTo(xm - ox, ye, x, ym + oy, x, ym);
-			ctx.lineWidth = Number(lineWidth) * 2;
+			ctx.lineWidth = Number(lineWidth);
 			ctx.strokeStyle = strokeStyle;
 			ctx.closePath(); // not used correctly, see comments (use to close off open path)
 			if (stroke && lineWidth) ctx.stroke();
@@ -454,28 +452,52 @@ $.extend( true, designer, {
 			}
 		},
 
-		actionPoints : function(){
+		actionPoints : function()
+		{
 			for(i in this.parent.selecteds)
 			{
-				object       = this.getObject( this.parent.selecteds[i].id );
-				actionPoints = this.getActionPoints( object );
-				for(i in actionPoints){
+				object       = this.parent.functions.getObject( this.parent.selecteds[i].id );
+				actionPoints = this.parent.helpers.getActionPoints( object );
+				for(i in actionPoints)
+				{
+					p = actionPoints[i];
 					this.parent.ctx.beginPath();
-					this.parent.ctx.arc(actionPoints[i].x, actionPoints[i].y, this.actionPointSize, 0, 2 * Math.PI, false);
-					this.parent.ctx.fillStyle = 'deepskyblue';
-					this.parent.ctx.fill();
-					this.parent.ctx.lineWidth = 1;
-					this.parent.ctx.strokeStyle = '#003300';
+					this.parent.ctx.arc(p.x, p.y, this.parent.defaults.actionPoint.size, 0, 2 * Math.PI, false);
+					this.parent.ctx.lineWidth   = this.parent.defaults.actionPoint.lineWidth;
+					this.parent.ctx.strokeStyle = this.parent.defaults.actionPoint.strokeStyle;
 					this.parent.ctx.stroke();
+				}
+				if(this.parent.events.actionPointPress || this.parent.helpers.isOverActionPoint()){
+					//actionPoint hover
+					$('.stage').addClass('pointer')
+					/*p = this.parent.events.activeActionPoint.target;
+					this.point(p.x,p.y,{
+						fillStyle : this.parent.defaults.actionPoint.hoverColor,
+						size      : this.parent.defaults.actionPoint.size
+					})*/
+				}else $('.stage').removeClass('pointer');
+
+				if(this.parent.events.selectedActionPoint)
+				{
+					var p = this.parent.events.selectedActionPoint;
+					this.quickPoint(p.target.x,p.target.y)
 				}
 			}
 		},
 
-		point : function(x,y){
+		point : function(x,y,data){
 			this.parent.ctx.beginPath();
-			this.parent.ctx.fillStyle="orange";
-			this.parent.ctx.arc(x, y, 3, 0, 2 * Math.PI, false);
+			this.parent.ctx.fillStyle = data.fillStyle;
+			this.parent.ctx.arc(x, y, 5, 0, 2 * Math.PI, false);
 			this.parent.ctx.fill();
+		},
+
+		quickPoint : function(x,y){
+			this.parent.ctx.beginPath();
+			this.parent.ctx.arc(x, y, 5, 0, 2 * Math.PI, false);
+			this.parent.ctx.lineWidth = 3;
+			this.parent.ctx.strokeStyle = 'orange';
+			this.parent.ctx.stroke();
 		},
 
 		box : function(x1,y1,x2,y2){
@@ -539,7 +561,6 @@ $.extend( true, designer, {
 
 		},
 
-
 		toolbar : function(){
 
 			$('.toolbar').hide();
@@ -548,8 +569,11 @@ $.extend( true, designer, {
 			{
 				var flag = false;
 
-				if(this.parent.helpers.selectedIsText()) { this.parent.functions.editText(); flag = true; }
-				if(this.parent.helpers.selectedIsBox())  { this.parent.functions.editBox();  flag = true; }
+				if(this.parent.helpers.selectedIs('text'))     { this.parent.functions.edit('text');    flag = true; }
+				if(this.parent.helpers.selectedIs('box'))      { this.parent.functions.edit('box');     flag = true; }
+				if(this.parent.helpers.selectedIs('line'))     { this.parent.functions.edit('line');    flag = true; }
+				if(this.parent.helpers.selectedIs('ellipse'))  { this.parent.functions.edit('ellipse'); flag = true; }
+				if(this.parent.helpers.selectedIs('path'))     { this.parent.functions.edit('path');    flag = true; }
 
 				if(this.parent.selecteds.length     && 
 				   this.parent.selecteds.length > 1 && 

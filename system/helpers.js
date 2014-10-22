@@ -17,6 +17,15 @@ $.extend( true, designer, {
 
 		},
 
+		getPointInPath : function( path, pointIndex ){
+			var p = document.createElementNS("http://www.w3.org/2000/svg", "path");
+			$(p).attr('d',path.path);
+			return {
+				x : p.pathSegList[pointIndex].x,
+				y : p.pathSegList[pointIndex].y
+			};
+		},
+
 		clickSelect : function()
 		{
 			if(!this.parent.events.ctrl) this.parent.selecteds = [];
@@ -87,27 +96,84 @@ $.extend( true, designer, {
 		{
 			if(!o) return;
 
-			var x  = o.startX,
-				y  = o.startY,
-				w  = o.width,
-				h  = o.height,
-				r  = o.rotate,
-				cx = x + (w / 2),
-				cy = y + (h / 2);
+			if(o.type == 'line'){
+				return [
+					{ x: o.startX, y: o.startY },
+					{ x: o.endX,   y: o.endY   },
+				]
+			}
 
-			p1 = this.getRotatedPoint( cx, cy, x, y, r);
-			p2 = this.getRotatedPoint( cx, cy, x+w, y, r);
-			p3 = this.getRotatedPoint( cx, cy, x, y+h, r);
-			p4 = this.getRotatedPoint( cx, cy, x+w, y+h, r);
+			if(o.type == 'ellipse'){
+				cx = o.cx;
+				cy = o.cy;
+				return [
+					this.getRotatedPoint( cx, cy, o.startX + o.rx / 2, o.startY + o.ry, o.rotate),
+					this.getRotatedPoint( cx, cy, o.startX + o.rx / 2, o.startY, o.rotate),
+					this.getRotatedPoint( cx, cy, o.startX, o.startY + o.ry / 2, o.rotate),
+					this.getRotatedPoint( cx, cy, o.startX + o.rx, o.startY + o.ry / 2, o.rotate)
+				]
+			}
 
-			var points = [
-				{ x: p1.x, y: p1.y },
-				{ x: p2.x, y: p2.y },
-				{ x: p3.x, y: p3.y },
-				{ x: p4.x, y: p4.y }
-			]
+			if(o.type == 'box'){
 
-			return points;
+				var x  = o.startX,
+					y  = o.startY,
+					w  = o.width,
+					h  = o.height,
+					r  = o.rotate,
+					cx = x + (w / 2),
+					cy = y + (h / 2);
+
+				p1 = this.getRotatedPoint( cx, cy, x, y, r);
+				p2 = this.getRotatedPoint( cx, cy, x+w, y, r);
+				p3 = this.getRotatedPoint( cx, cy, x, y+h, r);
+				p4 = this.getRotatedPoint( cx, cy, x+w, y+h, r);
+
+				return [
+					{ x: p1.x, y: p1.y },
+					{ x: p2.x, y: p2.y },
+					{ x: p3.x, y: p3.y },
+					{ x: p4.x, y: p4.y }
+				];
+			}
+
+			if(o.type == 'path')
+			{
+				p = o.getPathSegs();
+				points = [];
+				x = 0;
+				y = 0;
+				cx = o.topLeftX+(o.width/2);
+				cy = o.topLeftY+(o.height/2);
+				for(i in p)
+				{
+					x = x + p[i].x;
+					y = y + p[i].y;
+
+					point = this.getRotatedPoint( cx, cy, x, y, o.rotate);
+
+					points.push(point);
+				}
+				return points;
+			}
+		},
+
+		isOverActionPoint : function(){
+
+			var flag = false;
+			var o = this.parent.selecteds[0];
+			actionPoints = this.getActionPoints(o);
+			for(x in actionPoints){
+				target = actionPoints[x];
+				var mouse = { x : this.parent.events.mouseX, y : this.parent.events.mouseY };
+				if( this.isInRadius( target, mouse, this.parent.defaults.actionPoint.size ) ) 
+				{
+					flag = { objectType : o.type, target : target, pointIndex : Number(x) };
+					this.parent.events.activeActionPoint = flag;
+					return flag;
+				}
+			}
+			return flag;
 
 		},
 
@@ -136,17 +202,9 @@ $.extend( true, designer, {
 			}
 		},
 
-		selectedIsText : function()
-		{
-			if( this.parent.selecteds.length != 1 )       return false;
-			if( this.parent.selecteds[0].type == 'text' ) return true;
-			else return false;
-		},
-
-		selectedIsBox : function()
-		{
-			if( this.parent.selecteds.length != 1 )      return false;
-			if( this.parent.selecteds[0].type == 'box' ) return true;
+		selectedIs : function( what ){
+			if( this.parent.selecteds.length != 1 )     return false;
+			if( this.parent.selecteds[0].type == what ) return true;
 			else return false;
 		},
 
