@@ -68,10 +68,7 @@ $.extend( true, designer, {
 
 		objects : function()
 		{
-			this.parent.helpers.forEachObjects($.proxy(function( object )
-			{
-				this.drawObject( object );	
-			},this));
+			this.parent.helpers.forEachObjects($.proxy(function( object ) { this.drawObject( object ); },this));
 		},
 
 		drawObject : function( object, ctx ){

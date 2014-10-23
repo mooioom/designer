@@ -64,7 +64,7 @@ $.extend( true, designer, {
 			$(window).resize( $.proxy(this.parent.helpers.positionCanvas,this));
 
 			$('.tools .button').unbind('click').bind('click', $.proxy(this.toolButton,this) );
-			$('.toolbar .edit').unbind('click').bind('click', $.proxy(this.editMode,this) );
+			$('.toolbar .edit').unbind('click').bind('click', $.proxy(this.edit,this) );
 
 			for(i in this.clickEvents){
 				var clickEvent = this.clickEvents[i];
@@ -220,7 +220,7 @@ $.extend( true, designer, {
 			if(keyCode == 18) this.alt   = on;
 		},
 
-		editMode : function( e ){
+		edit : function( e ){
 
 			b = $(e.target);
 			b.toggleClass('active');

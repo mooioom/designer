@@ -348,6 +348,7 @@
 			<string resource="EnterTitle"       value="<%=Resources.Strings.EnterTitle %>"></string>
 			<string resource="TitleTooShort"    value="<%=Resources.Strings.TitleTooShort %>"></string>
 			<string resource="MapNameExists"    value="<%=Resources.Strings.MapNameExists %>"></string>
+			<string resource="SelectMapTIt"     value="<%=Resources.Strings.SelectMapTIt %>"></string>
 		
 		</div>
 

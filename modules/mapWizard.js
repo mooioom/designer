@@ -1,6 +1,6 @@
 //@ sourceURL=mapWizard.js
 
-// use mapWizard.modifyDesigner to modify designer code
+// use mapWizard.setupDesigner to modify designer code
 
 console.log('mapWizard');
 
@@ -12,10 +12,8 @@ mapWizard = {
 
 		document.title = getString('MapWizard');
 
-		$('.resources').css('left','0px').hide();
-		$('.objects').css('left','0px').hide();
-
-		this.modifyDesigner();
+		this.setupUi();
+		this.setupDesigner();
 
 		this.load();
 		this.firstMenu();
@@ -229,10 +227,13 @@ mapWizard = {
 
 				$('.goBack').click($.proxy(function(){ this.firstMenu(); },this));
 
+				$('#maps').append('<option value="0">'+getString('SelectMapTIt')+'</option>');
+
 				for(i in this.maps) $('#maps').append('<option value="'+this.maps[i].MapID+'">'+this.maps[i].Title+'</option>');
 
 				$('#maps').change($.proxy(function(e){
 					item = $(e.target);
+					if(item.val() == "0") return;
 					this.api('GetMapCode',$.proxy(function( data ){
 						var map = JSON.parse(data.d);
 						//debugger;
@@ -356,7 +357,7 @@ mapWizard = {
 						visible       : true,
 						locked        : false,
 						stroke 	  	  : '',
-						lineWidth     : $(this).attr('stroke-width') || 2,
+						lineWidth     : (Number($(this).attr('stroke-width')) * 2) || 2,
 						strokeStyle   : stroke,
 						fill 	      : fill,
 						fillStyle     : '',
@@ -556,7 +557,23 @@ mapWizard = {
 		return data;
 	},
 
-	modifyDesigner : function(){
+	setupUi : function(){
+
+		if( $('body').hasClass('ltr') )
+		{
+			$('.resources').css('left','0px').hide();
+			$('.objects').css('left','0px').hide();
+			$('.objects').css('top','309px').hide();
+		}
+		else
+		{
+			$('.resources').css('left','0px').hide();
+			$('.objects').css('left','0px').hide();
+		}
+
+	},
+
+	setupDesigner : function(){
 
 		// use this to modify designer
 
@@ -578,6 +595,15 @@ mapWizard = {
 			ctx.globalAlpha = opacity;
 			ctx.lineWidth = Number(lineWidth);
 			ctx.strokeStyle = strokeStyle;
+
+			if(this.current.dynamicData.search('btn') != -1)
+			{
+				ctx.globalAlpha = 0.3;
+				ctx.lineWidth   = 0;
+				fill            = '#2088F1';
+				stroke          = false;
+			}
+
 			if (stroke && lineWidth) ctx.stroke();
 			if (fill) { ctx.fillStyle = fill; ctx.fill(); }
 

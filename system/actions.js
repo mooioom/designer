@@ -446,7 +446,7 @@ $.extend( true, designer, {
 				}
 			},
 			mouseMove : function(){
-				if(this.parent.events.createPathMode)
+				if( this.parent.events.createPathMode )
 				{
 					tempPath = this.parent.functions.getObject( this.parent.temp );
 					x = this.parent.helpers.getClosestSnapCoords( this.parent.events.mouseX ) - this.path.currentPointX;
@@ -459,6 +459,11 @@ $.extend( true, designer, {
 					p.pathSegList.getItem(p.pathSegList.length-1).x = x;
 					p.pathSegList.getItem(p.pathSegList.length-1).y = y;
 					tempPath.path = p.getAttribute('d');
+				}else{
+					if( this.parent.helpers.selectedIs('path') )
+					{
+						// closest point on path to add more points
+					}
 				}
 			},
 			removeLastSeg : function(){
