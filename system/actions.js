@@ -437,11 +437,13 @@ $.extend( true, designer, {
 					this.parent.current ++;
 				}else{
 					//add point
+
 					this.path.currentPoint ++ ;
 					x = this.parent.helpers.getClosestSnapCoords( this.parent.events.mouseX ) - this.path.currentPointX;
 					y = this.parent.helpers.getClosestSnapCoords( this.parent.events.mouseY ) - this.path.currentPointY;
 					this.path.currentPointX = this.path.currentPointX + x;
 					this.path.currentPointY = this.path.currentPointY + y;
+					console.log('add xy',x,y);
 					this.path.createNewSeg  = true;
 				}
 			},
@@ -454,10 +456,15 @@ $.extend( true, designer, {
 					p = tempPath.getPath();
 					if(this.path.createNewSeg){
 						this.path.createNewSeg = false;
+						console.log('move create xy',x,y);
 						p.pathSegList.appendItem(p.createSVGPathSegLinetoRel(x,y));
 					}
-					p.pathSegList.getItem(p.pathSegList.length-1).x = x;
-					p.pathSegList.getItem(p.pathSegList.length-1).y = y;
+
+					pathLength = p.pathSegList.length || p.pathSegList.numberOfItems;
+
+					p.pathSegList.getItem(pathLength-1).x = x;
+					p.pathSegList.getItem(pathLength-1).y = y;
+
 					tempPath.path = p.getAttribute('d');
 				}else{
 					if( this.parent.helpers.selectedIs('path') )
@@ -471,7 +478,10 @@ $.extend( true, designer, {
 				{
 					tempPath = this.parent.parent.functions.getObject( this.parent.parent.temp );
 					p = tempPath.getPath();
-					p.pathSegList.removeItem( p.pathSegList.length - 1 );
+
+					pathLength = p.pathSegList.length || p.pathSegList.numberOfItems;
+
+					p.pathSegList.removeItem( pathLength - 1 );
 					tempPath.path = p.getAttribute('d');
 					this.parent.parent.render();
 				}
@@ -505,7 +515,9 @@ $.extend( true, designer, {
 
 					tempPath = o.getPath();
 
-					if(tempPath.pathSegList.length > p.pointIndex+1)
+					pathLength = tempPath.pathSegList.length || tempPath.pathSegList.numberOfItems;
+
+					if(pathLength > p.pointIndex+1)
 					{
 						tempPath.pathSegList.getItem(p.pointIndex+1).x = this.path.initPoints[p.pointIndex+1].x - this.path.movedX;
 						tempPath.pathSegList.getItem(p.pointIndex+1).y = this.path.initPoints[p.pointIndex+1].y - this.path.movedY;

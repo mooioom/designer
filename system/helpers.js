@@ -21,8 +21,8 @@ $.extend( true, designer, {
 			var p = document.createElementNS("http://www.w3.org/2000/svg", "path");
 			$(p).attr('d',path.path);
 			return {
-				x : p.pathSegList[pointIndex].x,
-				y : p.pathSegList[pointIndex].y
+				x : p.pathSegList.getItem(pointIndex).x,
+				y : p.pathSegList.getItem(pointIndex).y
 			};
 		},
 
@@ -145,10 +145,13 @@ $.extend( true, designer, {
 				y = 0;
 				cx = o.topLeftX+(o.width/2);
 				cy = o.topLeftY+(o.height/2);
-				for(i in p)
+
+				pathLength = p.length || p.numberOfItems;
+
+				for(i=0;i<=pathLength-1;i++)
 				{
-					x = x + p[i].x;
-					y = y + p[i].y;
+					x = x + p.getItem(i).x;
+					y = y + p.getItem(i).y;
 
 					point = this.getRotatedPoint( cx, cy, x, y, o.rotate);
 

@@ -359,9 +359,11 @@ $.extend( true, designer, {
 			cx = 0;
 			cy = 0;
 
-			for(i in path.pathSegList)
+			pathLength = path.pathSegList.length || path.pathSegList.numberOfItems;
+
+			for(i=0;i<=pathLength-1;i++)
 			{
-				seg = path.pathSegList[i];
+				seg = path.pathSegList.getItem(i);
 
 				nx = cx;
 				ny = cy;

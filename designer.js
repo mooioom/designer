@@ -15,8 +15,8 @@ $(document).ready(function()
 
 		designer.init({
 			name    : getString("UntitledProject"),
-		    width   : 1024,//$('.stage').width(),
-			height  : 320//$('.stage').height()
+		    width   : 1200,//$('.stage').width(),
+			height  : 800//$('.stage').height()
 		});
 
 	},20);
