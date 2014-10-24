@@ -443,7 +443,6 @@ $.extend( true, designer, {
 					y = this.parent.helpers.getClosestSnapCoords( this.parent.events.mouseY ) - this.path.currentPointY;
 					this.path.currentPointX = this.path.currentPointX + x;
 					this.path.currentPointY = this.path.currentPointY + y;
-					console.log('add xy',x,y);
 					this.path.createNewSeg  = true;
 				}
 			},
@@ -456,7 +455,6 @@ $.extend( true, designer, {
 					p = tempPath.getPath();
 					if(this.path.createNewSeg){
 						this.path.createNewSeg = false;
-						console.log('move create xy',x,y);
 						p.pathSegList.appendItem(p.createSVGPathSegLinetoRel(x,y));
 					}
 
