@@ -100,8 +100,8 @@ $.extend( true, designer, {
 
 			var o = this.parent.selecteds[0];
 
-			this.parent.ui.toolbox.update( o );
-			this.parent.ui.toolbar.update( o );
+			this.parent.ui.toolboxs.update( o );
+			this.parent.ui.toolbars.update( o );
 
 		},
 
@@ -310,6 +310,9 @@ $.extend( true, designer, {
 					newObject.startX      = point.x;
 					newObject.startY      = point.y;
 					newObject.path        = 'm '+point.x+' '+point.y;
+					if(this.parent.selectedShape != null){
+						newObject.path    = this.parent.shapes[ this.parent.selectedShape ].data;
+					}
 					newObject.getPathSegs = function(){
 						var p = document.createElementNS("http://www.w3.org/2000/svg", "path");
 						$(p).attr('d',this.path);

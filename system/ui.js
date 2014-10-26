@@ -3,7 +3,13 @@ $.extend( true, designer, {
 
 	ui : {
 
-		toolbox : {
+		tools : {
+
+			init : function(){}
+
+		},
+
+		toolboxs : {
 
 			init : function(){
 
@@ -458,9 +464,36 @@ $.extend( true, designer, {
 
 		},
 
-		toolbar : {
+		toolbars : {
 
 			init : function(){
+
+				if(designer.shapes && designer.shapes.length)
+				{
+					$('.toolbar.path .shapes').show();
+
+					$('.selectedShape').click(function(){
+						$('.listOfShapes').toggle();
+					});
+
+					for(i in designer.shapes)
+					{
+						shape = designer.shapes[i];
+						shapeDiv = $('<div class="shapeItem" shapeid="'+i+'"></div>');
+						shapeSvg = $('<svg xmlns="http://www.w3.org/2000/svg" viewbox="-15 -15 330 330"><path d="'+shape.data+'" /></svg>');
+						shapeDiv.append(shapeSvg);
+						$('.listOfShapes').append(shapeDiv);
+					}
+
+					$('.listOfShapes').append('<div class="clear"></div>');
+
+					$('.shapeItem').click(function( e ){
+						designer.selectedShape = Number( $(e.target).attr('shapeid') );
+						$('.selectedShape').empty();
+						$('.selectedShape').append('<svg xmlns="http://www.w3.org/2000/svg" viewbox="-15 -15 330 330"><path d="'+designer.shapes[designer.selectedShape].data+'" /></svg>');
+						$('.listOfShapes').hide();
+					});
+				}
 
 				$('#selectAndMove').click(function(){ designer.selectAndMove = $(this).prop('checked'); });
 
@@ -508,6 +541,12 @@ $.extend( true, designer, {
 				$(".toolbar .strokeStyle").spectrum("set", o.strokeStyle );
 
 			}
+
+		},
+
+		sidebars : {
+
+			init : function(){}
 
 		},
 

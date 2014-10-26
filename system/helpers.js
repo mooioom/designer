@@ -139,12 +139,12 @@ $.extend( true, designer, {
 
 			if(o.type == 'path')
 			{
-				p = o.getPathSegs();
+				p      = o.getPathSegs();
 				points = [];
-				x = 0;
-				y = 0;
-				cx = o.topLeftX+(o.width/2);
-				cy = o.topLeftY+(o.height/2);
+				x      = 0;
+				y      = 0;
+				cx     = o.topLeftX+(o.width/2);
+				cy     = o.topLeftY+(o.height/2);
 
 				pathLength = p.length || p.numberOfItems;
 
@@ -418,6 +418,54 @@ $.extend( true, designer, {
 			return aMemberCount ? false : true;
 		},
 
+		resizePath : function( startingPoint, pathData, size){
+
+			var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+			$(path).attr('d',pathData);
+
+			var pathClone = document.createElementNS("http://www.w3.org/2000/svg", "path");
+			$(pathClone).attr('d',pathData);
+
+			pathCloneData = this.getSvgPathInfo(pathClone);
+
+			dividerW = 0;
+			dividerH = 0;
+
+			if(pathCloneData.w) dividerW = pathCloneData.w;
+			if(pathCloneData.h) dividerH = pathCloneData.h;
+
+			if(dividerW > dividerH) divider = dividerW;
+			else divider = dividerH;
+
+			pathLength = path.pathSegList.length || path.pathSegList.numberOfItems;
+
+			for(i=0;i<=pathLength-1;i++)
+			{
+
+				seg       = path.pathSegList.getItem(i);
+				segClone  = pathClone.pathSegList.getItem(i);
+
+				if(i == 0) {
+					seg.x = startingPoint.x;
+					seg.y = startingPoint.y;
+				}else{
+					seg.x = (segClone.x * size) / divider;
+					seg.y = (segClone.y * size) / divider;
+
+					if(seg.x1) seg.x1 = (segClone.x1 * size) / divider;
+					if(seg.y1) seg.y1 = (segClone.y1 * size) / divider;
+
+					if(seg.x2) seg.x2 = (segClone.x2 * size) / divider;
+					if(seg.y2) seg.y2 = (segClone.y2 * size) / divider;
+
+					if(seg.r1) seg.r1 = (segClone.r1 * size) / divider;
+					if(seg.r2) seg.r2 = (segClone.r2 * size) / divider;
+				}
+			}
+
+			return path.getAttribute('d');
+		},
+
 		getSvgPathInfo : function( path ){
 
 			var sx = 0,
@@ -427,9 +475,11 @@ $.extend( true, designer, {
 				cx = 0,
 				cy = 0;
 
-			for(i in path.pathSegList)
+			pathLength = path.pathSegList.length || path.pathSegList.numberOfItems;
+
+			for(i=0;i<=pathLength-1;i++)
 			{
-				seg = path.pathSegList[i];
+				seg = path.pathSegList.getItem(i);
 
 				if(seg.x) cx = cx + seg.x;
 				if(seg.y) cy = cy + seg.y;

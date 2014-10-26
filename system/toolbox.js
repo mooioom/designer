@@ -71,6 +71,7 @@ designer.toolbox.prototype = {
 					// detect sidebar
 					// console.log(e);
 				},
+				handle : '.header',
 				containment : "window"
 			});
 			$('.toolbox.'+this.parent.name+' .close').click($.proxy(function(){

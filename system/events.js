@@ -27,8 +27,10 @@ $.extend( true, designer, {
 		mousePressed : false,
 		drag         : false,
 
-		editMode       : false,
-		createPathMode : false,
+		editMode        : false,
+		
+		createPathMode  : false,
+		createShapeMode : false,
 
 		selectedActionPoint : null,
 		activeActionPoint   : {},
@@ -230,12 +232,10 @@ $.extend( true, designer, {
 		},
 
 		exitEditMode : function(){
-
 			this.editMode       = false;
 			selectedActionPoint = null;
 			activeActionPoint   = {};
 			$('.toolbar .edit').removeClass('active');
-
 		},
 
 		toolButton : function( e ){

@@ -416,8 +416,31 @@ $.extend( true, designer, {
 			initPointX : 0,
 			initPointY : 0,
 
+			shapeSize : 0,
+
 			mouseDown : function(){
-				if(!this.parent.events.createPathMode)
+				if(this.parent.selectedShape != null)
+				{
+					//create premade shape
+					this.parent.events.createShapeMode = true;
+					this.parent.history.save();
+					this.parent.selecteds = [];
+					this.parent.events.exitEditMode();
+					newObject = this.parent.create.object();
+
+					newObject.path = this.parent.helpers.resizePath({
+						x : this.path.initX,
+						y : this.path.initY 
+					},this.parent.shapes[ this.parent.selectedShape ].data,0);
+
+					this.parent.temp = this.parent.current;
+					this.parent.objects.push( newObject );
+					this.path.currentPointX = this.parent.helpers.getClosestSnapCoords( this.parent.events.mouseX );
+					this.path.currentPointY = this.parent.helpers.getClosestSnapCoords( this.parent.events.mouseY );
+					this.path.initX         = this.path.currentPointX;
+					this.path.initY         = this.path.currentPointY;
+				}
+				else if(!this.parent.events.createPathMode)
 				{
 					//create
 					this.parent.events.createPathMode = true;
@@ -437,7 +460,6 @@ $.extend( true, designer, {
 					this.parent.current ++;
 				}else{
 					//add point
-
 					this.path.currentPoint ++ ;
 					x = this.parent.helpers.getClosestSnapCoords( this.parent.events.mouseX ) - this.path.currentPointX;
 					y = this.parent.helpers.getClosestSnapCoords( this.parent.events.mouseY ) - this.path.currentPointY;
@@ -447,7 +469,31 @@ $.extend( true, designer, {
 				}
 			},
 			mouseMove : function(){
-				if( this.parent.events.createPathMode )
+				if( this.parent.events.createShapeMode && this.parent.events.drag)
+				{
+					this.path.movedX = this.parent.helpers.getClosestSnapCoords( this.parent.events.mouseX - this.path.initX );
+					this.path.movedY = this.parent.helpers.getClosestSnapCoords( this.parent.events.mouseY - this.path.initY );
+
+					this.path.shapeSize = this.parent.helpers.getClosestSnapCoords(
+						this.parent.helpers.getLineDistance({
+							x : this.path.initX,
+							y : this.path.initY
+						},{
+							x : this.parent.helpers.getClosestSnapCoords( this.parent.events.mouseX ),
+							y : this.parent.helpers.getClosestSnapCoords( this.parent.events.mouseY )
+						})
+					);
+
+					tempPath = this.parent.functions.getObject( this.parent.temp );
+
+					tempPath.path = this.parent.helpers.resizePath({
+						x : this.path.initX,
+						y : this.path.initY 
+					},this.parent.shapes[ this.parent.selectedShape ].data,this.path.shapeSize);
+
+					//console.log(this.path.shapeSize);
+				}
+				else if( this.parent.events.createPathMode )
 				{
 					tempPath = this.parent.functions.getObject( this.parent.temp );
 					x = this.parent.helpers.getClosestSnapCoords( this.parent.events.mouseX ) - this.path.currentPointX;
@@ -484,7 +530,19 @@ $.extend( true, designer, {
 					this.parent.parent.render();
 				}
 			},
-			mouseUp : function(){},
+			mouseUp : function(){
+				if(this.parent.selectedShape != null)
+				{
+					path = this.parent.functions.getObject( this.parent.temp );
+					console.log('mouseUp path',path);
+					pathInfo       = this.parent.helpers.getSvgPathInfo( path.getPath() );
+					if(pathInfo.w == 0 && pathInfo.h == 0){
+						this.parent.functions.deleteObject( path.id );
+					}else{
+						this.parent.current ++;
+					}
+				}
+			},
 
 			actionPointDown : function( p ){
 				o                    = this.parent.selecteds[0];
@@ -492,7 +550,10 @@ $.extend( true, designer, {
 				this.path.initX      = this.parent.helpers.getClosestSnapCoords( this.parent.events.mouseX );
 				this.path.initY      = this.parent.helpers.getClosestSnapCoords( this.parent.events.mouseY );
 				this.path.initPoints = [];
-				for(i in tempPath.pathSegList)
+
+				pathLength = tempPath.pathSegList.length || tempPath.pathSegList.numberOfItems;
+
+				for(i=0;i<=pathLength-1;i++)
 				{
 					if(typeof tempPath.pathSegList.getItem(i).x != 'undefined')
 					this.path.initPoints.push({

@@ -26,8 +26,10 @@ $.extend( true, designer, {
 		this.render(); 
 		this.draw.ui();
 		this.draw.toolbar();
-		this.ui.toolbar.init();
-		this.ui.toolbox.init();
+		this.ui.tools.init();
+		this.ui.toolbars.init();
+		this.ui.toolboxs.init();
+		this.ui.sidebars.init();
 	},
 
 	draw : {

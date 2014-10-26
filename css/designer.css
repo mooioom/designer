@@ -236,6 +236,7 @@ input[type='range'] {
 }
 
 .toolbar{
+	height: 28px;
     background: #E9E9E9;
     padding: 0px;
     font-size: 12px;
@@ -358,6 +359,47 @@ input[type='range'] {
 	background-color: #fff;
 }
 
+.toolbar .shapes{
+	position:relative;
+}
+
+.toolbar .selectedShape{
+	width: 20px;
+	height: 28px;
+	padding-top: 4px;
+}
+
+.toolbar .listOfShapes{
+	float: left;
+	position: absolute;
+	background: #D0D0D0;
+	top: 28px;
+	min-width: 124px;
+	padding:1px;
+	left: -2px;
+}
+
+.toolbar .listOfShapes .shapeItem{
+	float: left;
+	width: 30px;
+	height: 30px;
+	background: #ECECEC;
+	overflow: hidden;
+	margin-left: 1px;
+	text-align: center;
+	padding: 5px;
+	margin-bottom: 1px;
+	cursor: pointer;
+}
+
+.toolbar .listOfShapes .shapeItem:hover{
+	background: #FFF;
+}
+
+.toolbar .listOfShapes .shapeItem svg{
+	pointer-events: none;
+}
+
 .toolbarButton.alignRight{   background-image: url(../images/alignRight.png);}
 .toolbarButton.alignLeft{    background-image: url(../images/alignLeft.png);}
 .toolbarButton.alignBottom{  background-image: url(../images/alignBottom.png);}
@@ -472,6 +514,7 @@ input[type='range'] {
 	color: #fff;
 	padding-top: 1px;
 	padding-bottom: 1px;
+	cursor:move;
 }
 
 .toolbox .body{

@@ -191,6 +191,10 @@
 		<div class="toolbar path hidden">
 			<div class="item">Path</div>
 			<div class="sep"></div>
+			<div class="shapes left hidden">
+				<div class="item"></div>
+				<div class="sep"></div>
+			</div>
 			<div class="item"><%=Resources.Strings.Fill %> <input type="text" class="fillStyle" data="string" /></div>
 			<div class="sep"></div>
 			<div class="item"><%=Resources.Strings.Stroke %> <input type="text" class="lineWidth" /> &nbsp;<%=Resources.Strings.Color %> <input type="text" class="strokeStyle" data="string" /></div>

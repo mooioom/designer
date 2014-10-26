@@ -187,6 +187,8 @@ mapWizard = {
 						$('.closeDesigner').click($.proxy(this.firstMenu,this));
 						$('.previewSvg').click($.proxy(this.previewSvg,this));
 
+						$('.bottomMenu').show();
+
 						//todo:uncomment
 						//window.onbeforeunload = function() { return getString('unsavedData'); };
 
@@ -256,6 +258,8 @@ mapWizard = {
 								$('.saveMap').click($.proxy(this.save,this));
 								$('.closeDesigner').click($.proxy(this.firstMenu,this));
 								$('.previewSvg').click($.proxy(this.previewSvg,this));
+
+								$('.bottomMenu').show();
 
 								//todo:uncomment
 								//window.onbeforeunload = function() { return getString('unsavedData'); };
@@ -563,13 +567,52 @@ mapWizard = {
 		{
 			$('.resources').css('left','0px').hide();
 			$('.objects').css('left','0px').hide();
-			$('.objects').css('top','309px').hide();
+			$('.objects').css('top','380px').hide();
 		}
 		else
 		{
 			$('.resources').css('left','0px').hide();
 			$('.objects').css('left','0px').hide();
 		}
+
+		$('.tools').css('height','288px');
+
+		// setup toolboxes, menus etc.
+
+		// shapes tool
+
+		$('.tools').append('<div class="button shape" id="shape"><svg class="shapeButton" xmlns="http://www.w3.org/2000/svg" width="24" height="24"><svg viewBox="-15 -15 330 330"><path fill="none" stroke="#000000" stroke-width="10" d="m7.454795,178.082489l67.605378,0m-67.605378,-54.850876l67.605393,0.000015m-0.155602,-30.065033l0,113.750015c194.70015,10.208389 199.234482,-124.687454 0,-113.750015zm217.618942,56.662766l-70.312149,0m-221.397258,-29.817062l6.68369,0l0,6.683685l-6.68369,0l0,-6.683685zm-0.314375,54.532364l6.68369,0l0,6.683685l-6.68369,0l0,-6.683685zm291.95109,-27.976547l6.683685,0l0,6.683685l-6.683685,0l0,-6.683685z"></path></svg></svg></div>');
+		$('.stage').before('<div class="toolbar shape hidden"><div class="item">Shape</div><div class="sep"></div><div class="item">Click and drag to add shape</div></div>');
+		$('.tools .button').unbind('click').bind('click', $.proxy(designer.events.toolButton,designer.events) );
+
+		
+
+		// devices tool
+
+		$('.tools').append('<div class="button device" id="device"></div>');
+
+		// dynamic data toolbox
+
+		// premade templates toolbox
+
+		/*$('body').append('<div class="bottomMenu hidden"></div>');
+
+		bottomMenu = $('.bottomMenu');
+
+		bottomMenu.append('<div class="bottomMenuButton left bottomObjects">Objects</div>');
+		bottomMenu.append('<div class="bottomMenuButton left bottomResources">Resources</div>');
+		bottomMenu.append('<div class="bottomMenuButton left bottomGraphics">Graphics</div>');
+		bottomMenu.append('<div class="bottomMenuButton left bottomDevices">Devices</div>');
+		bottomMenu.append('<div class="bottomMenuButton left bottomDynamic">Dynamic Data</div>');
+		bottomMenu.append('<div class="bottomMenuButton left bottomDataTemplates">Data Templates</div>');
+		bottomMenu.append('<div class="clear"></div>');
+
+		$('.bottomObjects').click(function(){       $('.toolbox.objects').toggle()});
+		$('.bottomResources').click(function(){     $('.toolbox.resources').toggle()});
+		$('.bottomGraphics').click(function(){      $('.toolbox.graphics').toggle()});
+		$('.bottomDevices').click(function(){       $('.toolbox.devices').toggle()});
+		$('.bottomDynamic').click(function(){       $('.toolbox.dynamicData').toggle()});
+		$('.bottomDataTemplates').click(function(){ $('.toolbox.dataTemplates').toggle()});*/
 
 	},
 
@@ -581,6 +624,7 @@ mapWizard = {
 
 			if (typeof stroke == "undefined" ) stroke = true;
 			if (typeof radius === "undefined") radius = 5;
+
 			ctx.beginPath();
 			ctx.moveTo(x + radius, y);
 			ctx.lineTo(x + w - radius, y);
@@ -596,7 +640,7 @@ mapWizard = {
 			ctx.lineWidth = Number(lineWidth);
 			ctx.strokeStyle = strokeStyle;
 
-			if(this.current.dynamicData.search('btn') != -1)
+			if(this.current.dynamicData && this.current.dynamicData.search('btn') != -1)
 			{
 				ctx.globalAlpha = 0.3;
 				ctx.lineWidth   = 0;

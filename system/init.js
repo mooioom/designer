@@ -37,9 +37,10 @@ $.extend( true, designer, {
 		this.helperCtx    = this.helperCanvas.getContext("2d");
 
 		this.menu.init();
-		this.ui.toolbar.init();
-		this.ui.toolbox.init();
-		this.sidebar.init();
+		this.ui.tools.init();
+		this.ui.toolbars.init();
+		this.ui.toolboxs.init();
+		this.ui.sidebars.init();
 
 		this.file.init();
 		this.events.init();
