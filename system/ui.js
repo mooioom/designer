@@ -19,6 +19,8 @@ $.extend( true, designer, {
 					title   : getString('objects'),
 					visible : true,
 
+					autoScrollOnSelect : true,
+
 					redraw  : function(){
 						//this.parent.helpers.timer('start','objects toolbox');
 						this.render();
@@ -125,6 +127,8 @@ $.extend( true, designer, {
 
 						this.currentObjects   = $.extend(true,[],this.parent.objects);
 						this.currentSelecteds = $.extend(true,[],this.parent.selecteds);
+
+						if( this.autoScrollOnSelect && $('.objectsItem.selected:eq(0)').length ) $('.body',this.el).scrollTop($('.objectsItem.selected:eq(0)').index() * 27 - (27*4));
 						
 					},
 
@@ -468,13 +472,22 @@ $.extend( true, designer, {
 
 			init : function(){
 
+				// fonts
+				if(designer.fonts && designer.fonts.length)
+				{
+					$('.toolbar .font').empty();
+					for(i in designer.fonts){
+						font = designer.fonts[i];
+						$('.toolbar .font').append('<option value="'+font.font+'">'+font.title+'</option>');
+					}
+				}
+
+				// shapes
 				if(designer.shapes && designer.shapes.length)
 				{
 					$('.toolbar.path .shapes').show();
-
-					$('.selectedShape').click(function(){
-						$('.listOfShapes').toggle();
-					});
+					$('.listOfShapes').empty();
+					$('.selectedShape').click(function(){$('.listOfShapes').toggle();});
 
 					for(i in designer.shapes)
 					{
@@ -486,7 +499,6 @@ $.extend( true, designer, {
 					}
 
 					$('.listOfShapes').append('<div class="clear"></div>');
-
 					$('.shapeItem').click(function( e ){
 						designer.selectedShape = Number( $(e.target).attr('shapeid') );
 						$('.selectedShape').empty();
@@ -497,19 +509,23 @@ $.extend( true, designer, {
 
 				$('#selectAndMove').click(function(){ designer.selectAndMove = $(this).prop('checked'); });
 
-				$('.toolbar .link').click(function(){
+				$('.toolbar .link').unbind('click').bind('click',function(){
 					$(this).toggleClass('unlinked');
 					designer.resizeLinked = !$(this).hasClass('unlinked');
-				})
+				});
 
-				$('.toolbar input, .toolbar select').bind('keyup change',function( e ){
+				$('.toolbar input, .toolbar select').unbind('keyup change').bind('keyup change',function( e ){
+
+					if(e.keyCode == 190) {return;} // allow decimal point
+
+					if(e.shiftKey) amount = 10; else amount = 1;
 					
 					if($(this).attr('data')!='string')
 					{
 						if (e.keyCode == 37) {} //left
-						if (e.keyCode == 38) { $(this).val( Number( $(this).val() )+ designer.grid.size ) } // up
+						if (e.keyCode == 38) { $(this).val( Number( $(this).val() ) + amount ) } // up
 						if (e.keyCode == 39) {} //right
-						if (e.keyCode == 40) { $(this).val( Number( $(this).val() )- designer.grid.size ) } // down
+						if (e.keyCode == 40) { $(this).val( Number( $(this).val() ) - amount ) } // down
 					}
 					var val = $(this).val();
 					if( $(this).attr('type') == 'checkbox' ) val = $(this).prop('checked');
@@ -534,6 +550,12 @@ $.extend( true, designer, {
 				$('.toolbar.'+o.type+' .strokeStyle').val( o.strokeStyle );
 				$('.toolbar.'+o.type+' .radius').val( 	   o.radius 	 );
 				$('.toolbar.'+o.type+' .fill').val( 	   o.fill 		 );
+
+				$('.toolbar.'+o.type+' .font').val(        o.font        );
+				$('.toolbar.'+o.type+' .fontSize').val(    o.fontSize    );
+				$('.toolbar.'+o.type+' .isBold').prop('checked',   o.isBold   );
+				$('.toolbar.'+o.type+' .isItalic').prop('checked', o.isItalic );
+
 				$('.toolbar.'+o.type+' .opacity').val();
 
 				$(".toolbar .fill").spectrum("set", 	   o.fill        );

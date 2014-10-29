@@ -102,6 +102,22 @@ namespace Satec.eXpertPowerPlus.Web
 
         }
 
+        [WebMethod]
+        public static string getDevices() {
+            MapBL mapsBl = new MapBL();
+            var devices = mapsBl.GetDevicesForUser(sessionHandler.UserID);
+            return js.Serialize(devices);
+        }
+
+        [WebMethod]
+        public static string GetParametersForDevice(int deviceId)
+        {
+            SessionHandler sessionHandler = new SessionHandler();
+            MapBL mapBl = new MapBL();
+            var list = mapBl.GetDeviceParameters(deviceId, sessionHandler.LangID);
+            return list.ToJson();
+        }
+
         private static UserBL GetCurrentUserObject()
         {
             SessionHandler sessionHandler = new SessionHandler();

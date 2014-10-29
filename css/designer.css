@@ -373,16 +373,21 @@ input[type='range'] {
 	float: left;
 	position: absolute;
 	background: #D0D0D0;
-	top: 28px;
-	min-width: 124px;
+	top: 30px;
+	min-width: 561px;
 	padding:1px;
 	left: -2px;
 }
 
+.rtl .toolbar .listOfShapes{
+	right: -2px;
+	left: initial;
+}
+
 .toolbar .listOfShapes .shapeItem{
 	float: left;
-	width: 30px;
-	height: 30px;
+	width: 45px;
+	height: 45px;
 	background: #ECECEC;
 	overflow: hidden;
 	margin-left: 1px;
@@ -392,12 +397,22 @@ input[type='range'] {
 	cursor: pointer;
 }
 
+.rtl .toolbar .listOfShapes .shapeItem{
+	float:right;
+}
+
 .toolbar .listOfShapes .shapeItem:hover{
 	background: #FFF;
 }
 
 .toolbar .listOfShapes .shapeItem svg{
 	pointer-events: none;
+}
+
+.toolbar .listOfShapes .shapeItem svg path{
+	fill: rgba(255, 255, 255, 0.74);
+	stroke: #000;
+	stroke-width: 5px;
 }
 
 .toolbarButton.alignRight{   background-image: url(../images/alignRight.png);}

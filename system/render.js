@@ -566,6 +566,8 @@ $.extend( true, designer, {
 
 			$('.toolbar').hide();
 
+			if(this.parent.action != 'path') $('.listOfShapes').hide();
+
 			if(this.parent.selecteds.length && this.parent.action != 'move')
 			{
 				var flag = false;
@@ -575,6 +577,12 @@ $.extend( true, designer, {
 				if(this.parent.helpers.selectedIs('line'))     { this.parent.functions.edit('line');    flag = true; }
 				if(this.parent.helpers.selectedIs('ellipse'))  { this.parent.functions.edit('ellipse'); flag = true; }
 				if(this.parent.helpers.selectedIs('path'))     { this.parent.functions.edit('path');    flag = true; }
+
+				if(this.parent.action != 'select') {
+					$('.toolbar').hide();
+					$('.toolbox.text').hide();
+					flag = false;
+				}
 
 				if(this.parent.selecteds.length     && 
 				   this.parent.selecteds.length > 1 && 

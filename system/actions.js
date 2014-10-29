@@ -534,7 +534,6 @@ $.extend( true, designer, {
 				if(this.parent.selectedShape != null)
 				{
 					path = this.parent.functions.getObject( this.parent.temp );
-					console.log('mouseUp path',path);
 					pathInfo       = this.parent.helpers.getSvgPathInfo( path.getPath() );
 					if(pathInfo.w == 0 && pathInfo.h == 0){
 						this.parent.functions.deleteObject( path.id );

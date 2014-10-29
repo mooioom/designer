@@ -253,16 +253,20 @@ $.extend( true, designer, {
 				if(w == 0) w = '0.1';
 				if(h == 0) h = '0.1';
 
+				if(!o.dynamicData) o.dynamicData = '';
+
 				if(o.type == 'box')
 				{
 					if(o.src)
 					{
 						var str = '<image ';
+						str+= ' id="'		  + o.dynamicData + '"';
+						if(o.url) str+= ' onclick="window.open(\''+o.url+'\',\'_blank\')" dataurl="'+o.url+'"';
 						str+= ' x="'		  + x + '"';
 						str+= ' y="'		  + y + '"';
 						str+= ' width="'	  + w + '"';
 						str+= ' height="'	  + h + '"';
-						if(o.rotate)  str+= ' transform="rotate('+o.rotate+','+cx+','+cy+')"';
+						if(o.rotate)  str+= ' transform="rotate('+o.rotate+' '+cx+' '+cy+')"';
 						if(addShadow) str+= ' style="filter:url(#f'+counter+')"';
 						if(o.opacity) str+= ' opacity = "'+o.opacity+'"';
 						str+= ' xlink:href="' + o.src + '"';
@@ -271,6 +275,8 @@ $.extend( true, designer, {
 					{
 						if(!o.fill) fill = "rgba(0,0,0,0)"; else fill = o.fill;
 						var str = '<rect ';
+						str+= ' id="'		    + o.dynamicData + '"';
+						if(o.url) str+= ' onclick="window.open(\''+o.url+'\',\'_blank\')" dataurl="'+o.url+'"';
 						str+= ' x="'		    + x + '"';
 						str+= ' y="'		    + y + '"';
 						str+= ' width="'	    + w + '"';
@@ -279,7 +285,7 @@ $.extend( true, designer, {
 						if(o.radius) str+= ' ry="' + o.radius + '"';
 						str+= ' stroke="'	    + o.strokeStyle + '"';
 						str+= ' stroke-width="' + o.lineWidth / 2 + '"';
-						if(o.rotate)  str+= ' transform="rotate('+o.rotate+','+cx+','+cy+')"';
+						if(o.rotate)  str+= ' transform="rotate('+o.rotate+' '+cx+' '+cy+')"';
 						if(addShadow) str+= ' style="filter:url(#f'+counter+')"';
 						if(o.opacity) str+= ' opacity = "'+o.opacity+'"';
 						str+= ' fill="' + fill + '"';
@@ -289,23 +295,28 @@ $.extend( true, designer, {
 				}
 				if(o.type == 'text')
 				{
-					if(!o.fill) fill = "#000"; else fill = o.fill;
+					if(!o.fillStyle) fill = "#000"; else fill = o.fillStyle;
 					//todo fontsize compensation
 					fontComp = o.fontSize/10; // arial type
 					var str = '<text ';
+						str+= ' id="'		    + o.dynamicData + '"';
+						if(o.url) str+= ' onclick="window.open(\''+o.url+'\',\'_blank\')" dataurl="'+o.url+'"';
 						str+= ' xml:space="preserve"';
 						str+= ' text-anchor="start"';
 						str+= ' x="'		    + x + '"';
 						str+= ' y="'		    + (y + (o.fontSize - fontComp)) + '"';
 						str+= ' font-size="'	+ o.fontSize + '"';
 						str+= ' font-family="'	+ o.font + '"';
+						str+= ' fill="'	        + fill + '"';
+						str+= ' stroke="'	    + o.strokeStyle + '"';
+						str+= ' stroke-width="'	+ o.lineWidth + '"';
 						if(o.isBold)   str+= ' font-weight="bold"';
 						if(o.isItalic) str+= ' font-style="italic"';
 						str+= ' style="';
 						if(addShadow) str+= 'filter:url(#f'+counter+'); ';
-						str+= ' fill: ' + o.fillStyle + '; stroke: ' + o.strokeStyle + '; stroke-width: ' + o.lineWidth + '"';
+						str+= '"';
 						//str+= ' alignment-baseline="before-edge"'; // equiv to Top
-						if(o.rotate) str+= ' transform="rotate('+o.rotate+','+cx+','+cy+')"';
+						if(o.rotate) str+= ' transform="rotate('+o.rotate+' '+cx+' '+cy+')"';
 						if(o.opacity) str+= ' opacity = "'+o.opacity+'"';
 						str+= ' >'+o.text+'</text>';
 
@@ -313,20 +324,24 @@ $.extend( true, designer, {
 				}
 				if(o.type == 'path')
 				{
-					if(!o.fillStyle) fill = "#000"; else fill = o.fillStyle;
+					if(!o.fillStyle) fill = "none"; else fill = o.fillStyle;
 					var str = '<path ';
+						str+= ' id="'		  + o.dynamicData + '"';
+						if(o.url) str+= ' onclick="window.open(\''+o.url+'\',\'_blank\')" dataurl="'+o.url+'"';
 						str+= ' d="'+o.path+'"';
 						str+= ' stroke-width="'+o.lineWidth+'"';
 						str+= ' stroke="'+o.strokeStyle+'"';
 						str+= ' fill="'+fill+'"';
-						if(o.rotate) str+= ' transform="rotate('+o.rotate+','+(o.topLeftX + (o.width/2))+','+(o.topLeftY + (o.height/2))+')"';
+						if(o.rotate) str+= ' transform="rotate('+o.rotate+' '+(o.topLeftX + (o.width/2))+' '+(o.topLeftY + (o.height/2))+')"';
 						str+= '></path>';
 						svg+=str;
 				}
 				if(o.type == 'ellipse')
 				{
-					if(!o.fillStyle) fill = "#000"; else fill = o.fillStyle;
+					if(!o.fillStyle) fill = "none"; else fill = o.fillStyle;
 					var str = '<ellipse ';
+						str+= ' id="'		  + o.dynamicData + '"';
+						if(o.url) str+= ' onclick="window.open(\''+o.url+'\',\'_blank\')" dataurl="'+o.url+'"';
 						str+= ' rx="'+(o.rx/2)+'"';
 						str+= ' ry="'+(o.ry/2)+'"';
 						str+= ' cx="'+o.cx+'"';
@@ -334,7 +349,7 @@ $.extend( true, designer, {
 						str+= ' stroke-width="'+o.lineWidth / 2+'"';
 						str+= ' stroke="'+o.strokeStyle+'"';
 						str+= ' fill="'+fill+'"';
-						if(o.rotate) str+= ' transform="rotate('+o.rotate+','+(o.startX + (o.width/2))+','+(o.startY + (o.height/2))+')"';
+						if(o.rotate) str+= ' transform="rotate('+o.rotate+' '+(o.startX + (o.width/2))+' '+(o.startY + (o.height/2))+')"';
 						str+= '></ellipse>';
 						svg+=str;
 				}
@@ -342,6 +357,7 @@ $.extend( true, designer, {
 				{
 					fill = "none";
 					var str = '<line ';
+						str+= ' id="'+ o.dynamicData + '"';
 						str+= ' x1="'+o.startX+'"';
 						str+= ' y1="'+o.startY+'"';
 						str+= ' x2="'+o.endX+'"';
@@ -354,8 +370,10 @@ $.extend( true, designer, {
 				}
 				if(o.type == 'circle')
 				{
-					if(!o.fill) fill = "#000"; else fill = o.fill;
+					if(!o.fill) fill = "none"; else fill = o.fill;
 					var str = '<circle ';
+						str+= ' id="' + o.dynamicData + '"';
+						if(o.url) str+= ' onclick="window.open(\''+o.url+'\',\'_blank\')" dataurl="'+o.url+'"';
 						str+= ' r="'+(o.r)+'"';
 						str+= ' cx="'+o.cx+'"';
 						str+= ' cy="'+o.cy+'"';

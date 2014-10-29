@@ -18,6 +18,10 @@
 	padding:0px;
 }
 
+.tools .shape path{
+	stroke-width:20px !important;
+}
+
 .shapeButton{
 	pointer-events: none;
 	position:relative;
@@ -25,12 +29,12 @@
 }
 
 .mapWizardMenu{
-    width: 460px;
+    width: 810px;
     margin: 0px auto;
     padding: 30px;
     font-size: 26px;
     position: relative;
-    top: 80px;
+    top: 36px;
     border-radius: 10px;
     color: #fff;
     z-index: 2;
@@ -40,13 +44,14 @@
     font-weight: bold;
     text-shadow: 0px 2px 0px #000;
     margin-bottom: 13px;
-    color: #FF9611;
+    color: #F79600;
     border-bottom: 1px solid #707070;
     padding-bottom: 13px;
     padding: 13px;
     padding-left: 0px;
     padding-right: 0px;
-    font-size: 36px;
+    font-size: 54px;
+    cursor:default;
 }
 
 .mapWizardMenuItem{
@@ -184,8 +189,8 @@
 	padding-right: 20px;
 	padding-left: 20px;
 	z-index: 1000;
-	box-shadow: 0px 0px 10px rgba(0,0,0,0.4);
-	margin-left: 3px;
+	box-shadow: 0px 0px 3px rgba(0,0,0,0.4);
+	margin-left: 1px;
 }
 
 .rtl .closeDesignerWrapper .button{
@@ -194,7 +199,7 @@
 }
 
 .mapPreviewCanvas {
-	width: 460px;
+	width: 810px;
 	direction: ltr;
 	background: white;
 	cursor: initial;
@@ -251,4 +256,152 @@
 	cursor: pointer;
 	border-radius: 3px;
 	color: #fff;
+}
+
+.toolbox.resources{
+	width:472px;
+}
+.toolbox.resources .resourceItem{
+	float:left;
+}
+.toolbox.resources .menu{
+	display:none;
+}
+
+.resourceName {
+	color: #000;
+	overflow: hidden;
+	height: 14px;
+	margin-bottom: -14px;
+	position: relative;
+	z-index: 1;
+	background: rgba(255, 255, 255, 0.69);
+	width: 110px;
+	top: 60px;
+	left: 1px;
+	text-align: center;
+}
+
+.button.device{
+	background-image: url(../modules/images/electro1.png);
+	background-size: 100%;
+}
+
+.toolbarButtonB{
+	float: left;
+	margin-left: 3px;
+	background-position: center;
+	background-size: contain;
+	cursor: pointer;
+	position: relative;
+	border-radius: 2px;
+	top: 2px;
+	width: initial;
+	text-align: center;
+	line-height: 20px;
+	background: #5C5D5D;
+	color: #fff;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+.toolbarButtonB:hover{
+	background-color: #2571D3;
+}
+
+/* dynamic data popup */
+
+.dynamicDataPopup{}
+
+.dynamicDataContent{}
+
+.dynamicDataTabs{
+    width: 100%;
+    height: 50px;
+    background: #D3D3D3;
+}
+
+.dynamicDataTab{
+    float: left;
+    width: 33.3%;
+    text-align: center;
+    padding-top: 10px;
+    height: 40px;
+    cursor: pointer;
+    color: #989898;
+}
+
+.rtl .dynamicDataTab{
+	float: right;
+}
+
+.dynamicDataTab.selected{
+    background: #448922;
+    color: #fff;
+}
+
+.dynamicDataTabContents{}
+
+.dynamicDataTabContent{
+    display: none;
+}
+
+.dynamicDataTabContent.selected{
+    display: block;
+}
+
+.dynamicDataPar{
+    margin-top: 10px;
+    border-top: 1px solid #ECECEC;
+    padding-top: 10px;
+}
+
+.dynamicDataRadio{
+    background: #ccc;
+    padding: 8px;
+    margin-right: 0px;
+    font-size: 18px;
+    min-width: 123px;
+    text-align: center;
+    color: #989898;
+    cursor: pointer;
+}
+
+.dynamicDataRadio.selected{
+    background: #FF9100;
+    color: #fff;
+}
+
+.dynamicDataTitle{
+    font-weight: bold;
+    font-size: 23px;
+}
+
+.dynamicDataSelect{
+    width: 100%;
+    font-size: 18px;
+    margin-top: 5px;
+    padding: 3px;
+    padding-left: 0px;
+}
+
+.dynamicDataInput{
+    width: 390px;
+    font-size: 18px;
+    padding: 3px;
+}
+
+.dynamicDataType{
+	margin-bottom:5px;
+}
+
+.selectedInteraction{
+	margin-left: 7px;
+	color: #838383;
+	font-size: 12px;
+}
+
+.rtl .selectedInteraction{
+	margin-left: 0px;
+	margin-right: 7px;
 }

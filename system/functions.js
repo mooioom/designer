@@ -112,7 +112,7 @@ $.extend( true, designer, {
 
 		},
 
-		changeText : function( newText ) { if(!this.parent.helpers.selectedIsText()) return; this.parent.selecteds[0].text = newText; this.parent.render(); },
+		changeText : function( newText ) { if(!this.parent.helpers.selectedIs('text')) return; this.parent.selecteds[0].text = newText; this.parent.render(); },
 
 		align : function( to ){
 

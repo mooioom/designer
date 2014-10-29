@@ -101,29 +101,8 @@
 			<div class="item">X <input type="text" class="startX" /> &nbsp;Y <input type="text" class="startY" /></div>
 			<div class="sep"></div>
 			<div class="item"><%=Resources.Strings.Font %> 
-				<select class="font" data="string">
-					<option value="arial">Arial</option>
-					<option value="arial black">Arial Black</option>
-					<option value="comic sans ms">Comic Sans Ms</option>
-					<option value="courier">Courier</option>
-					<option value="cursive">Cursive</option>
-					<option value="fantasy">Fantasy</option>
-					<option value="georgia">Georgia</option>
-					<option value="helvetica">Helvetica</option>
-					<option value="impact">Impact</option>
-					<option value="lucida console">Lucida Console</option>
-					<option value="marlett">Marlett - Symbols</option>
-					<option value="mekanik let">Mekanik Let</option>
-					<option value="monospace">Monospace</option>
-					<option value="sans-serif">Sans Serif</option>
-					<option value="symbol">Symbol</option>
-					<option value="tahoma">Tahoma</option>
-					<option value="times new roman">Times New Roman</option>
-					<option value="trebuchet ms">Trebuchet ms</option>
-					<option value="verdana">Verdana</option>
-					<option value="webdings">Webdings</option>
-					<option value="wingdings">Wingdings</option>
-				</select> &nbsp; <%=Resources.Strings.Size %> <input type="text" class="fontSize" value="30" /> &nbsp; <%=Resources.Strings.Bold %> <input type="checkbox" class="isBold"/> &nbsp; <%=Resources.Strings.Italic %> <input type="checkbox" class="isItalic"/></div>
+				<select class="font" data="string"></select> 
+				&nbsp; <%=Resources.Strings.Size %> <input type="text" class="fontSize" value="30" /> &nbsp; <%=Resources.Strings.Bold %> <input type="checkbox" class="isBold"/> &nbsp; <%=Resources.Strings.Italic %> <input type="checkbox" class="isItalic"/></div>
 			<div class="sep"></div>
 			<div class="item"><%=Resources.Strings.Fill %> <input type="text" class="fillStyle" data="string" /></div>
 			<div class="sep"></div>
@@ -192,8 +171,10 @@
 			<div class="item">Path</div>
 			<div class="sep"></div>
 			<div class="shapes left hidden">
-				<div class="item"></div>
+				<div class="item selectedShape"></div>
+				<div class="listOfShapes hidden"></div>
 				<div class="sep"></div>
+				<div class="clear"></div>
 			</div>
 			<div class="item"><%=Resources.Strings.Fill %> <input type="text" class="fillStyle" data="string" /></div>
 			<div class="sep"></div>
@@ -353,7 +334,21 @@
 			<string resource="TitleTooShort"    value="<%=Resources.Strings.TitleTooShort %>"></string>
 			<string resource="MapNameExists"    value="<%=Resources.Strings.MapNameExists %>"></string>
 			<string resource="SelectMapTIt"     value="<%=Resources.Strings.SelectMapTIt %>"></string>
-		
+			<string resource="SelectParameter"  value="<%=Resources.Strings.SelectParameter %>"></string>
+			<string resource="MakeButton"       value="<%=Resources.Strings.MakeButton %>"></string>
+			<string resource="LinkToUrl"        value="<%=Resources.Strings.LinkToUrl %>"></string>
+			<string resource="LinkToMap"        value="<%=Resources.Strings.LinkToMap %>"></string>
+			<string resource="LinkToPage"       value="<%=Resources.Strings.LinkToPage %>"></string>
+			<string resource="LastReading"      value="<%=Resources.Strings.LastReading %>"></string>
+			<string resource="TOUImport"        value="<%=Resources.Strings.TOUImport %>"></string>
+			<string resource="EnterDeviceID"    value="<%=Resources.Strings.EnterDeviceID %>"></string>
+			<string resource="SelectUrl"        value="<%=Resources.Strings.SelectUrl %>"></string>
+			<string resource="SelectDevice"     value="<%=Resources.Strings.SelectDevice %>"></string>
+			<string resource="Basic"            value="<%=Resources.Strings.Basic %>"></string>
+			<string resource="Energy"           value="<%=Resources.Strings.Energy %>"></string>
+			<string resource="Type"             value="<%=Resources.Strings.Type %>"></string>
+			<string resource="Parameter"        value="<%=Resources.Strings.Parameter %>"></string>
+			
 		</div>
 
 	</body>

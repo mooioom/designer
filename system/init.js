@@ -88,6 +88,7 @@ $.extend( true, designer, {
 		var s = $.proxy(function( color ){
 			if(!this.selecteds.length) return;
 	    	str = color ? color.toRgbString() : ""; 
+	    	console.log(this.selecteds[0]);
 	    	this.selecteds[0][el] = str;
 	    	$("."+el).val( str );
 	    	this.render();
