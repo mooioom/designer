@@ -386,7 +386,16 @@ $.extend( true, designer, {
 
 			}
 
-			svg+='</svg>'
+			css = '<style type="text/css">';
+			//css += 'rect{transition:all 0.3s ease-in; fill : #fff;}rect:hover{fill:#000}';
+			css += '</style>';
+
+			script = '<script type="text/javascript">';
+			//script+= '$("rect").mouseover(function(){ $(this).velocity({fill:"#000"},250).stop() });';
+			//script+= '$("rect").mouseout( function(){ $(this).velocity({fill:"#fff"},250).stop() });';
+			script+= '</script>';
+
+			svg+='</svg>'+css+script;
 
 			return svg;
 		},

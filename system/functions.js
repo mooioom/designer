@@ -105,6 +105,48 @@ $.extend( true, designer, {
 
 		},
 
+		transform : function(){
+
+			if(this.parent.events.transformMode) {
+				$('.toolbox.transform').hide();
+				this.parent.events.transformMode = false;
+			}
+			else {
+				if(!this.parent.selecteds.length) return;
+				this.parent.events.transformMode = true;
+				$('.toolbox.transform').show();
+			}
+
+			this.parent.render();
+
+		},
+
+		rotate : function( amount ){
+
+			for(i in this.parent.selecteds)
+			{
+				o = this.parent.selecteds[i];
+				if( !o || o.locked || !o.visible || !o.rotationData ) continue;
+
+				o.rotate = Number(Number(o.rotationData.rotate) + Number(this.parent.rotateAmount));
+
+				c = {
+					x : o.rotationData.center.x,
+					y : o.rotationData.center.y
+				}
+
+				p = this.parent.helpers.getRotatedPoint( this.parent.rotateStartCenter.x, this.parent.rotateStartCenter.y, c.x, c.y, o.rotate - Number(o.rotationData.rotate));
+				
+				this.parent.helpers.setByCenter( o , p );
+
+				this.parent.render();
+
+				this.parent.draw.quickPoint(this.parent.rotateStartCenter.x, this.parent.rotateStartCenter.y, 'blue');	
+
+			}
+
+		},
+
 		exitEditMode : function(){
 
 			this.parent.editMode = false;

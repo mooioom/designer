@@ -15,8 +15,7 @@ $.extend( true, designer, {
 		this.draw.selectedBox();
 		this.draw.selectionBox();
 		if(this.events.editMode) this.draw.actionPoints();
-
-		if( this.action == 'transform' ) this.draw.actionPoints();
+		if(this.events.transformMode) this.draw.transformationBox();
 
 		//this.helpers.timer('stop','render');
 
@@ -453,11 +452,41 @@ $.extend( true, designer, {
 			}
 		},
 
+		transformationBox : function(){
+
+			transformDimensions = this.parent.helpers.getTransformDimensions();
+
+			x1 = transformDimensions.x1;
+			x2 = transformDimensions.x2;
+			y1 = transformDimensions.y1;
+			y2 = transformDimensions.y2;
+			cx = transformDimensions.c.x;
+			cy = transformDimensions.c.y;
+
+			this.parent.ctx.beginPath();
+			this.parent.ctx.moveTo(x1,y1);
+			this.parent.ctx.lineTo(x1,y2);
+			this.parent.ctx.lineTo(x2,y2);
+			this.parent.ctx.lineTo(x2,y1);
+			this.parent.ctx.lineTo(x1,y1);
+			this.parent.ctx.lineWidth = 1;
+			this.parent.ctx.strokeStyle = 'orange';
+			this.parent.ctx.stroke();
+
+			this.quickPoint(x1,y1);
+			this.quickPoint(x1,y2);
+			this.quickPoint(x2,y1);
+			this.quickPoint(x2,y2);
+			this.quickPoint(cx,cy);
+
+		},
+
 		actionPoints : function()
 		{
 			for(i in this.parent.selecteds)
 			{
-				object       = this.parent.functions.getObject( this.parent.selecteds[i].id );
+				object = this.parent.functions.getObject( this.parent.selecteds[i].id );
+
 				actionPoints = this.parent.helpers.getActionPoints( object );
 				for(i in actionPoints)
 				{
@@ -468,22 +497,17 @@ $.extend( true, designer, {
 					this.parent.ctx.strokeStyle = this.parent.defaults.actionPoint.strokeStyle;
 					this.parent.ctx.stroke();
 				}
-				if(this.parent.events.actionPointPress || this.parent.helpers.isOverActionPoint()){
-					//actionPoint hover
-					$('.stage').addClass('pointer')
-					/*p = this.parent.events.activeActionPoint.target;
-					this.point(p.x,p.y,{
-						fillStyle : this.parent.defaults.actionPoint.hoverColor,
-						size      : this.parent.defaults.actionPoint.size
-					})*/
-				}else $('.stage').removeClass('pointer');
+				if(this.parent.events.actionPointPress || this.parent.helpers.isOverActionPoint()) $('.stage').addClass('pointer')
+				else $('.stage').removeClass('pointer');
 
 				if(this.parent.events.selectedActionPoint)
 				{
 					var p = this.parent.events.selectedActionPoint;
 					this.quickPoint(p.target.x,p.target.y)
 				}
+
 			}
+				
 		},
 
 		point : function(x,y,data){
@@ -493,11 +517,11 @@ $.extend( true, designer, {
 			this.parent.ctx.fill();
 		},
 
-		quickPoint : function(x,y){
+		quickPoint : function(x,y,color){
 			this.parent.ctx.beginPath();
 			this.parent.ctx.arc(x, y, 5, 0, 2 * Math.PI, false);
 			this.parent.ctx.lineWidth = 3;
-			this.parent.ctx.strokeStyle = 'orange';
+			this.parent.ctx.strokeStyle = color || 'orange';
 			this.parent.ctx.stroke();
 		},
 

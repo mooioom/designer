@@ -23,12 +23,13 @@ $.extend( true, designer, {
 					sub   : [
 						{ id : 'undo'         , action : this.parent.history.undo,           scope : this.parent.history,   shortcut : 'Ctrl + Z' },
 						{ id : 'redo'         , action : this.parent.history.redo,           scope : this.parent.history,   shortcut : 'Ctrl + Y' },
-						{ id : 'sep' 															                                                    },
+						{ id : 'sep' 															                                                  },
 						{ id : 'copy'         , action : this.parent.functions.copy,         scope : this.parent.functions, shortcut : 'Ctrl + C' },
 						{ id : 'paste'	      , action : this.parent.functions.paste,        scope : this.parent.functions, shortcut : 'Ctrl + V' },
 						{ id : 'selectAll'    , action : this.parent.functions.selectAll,    scope : this.parent.functions, shortcut : 'Ctrl + A' },
 						{ id : 'delete'	  	  , action : this.parent.functions['delete'],    scope : this.parent.functions, shortcut : 'Del'      },
-						{ id : 'sep' 														                                                        },
+						{ id : 'sep' 														                                                      },
+						{ id : 'transform'    , action : this.parent.functions.transform,    scope : this.parent.functions, shortcut : 'T'        },
 						{ id : 'bringToFront' , action : this.parent.functions.bringToFront, scope : this.parent.functions, shortcut : 'Ctrl + F' },
 						{ id : 'sendToBack'   , action : this.parent.functions.sendToBack,   scope : this.parent.functions, shortcut : 'Ctrl + B' },
 					]
@@ -55,15 +56,15 @@ $.extend( true, designer, {
 
 			for(i in this.items){
 
-				item   = this.items[i];
-				itemEl = $("<div id='"+item.id+"' class='item'>"+getString(item.id)+"</div>");
+				m   = this.items[i];
+				itemEl = $("<div id='"+m.id+"' class='item'>"+getString(m.id)+"</div>");
 
-				if(item.sub && item.sub.length)
+				if(m.sub && m.sub.length)
 				{
 					subHolderEl = $("<div class='mainMenuSub'></div>");
-					for(x in item.sub)
+					for(x in m.sub)
 					{
-						sub = item.sub[x];
+						sub = m.sub[x];
 						if(sub.shortcut) shortcut = sub.shortcut; else shortcut = '';
 						if(sub.id == 'sep'){ subHolderEl.append("<div class='subItemSep'></div>"); continue; }
 						subEl 		  = $("<div id='"+sub.id+"' class='subItem'></div>");
@@ -85,29 +86,29 @@ $.extend( true, designer, {
 
 			for(i in this.items)
 			{
-				item = this.items[i];
-				this.addEvent( item );
-				if(item.sub && item.sub.length)
-					for(x in item.sub) this.addEvent( item.sub[x] ); 
+				m = this.items[i];
+				this.addEvent( m );
+				if(m.sub && m.sub.length)
+					for(x in m.sub) this.addEvent( m.sub[x] ); 
 			}
 
 		},
 
-		addEvent : function( item ){
-			if(!item.action) return;
+		addEvent : function( m ){
+			if(!m.action) return;
 			this.parent.events.clickEvents.push({
-				selector : '.mainMenu #'+item.id,
-				action   : item.action,
-				args     : item.args,
-				scope    : item.scope
+				selector : '.mainMenu #'+m.id,
+				action   : m.action,
+				args     : m.args,
+				scope    : m.scope
 			})
-			if(item.shortcut)
+			if(m.shortcut)
 			{
 				this.parent.events.keyboardEvents.push({
-					action   : item.action,
-					shortcut : item.shortcut.toLowerCase(),
-					args     : item.args,
-					scope    : item.scope
+					action   : m.action,
+					shortcut : m.shortcut.toLowerCase(),
+					args     : m.args,
+					scope    : m.scope
 				});
 			}
 		}

@@ -25,6 +25,7 @@
 		<script type="text/javascript" src="libs/thumbnailer.js"></script>
 		<script type="text/javascript" src="libs/popup.js"></script>
 		<script type="text/javascript" src="libs/mustache.js"></script>
+		<script type="text/javascript" src="libs/velocity.js"></script>
 
 		<script type="text/javascript" src="system/base.js"></script>
 		<script type="text/javascript" src="system/init.js"></script>
@@ -158,12 +159,7 @@
 		<div class="toolbar line hidden">
 			<div class="item">Line</div>
 			<div class="sep"></div>
-			<div class="item"><input type="checkbox" id="selectAndMove" /> <%=Resources.Strings.SelectAndMove %></div>
-			<div class="sep"></div>
-			<div class="item">
-				<div class="left toolbarBigButton edit"><%=Resources.Strings.ChangeNOUN %></div>
-				<div class="clear"></div>
-			</div>
+			<div class="item"><%=Resources.Strings.Stroke %> <input type="text" class="lineWidth" /> &nbsp;<%=Resources.Strings.Color %> <input type="text" class="strokeStyle" data="string" /></div>
 			<div class="clear"></div>
 		</div>
 

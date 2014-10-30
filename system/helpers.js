@@ -53,9 +53,33 @@ $.extend( true, designer, {
 		},
 
 		getCenter : function( o ){
+			if(o.type == 'path'){
+				return {
+					x : o.topLeftX + (o.width/2),
+					y : o.topLeftY + (o.height/2)
+				}
+			}
 			return {
 				x : o.startX + (o.width/2),
 				y : o.startY + (o.height/2)
+			}
+		},
+
+		setByCenter : function( o, centerPoint ){
+			if(o.type == 'box' || o.type == 'text')
+			{
+				o.startX = centerPoint.x - (o.width / 2);
+				o.startY = centerPoint.y - (o.height / 2);
+			}
+			if( o.type == 'ellipse' )
+			{
+				o.cx = centerPoint.x;
+				o.cy = centerPoint.y;
+			}
+			if( o.type == 'path' )
+			{
+				o.startX = centerPoint.x - (o.width / 2)  + Math.abs( o.startX - o.topLeftX );
+				o.startY = centerPoint.y - (o.height / 2) + Math.abs( o.startY - o.topLeftY ); 
 			}
 		},
 
@@ -92,11 +116,58 @@ $.extend( true, designer, {
 
 		},
 
+		getTransformDimensions : function(){
+
+			var x1 = 100000,
+				y1 = 100000,
+				x2 = -100000,
+				y2 = -100000,
+				c;
+
+			for(i in this.parent.selecteds){
+
+				o = this.parent.selecteds[i];
+
+				points = this.getActionPoints( o );
+
+				for(j in points){
+
+					point = points[j];
+
+					if(point.x < x1) x1 = point.x;
+					if(point.y < y1) y1 = point.y;
+					if(point.x > x2) x2 = point.x;
+					if(point.y > y2) y2 = point.y;
+					
+				}
+
+			}
+
+			c = {
+				x : (x1 + x2) / 2,
+				y : (y1 + y2) / 2
+			}
+
+			transformDimensions = {
+				x1 : x1,
+				y1 : y1,
+				x2 : x2,
+				y2 : y2,
+				c  : c
+			}
+
+			this.parent.events.transformDimensions = transformDimensions;
+
+			return transformDimensions;
+
+		},
+
 		getActionPoints : function( o )
 		{
 			if(!o) return;
 
-			if(o.type == 'line'){
+			if(o.type == 'line')
+			{
 				return [
 					{ x: o.startX, y: o.startY },
 					{ x: o.endX,   y: o.endY   },
@@ -114,7 +185,7 @@ $.extend( true, designer, {
 				]
 			}
 
-			if(o.type == 'box'){
+			if(o.type == 'box' || o.type == 'text'){
 
 				var x  = o.startX,
 					y  = o.startY,

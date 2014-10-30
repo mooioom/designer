@@ -359,17 +359,42 @@ $.extend( true, designer, {
 
 					render : function(){
 						$('.body',this.el).empty();
-						$('.body',this.el).append('<div class="item"><div class="title">'+getString('rotate')+'</div><input type="range" class="rotate" min="0" max="360" step="5" value="0"></div>');
+						$('.body',this.el).append('<div class="item"><div class="title">'+getString('rotate')+'</div><input type="range" class="rotate" min="0" max="360" step="5" value="180"></div>');
 					},
 
-					events : function(){
-						$('.toolbox input[type="range"]',this.el).change(function(){
-							var prop = $(this).attr('class');
-							o = designer.selecteds[0];
-							if( !o ) return;
-							if( o.locked || !o.visible ) return;
-							o[prop] = $(this).val();
-							designer.render();
+					events : function()
+					{
+						$('.toolbox.transform input[type="range"]').bind('mousedown',function(){
+							designer.history.save();
+							designer.rotateStartAmount = $(this).val();
+							designer.rotateStartCenter = designer.events.transformDimensions.c;
+							for(i in designer.selecteds)
+							{
+								o = designer.selecteds[i];
+								if( !o || o.locked || !o.visible ) continue;
+								o.rotationData = {};
+								o.rotationData.rotate = Number(o.rotate) || 0;
+								o.rotationData.center = designer.helpers.getCenter( o );
+							}
+						});
+						$('.toolbox.transform input[type="range"]').bind('mouseup',function(){
+							for(i in designer.selecteds)
+							{
+								o = designer.selecteds[i];
+								if( !o || o.locked || !o.visible ) continue;
+								delete o.rotationData;
+							}
+							delete designer.rotateStartAmount;
+							delete designer.rotateAmount;
+							designer.events.doNotRotate = true;
+							$('input.rotate').val(180);
+							$('.stage').focus();
+						});
+						$('.toolbox.transform input[type="range"]').bind('change input',function(){
+							if(designer.events.doNotRotate){ delete designer.events.doNotRotate; return; }
+							designer.rotateAmount = Number($(this).val()) - Number(designer.rotateStartAmount);
+							designer.functions.rotate( designer.rotateAmount );
+							
 						});
 					}
 

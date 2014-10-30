@@ -38,6 +38,8 @@ $.extend( true, designer, {
 		actionPointPress    : false,
 		actionPointDrag     : false,
 
+		transformMode : false,
+
 		init : function()
 		{
 

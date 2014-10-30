@@ -456,7 +456,7 @@ input[type='range'] {
 .button:hover{
 	cursor: pointer;
 	color: #fff;
-	background-color: #C7C7C7;
+	background-color: #F9F9F9;
 }
 .button.active{
 	background-color: #0068EC;
