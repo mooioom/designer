@@ -19,8 +19,8 @@ $.extend( true, designer, {
 	temp      : null,
 	toolboxes : [],
 
-	color1 : 'grey',
-	color2 : '',
+	color1 : 'black',
+	color2 : 'white',
 
 	action : "select", // select, move, rotate, scale, box, line, colorpick etc...
 

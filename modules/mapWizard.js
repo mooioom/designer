@@ -641,13 +641,13 @@ mapWizard = {
 
 	setupUi : function(){
 
-		$('.tools').css('height','290px');
+		$('.tools').css('height','358px');
 
 		if( $('body').hasClass('ltr') )
 		{
 			$('.resources').css('left','0px');
 			$('.objects').css('left','0px');
-			$('.objects').css('top','380px');
+			$('.objects').css('top','441px');
 		}
 		else
 		{
@@ -665,7 +665,7 @@ mapWizard = {
 
 			$('.tools .shape').remove();
 
-			$('.tools').append('<div class="button shape" id="shape"><svg class="shapeButton" xmlns="http://www.w3.org/2000/svg" width="24" height="24"><svg viewBox="-15 -15 330 330"><path fill="none" stroke="#000000" stroke-width="20" d="m7.454795,178.082489l67.605378,0m-67.605378,-54.850876l67.605393,0.000015m-0.155602,-30.065033l0,113.750015c194.70015,10.208389 199.234482,-124.687454 0,-113.750015zm217.618942,56.662766l-70.312149,0m-221.397258,-29.817062l6.68369,0l0,6.683685l-6.68369,0l0,-6.683685zm-0.314375,54.532364l6.68369,0l0,6.683685l-6.68369,0l0,-6.683685zm291.95109,-27.976547l6.683685,0l0,6.683685l-6.683685,0l0,-6.683685z"></path></svg></svg></div>');
+			$('.tools .text').after('<div class="button shape" id="shape"><svg class="shapeButton" xmlns="http://www.w3.org/2000/svg" width="24" height="24"><svg viewBox="-15 -15 330 330"><path fill="none" stroke="#000000" stroke-width="20" d="m7.454795,178.082489l67.605378,0m-67.605378,-54.850876l67.605393,0.000015m-0.155602,-30.065033l0,113.750015c194.70015,10.208389 199.234482,-124.687454 0,-113.750015zm217.618942,56.662766l-70.312149,0m-221.397258,-29.817062l6.68369,0l0,6.683685l-6.68369,0l0,-6.683685zm-0.314375,54.532364l6.68369,0l0,6.683685l-6.68369,0l0,-6.683685zm291.95109,-27.976547l6.683685,0l0,6.683685l-6.683685,0l0,-6.683685z"></path></svg></svg></div>');
 			$('.stage').before('<div class="toolbar shape hidden"><div class="item">Shape</div><div class="sep"></div><div class="item">Click and drag to add shape</div></div>');
 			$('.tools #shape').unbind('click').bind('click', function( e ){
 				$('.tools .button').removeClass('active');
@@ -717,7 +717,7 @@ mapWizard = {
 			// devices
 
 			$('.tools .device').remove();
-			$('.tools').append('<div class="button device" id="device"></div>');
+			$('.tools .text').after('<div class="button device" id="device"></div>');
 
 			devices = [
 				{"name":"AX8","src":"modules/devices/AX-8_Reflect.png"},

@@ -364,7 +364,7 @@ $.extend( true, designer, {
 
 					events : function()
 					{
-						$('.toolbox.transform input[type="range"]').bind('mousedown',function(){
+						$('.toolbox.transform .rotate').bind('mousedown',function(){
 							designer.history.save();
 							designer.rotateStartAmount = $(this).val();
 							designer.rotateStartCenter = designer.events.transformDimensions.c;
@@ -377,7 +377,7 @@ $.extend( true, designer, {
 								o.rotationData.center = designer.helpers.getCenter( o );
 							}
 						});
-						$('.toolbox.transform input[type="range"]').bind('mouseup',function(){
+						$('.toolbox.transform .rotate').bind('mouseup',function(){
 							for(i in designer.selecteds)
 							{
 								o = designer.selecteds[i];
@@ -390,7 +390,7 @@ $.extend( true, designer, {
 							$('input.rotate').val(180);
 							$('.stage').focus();
 						});
-						$('.toolbox.transform input[type="range"]').bind('change input',function(){
+						$('.toolbox.transform .rotate').bind('change input',function(){
 							if(designer.events.doNotRotate){ delete designer.events.doNotRotate; return; }
 							designer.rotateAmount = Number($(this).val()) - Number(designer.rotateStartAmount);
 							designer.functions.rotate( designer.rotateAmount );

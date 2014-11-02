@@ -38,7 +38,9 @@ $.extend( true, designer, {
 		actionPointPress    : false,
 		actionPointDrag     : false,
 
-		transformMode : false,
+		transformMode   : false,
+		
+		eyeDropperGuide : false,
 
 		init : function()
 		{

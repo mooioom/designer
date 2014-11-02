@@ -365,6 +365,7 @@ $.extend( true, designer, {
 						str+= ' stroke-width="'+o.lineWidth+'"';
 						str+= ' stroke="'+o.strokeStyle+'"';
 						str+= ' fill="'+fill+'"';
+						if(o.rotate) str+= ' transform="rotate('+o.rotate+' '+(o.startX + (o.width/2))+' '+(o.startY + (o.height/2))+')"';
 						str+= '></line>';
 						svg+=str;
 				}
@@ -386,16 +387,16 @@ $.extend( true, designer, {
 
 			}
 
-			css = '<style type="text/css">';
+			//css = '<style type="text/css">';
 			//css += 'rect{transition:all 0.3s ease-in; fill : #fff;}rect:hover{fill:#000}';
-			css += '</style>';
+			//css += '</style>';
 
-			script = '<script type="text/javascript">';
+			//script = '<script type="text/javascript">';
 			//script+= '$("rect").mouseover(function(){ $(this).velocity({fill:"#000"},250).stop() });';
 			//script+= '$("rect").mouseout( function(){ $(this).velocity({fill:"#fff"},250).stop() });';
-			script+= '</script>';
+			//script+= '</script>';
 
-			svg+='</svg>'+css+script;
+			//svg+='</svg>'+css+script;
 
 			return svg;
 		},

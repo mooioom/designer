@@ -190,6 +190,13 @@
 			<div class="clear"></div>
 		</div>
 
+		<div class="toolbar eyedrop hidden">
+			<div class="item">Eyedropper</div>
+			<div class="sep"></div>
+			<div class="item">Click on canvas to select color</div>
+			<div class="clear"></div>
+		</div>
+
 		<div class="stage">
 			<canvas id="canvas"></canvas>
 			<canvas id="gridCanvas"></canvas>
@@ -204,7 +211,13 @@
 			<div class="button line" id="line"></div>
 			<div class="button path" id="path"></div>
 			<div class="button text" id="text"></div>
+			<div class="sep"></div>
 			<!-- <div class="button transform"  id="transform"></div> -->
+			<div class="button eyedrop" id="eyedrop"></div>
+			<div class="colors">
+				<div class="color1Holder"><input class="color1 colorTool hidden" value="black" /></div>
+				<div class="color2Holder"><input class="color2 colorTool hidden" value="white" /></div>
+			</div>
 		</div>
 
 		<div class="sideBar"></div>

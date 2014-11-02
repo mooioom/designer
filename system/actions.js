@@ -637,6 +637,32 @@ $.extend( true, designer, {
 				this.parent.temp = null;
 				this.parent.current++;
 			}
+		},
+
+		eyedrop :
+		{
+			mouseDown : function(){ 
+				this.eyedrop.select(); 
+				this.parent.events.eyeDropperGuide = true;
+			},
+			mouseMove : function(){ if(this.parent.events.drag) this.eyedrop.select(); },
+			mouseUp : function(){ 
+				this.eyedrop.select();
+				this.parent.events.eyeDropperGuide = false;
+			},
+			select : function(){
+
+				this.parent.parent.draw.clearCanvas( this.parent.parent.helperCtx );
+				this.parent.parent.draw.objects( this.parent.parent.helperCtx );
+				x = this.parent.parent.events.mouseX;
+				y = this.parent.parent.events.mouseY;
+				pixelData = this.parent.parent.helperCtx.getImageData(x,y,1,1).data;
+				color = 'rgba('+pixelData[0]+','+pixelData[1]+','+pixelData[2]+','+String(pixelData[3] / 255)+')';
+				if(!pixelData[3]) color = '';
+				this.parent.parent.color1 = color;
+				$('.color1').spectrum('set',color);
+
+			}
 		}
 	},
 

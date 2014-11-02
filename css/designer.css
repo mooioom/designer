@@ -441,7 +441,7 @@ input[type='range'] {
 	height: 100%;
 	background: #eee;
 	position: absolute;
-	height: 263px;
+	height: 294px;
 	top: 74px;
 	z-index: 3;
 	width: 32px;
@@ -493,6 +493,10 @@ input[type='range'] {
 }
 .button.path{
 	background-image: url(../images/path.png);
+	background-size: 60%;
+}
+.button.eyedrop{
+	background-image: url(../images/eyedrop.png);
 	background-size: 60%;
 }
 .colorTool .sp-replacer{

@@ -16,6 +16,7 @@ $.extend( true, designer, {
 		this.draw.selectionBox();
 		if(this.events.editMode) this.draw.actionPoints();
 		if(this.events.transformMode) this.draw.transformationBox();
+		if(this.events.eyeDropperGuide) this.draw.eyeDropperGuide();
 
 		//this.helpers.timer('stop','render');
 
@@ -67,9 +68,9 @@ $.extend( true, designer, {
 			}	
 		},
 
-		objects : function()
+		objects : function( ctx )
 		{
-			this.parent.helpers.forEachObjects($.proxy(function( object ) { this.drawObject( object ); },this));
+			this.parent.helpers.forEachObjects($.proxy(function( object ) { this.drawObject( object, ctx ); },this));
 		},
 
 		drawObject : function( object, ctx ){
@@ -277,12 +278,28 @@ $.extend( true, designer, {
 			if( o.type == 'line' )
 			{
 				o = o;
+
+				o.width  = o.endX - o.startX ;
+				o.height = o.endY - o.startY ;
+
+				c = {
+					x : o.startX + (o.width/2),
+					y : o.startY + (o.height/2)
+				}
+
+				ctx.save();
+				ctx.translate( c.x,c.y );
+				ctx.rotate(o.rotate*Math.PI/180);
+				ctx.translate( -c.x,-c.y );
+
 				ctx.beginPath();
 				ctx.moveTo(o.startX, o.startY);
 				ctx.lineTo(o.endX, o.endY);
 				ctx.lineWidth   = o.lineWidth;
 				ctx.strokeStyle = o.strokeStyle;
 				if (o.strokeStyle && o.lineWidth) ctx.stroke();
+
+				ctx.restore();
 			}
 		},
 
@@ -290,6 +307,7 @@ $.extend( true, designer, {
 
 			if (typeof stroke == "undefined" ) stroke = true;
 			if (typeof radius === "undefined") radius = 5;
+
 			ctx.beginPath();
 			ctx.moveTo(x + radius, y);
 			ctx.lineTo(x + w - radius, y);
@@ -304,7 +322,8 @@ $.extend( true, designer, {
 			ctx.globalAlpha = opacity;
 			ctx.lineWidth = Number(lineWidth);
 			ctx.strokeStyle = strokeStyle;
-			if (stroke && lineWidth) ctx.stroke();
+
+			if (strokeStyle && lineWidth) ctx.stroke();
 			if (fill) { ctx.fillStyle = fill; ctx.fill(); }
 
 		},
@@ -327,7 +346,7 @@ $.extend( true, designer, {
 			ctx.lineWidth = Number(lineWidth);
 			ctx.strokeStyle = strokeStyle;
 			ctx.closePath(); // not used correctly, see comments (use to close off open path)
-			if (stroke && lineWidth) ctx.stroke();
+			if (strokeStyle && lineWidth) ctx.stroke();
 			if (fill) { ctx.fillStyle = fill; ctx.fill(); }
 
 		},
@@ -508,6 +527,21 @@ $.extend( true, designer, {
 
 			}
 				
+		},
+
+		eyeDropperGuide : function(){
+			ctx = this.parent.ctx;
+			x = this.parent.events.mouseX - 20;
+			y = this.parent.events.mouseY - 20;
+			w = 20;
+			h = 20;
+			radius = 0;
+			lineWidth = 1;
+			strokeStyle = '#000';
+			fill = this.parent.color1;
+			stroke = 1;
+			opacity = 1;
+			this.rect( ctx, x, y, w, h, radius, lineWidth, strokeStyle, fill, stroke, opacity );
 		},
 
 		point : function(x,y,data){

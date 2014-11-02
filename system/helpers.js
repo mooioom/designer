@@ -71,6 +71,13 @@ $.extend( true, designer, {
 				o.startX = centerPoint.x - (o.width / 2);
 				o.startY = centerPoint.y - (o.height / 2);
 			}
+			if( o.type == 'line' )
+			{
+				o.startX = centerPoint.x - (o.width / 2);
+				o.startY = centerPoint.y - (o.height / 2);
+				o.endX   = centerPoint.x + (o.width / 2);
+				o.endY   = centerPoint.y + (o.height / 2);
+			}
 			if( o.type == 'ellipse' )
 			{
 				o.cx = centerPoint.x;
@@ -168,9 +175,10 @@ $.extend( true, designer, {
 
 			if(o.type == 'line')
 			{
+				c = this.getCenter( o );
 				return [
-					{ x: o.startX, y: o.startY },
-					{ x: o.endX,   y: o.endY   },
+					this.getRotatedPoint( c.x, c.y, o.startX, o.startY, o.rotate ),
+					this.getRotatedPoint( c.x, c.y, o.endX,    o.endY, o.rotate )
 				]
 			}
 
@@ -320,50 +328,19 @@ $.extend( true, designer, {
 		getObjectInPoint : function( point )
 		{
 			var target = null;
-			this.forEachObjects( $.proxy(function( object ){
+			this.forEachObjects( $.proxy(function( o ){
 
-				if(!target && object.visible && !object.locked)
+				this.parent.draw.clearCanvas( this.parent.helperCtx );
+
+				if(!target && o.visible && !o.locked)
 				{
-					var x  = object.startX, y = object.startY, w = object.width, h = object.height,
-						cx = w/2, cy = h/2, r = object.rotate;
+					//todo line
+					c = $.extend(true,{},o);
+					if(c.type=='text') c.type = 'box';
+					c.src = '';
+					this.parent.draw.drawObject( c, this.parent.helperCtx );
+					if (this.parent.helperCtx.isPointInPath(point.x,point.y)) target = o;
 
-					if(object.type == 'path')
-					{
-						x = object.topLeftX;
-						y = object.topLeftY;
-					}
-
-					if(object.type == 'line')
-					{
-
-						r = this.getAngleBetweenTwoPoints({x:object.startX,y:object.startY},{x:object.endX,y:object.endY});
-						d = this.getLineDistance({x:object.startX,y:object.startY},{x:object.endX,y:object.endY});
-
-						w = d;
-						h = object.lineWidth;
-
-						cx = 0, cy = 0;
-
-					}
-
-					this.parent.ctx.save();
-					this.parent.ctx.translate( x + cx, y + cy );
-					this.parent.ctx.rotate(r*Math.PI/180);
-					this.parent.ctx.translate( -(x + cx), -(y + cy) );
-					this.parent.ctx.beginPath();
-
-					if(object.type == 'line') y = y - object.lineWidth / 2;
-					if(object.type != 'path') this.parent.ctx.rect(x,y,w,h);
-
-					else{
-						var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-						$(path).attr('d',object.path);
-						this.parent.draw.path(this.parent.ctx,path);
-						this.parent.ctx.closePath();
-					}
-					if (this.parent.ctx.isPointInPath(point.x,point.y)) target = object;
-					this.parent.ctx.closePath();
-					this.parent.ctx.restore();
 				}
 
 			},this), true );

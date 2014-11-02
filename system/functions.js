@@ -309,8 +309,8 @@ $.extend( true, designer, {
 					break;
 				case 'text' :
 					newObject.lineWidth     = this.parent.defaults.text.lineWidth;
-					newObject.strokeStyle   = this.parent.defaults.text.strokeStyle;
-					newObject.fillStyle     = this.parent.defaults.text.color;
+					newObject.fillStyle     = this.parent.color1;
+					newObject.strokeStyle   = this.parent.color2;
 					newObject.radius        = this.parent.defaults.text.radius;
 					newObject.text 		    = this.parent.defaults.text.text;
 					newObject.font          = this.parent.defaults.text.font;
@@ -319,8 +319,6 @@ $.extend( true, designer, {
 					newObject.isItalic      = this.parent.defaults.text.isItalic;
 					newObject.isBold        = this.parent.defaults.text.isBold;
 					newObject.stroke        = this.parent.defaults.text.stroke;
-					newObject.strokeStyle   = this.parent.defaults.text.strokeStyle;
-					newObject.fillStyle     = this.parent.defaults.text.fillStyle;
 					newObject.height        = this.parent.defaults.text.fontSize;
 					break;
 				case 'line' :
