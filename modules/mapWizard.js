@@ -641,7 +641,7 @@ mapWizard = {
 
 	setupUi : function(){
 
-		$('.tools').css('height','288px');
+		$('.tools').css('height','290px');
 
 		if( $('body').hasClass('ltr') )
 		{

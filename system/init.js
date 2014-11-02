@@ -60,6 +60,8 @@ $.extend( true, designer, {
 			this.redraw();
 		}
 
+		this.spectrum('color1');
+		this.spectrum('color2');
 		this.spectrum('fill');
 		this.spectrum('strokeStyle');
 		this.spectrum('fillStyle');
@@ -88,20 +90,43 @@ $.extend( true, designer, {
 		var s = $.proxy(function( color ){
 			if(!this.selecteds.length) return;
 	    	str = color ? color.toRgbString() : ""; 
-	    	console.log(this.selecteds[0]);
 	    	this.selecteds[0][el] = str;
 	    	$("."+el).val( str );
 	    	this.render();
 		},this);
 
-		$("." + el).spectrum({
-		    allowEmpty : true,
-		    showAlpha  : true,
-		    move   : function( color ){ s( color ) },
-		    change : function( color ){ s( color ) }
-		}).on("dragstart.spectrum", $.proxy(function(e, color) {
-			this.history.save();
-		},this));
+		var c = $.proxy(function( color ){
+			str = color ? color.toRgbString() : "";
+			this[el] = str; 
+			$("."+el).val( str );
+			this.render();
+		},this);
+
+		if(el == 'color1' || el == 'color2'){
+
+			$("." + el).spectrum({
+			    allowEmpty : true,
+			    showAlpha  : true,
+			    showInput  : true,
+			    move   : function( color ){ c( color ) },
+			    change : function( color ){ c( color ) }
+			}).on("dragstart.spectrum", $.proxy(function(e, color) {
+				this.history.save();
+			},this));
+
+		}else{
+
+			$("." + el).spectrum({
+			    allowEmpty : true,
+			    showAlpha  : true,
+			    showInput  : true,
+			    move   : function( color ){ s( color ) },
+			    change : function( color ){ s( color ) }
+			}).on("dragstart.spectrum", $.proxy(function(e, color) {
+				this.history.save();
+			},this));
+
+		}		
 
 	},
 

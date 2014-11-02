@@ -285,14 +285,16 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
     width: 100%;
 }
 .sp-input {
-   font-size: 12px !important;
-   border: 1px inset;
+   font-size: 11px !important;
+   border: 1px solid #ccc;
    padding: 4px 5px;
    margin: 0;
    width: 100%;
-   background:transparent;
+   background: rgba(255, 255, 255, 1) !important;
    border-radius: 3px;
    color: #222;
+   margin-top: 3px;
+   margin-bottom: -7px;
 }
 .sp-input:focus  {
     border: 1px solid orange;

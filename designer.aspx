@@ -198,6 +198,7 @@
 		<div class="tools">
 			<div class="button select active" id="select"></div>
 			<div class="button move" id="move"></div>
+			<div class="sep"></div>
 			<div class="button box" id="box"></div>
 			<div class="button ellipse" id="ellipse"></div>
 			<div class="button line" id="line"></div>

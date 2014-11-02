@@ -302,8 +302,8 @@ $.extend( true, designer, {
 				case 'box' :
 					newObject.stroke 	  = this.parent.defaults.box.stroke;
 					newObject.lineWidth   = this.parent.defaults.box.lineWidth;
-					newObject.strokeStyle = this.parent.defaults.box.strokeStyle;
-					newObject.fill 	      = this.parent.defaults.box.fill;
+					newObject.strokeStyle = this.parent.color1;
+					newObject.fill 	      = this.parent.color2;
 					newObject.fillStyle   = this.parent.defaults.box.fillStyle;
 					newObject.radius      = this.parent.defaults.box.radius;
 					break;
@@ -326,16 +326,14 @@ $.extend( true, designer, {
 				case 'line' :
 					newObject.stroke 	  = this.parent.defaults.box.stroke;
 					newObject.lineWidth   = this.parent.defaults.box.lineWidth;
-					newObject.strokeStyle = this.parent.defaults.box.strokeStyle;
-					newObject.fill 	      = this.parent.defaults.box.fill;
-					newObject.fillStyle   = this.parent.defaults.box.fillStyle;
+					newObject.strokeStyle = this.parent.color1;
 					break;
 				case 'ellipse' :
 					newObject.stroke 	  = this.parent.defaults.box.lineWidth;
 					newObject.lineWidth   = this.parent.defaults.box.lineWidth;
-					newObject.strokeStyle = this.parent.defaults.box.strokeStyle;
+					newObject.strokeStyle = this.parent.color1;
 					newObject.fill 	      = this.parent.defaults.box.fill;
-					newObject.fillStyle   = this.parent.defaults.box.fillStyle;
+					newObject.fillStyle   = this.parent.color2;
 					newObject.rx          = 0;
 					newObject.ry          = 0;
 					newObject.cx          = point.x;
@@ -346,9 +344,9 @@ $.extend( true, designer, {
 				case 'path' :
 					newObject.stroke 	  = this.parent.defaults.box.lineWidth;
 					newObject.lineWidth   = this.parent.defaults.box.lineWidth;
-					newObject.strokeStyle = this.parent.defaults.box.strokeStyle;
+					newObject.strokeStyle = this.parent.color1;
 					newObject.fill 	      = this.parent.defaults.box.fill;
-					newObject.fillStyle   = this.parent.defaults.box.fillStyle;
+					newObject.fillStyle   = this.parent.color2;
 					newObject.startX      = point.x;
 					newObject.startY      = point.y;
 					newObject.path        = 'm '+point.x+' '+point.y;

@@ -441,9 +441,15 @@ input[type='range'] {
 	height: 100%;
 	background: #eee;
 	position: absolute;
-	height: 224px;
+	height: 263px;
 	top: 74px;
 	z-index: 3;
+	width: 32px;
+}
+.tools .sep{
+	background: #ccc;
+	height: 1px;
+	border-bottom: 1px solid #fff;
 }
 .button{
 	text-align: center;
@@ -489,6 +495,33 @@ input[type='range'] {
 	background-image: url(../images/path.png);
 	background-size: 60%;
 }
+.colorTool .sp-replacer{
+	width: 20px;
+	display: block;
+	border: 1px solid #5C5757;
+}
+.colors .sp-preview{
+	width: 16px;
+}
+.color1Holder .sp-replacer{
+    width: 18px;
+    height: 18px;
+    position: relative;
+    left: 2px;
+    top: 2px;
+    z-index: 10;
+    border: 1px solid #fff;
+}
+.color2Holder .sp-replacer{
+    width: 18px;
+    position: relative;
+    left: 9px;
+    height: 18px;
+    top: -9px;
+    z-index: 9;
+    border: 1px solid #fff;
+}
+
 
 
 /* Toolbox */
