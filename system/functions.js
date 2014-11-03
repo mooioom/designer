@@ -130,21 +130,30 @@ $.extend( true, designer, {
 
 				o.rotate = Number(Number(o.rotationData.rotate) + Number(this.parent.rotateAmount));
 
-				c = {
-					x : o.rotationData.center.x,
-					y : o.rotationData.center.y
-				}
-
+				c = { x : o.rotationData.center.x, y : o.rotationData.center.y }
 				p = this.parent.helpers.getRotatedPoint( this.parent.rotateStartCenter.x, this.parent.rotateStartCenter.y, c.x, c.y, o.rotate - Number(o.rotationData.rotate));
 				
 				this.parent.helpers.setByCenter( o , p );
 
 				this.parent.render();
-
 				this.parent.draw.quickPoint(this.parent.rotateStartCenter.x, this.parent.rotateStartCenter.y, 'blue');	
 
 			}
 
+		},
+
+		scale : function( amount ){
+
+			for(i in this.parent.selecteds)
+			{
+				o = this.parent.selecteds[i];
+				if( !o || o.locked || !o.visible || !o.scaleData ) continue;
+
+				this.parent.helpers.scale( o, amount + 100, this.parent.scaleStartCenter );
+				this.parent.render();
+				this.parent.draw.quickPoint(this.parent.scaleStartCenter.x, this.parent.scaleStartCenter.y, 'blue');
+
+			}
 		},
 
 		exitEditMode : function(){

@@ -360,10 +360,12 @@ $.extend( true, designer, {
 					render : function(){
 						$('.body',this.el).empty();
 						$('.body',this.el).append('<div class="item"><div class="title">'+getString('rotate')+'</div><input type="range" class="rotate" min="0" max="360" step="5" value="180"></div>');
+						$('.body',this.el).append('<div class="item"><div class="title">'+getString('Scale')+'</div><input type="range" class="scale" min="-200" max="200" step="1" value="0"></div>');
 					},
 
 					events : function()
 					{
+						//rotate
 						$('.toolbox.transform .rotate').bind('mousedown',function(){
 							designer.history.save();
 							designer.rotateStartAmount = $(this).val();
@@ -395,6 +397,52 @@ $.extend( true, designer, {
 							designer.rotateAmount = Number($(this).val()) - Number(designer.rotateStartAmount);
 							designer.functions.rotate( designer.rotateAmount );
 							
+						});
+
+						//scale
+						$('.toolbox.transform .scale').bind('mousedown',function(){
+
+							designer.history.save();
+							designer.scaleStartAmount = $(this).val();
+							designer.scaleStartCenter = designer.events.transformDimensions.c;
+							for(i in designer.selecteds)
+							{
+								o = designer.selecteds[i];
+								if( !o || o.locked || !o.visible ) continue;
+								o.scaleData = {};
+								o.scaleData.rotate   = Number(o.rotate) || 0;
+								o.scaleData.center   = designer.helpers.getCenter( o );
+								o.scaleData.startX   = o.startX;
+								o.scaleData.startY   = o.startY;
+								o.scaleData.endX     = o.endX;
+								o.scaleData.endY     = o.endY;
+								o.scaleData.width    = o.width;
+								o.scaleData.height   = o.height;
+								o.scaleData.rx       = o.rx;
+								o.scaleData.ry       = o.ry;
+								o.scaleData.fontSize = o.fontSize;
+								o.scaleData.path     = o.path;
+								o.scaleData.tlx      = o.topLeftX;
+								o.scaleData.tly      = o.topLeftY;
+							}
+						});
+						$('.toolbox.transform .scale').bind('mouseup',function(){
+							for(i in designer.selecteds)
+							{
+								o = designer.selecteds[i];
+								if( !o || o.locked || !o.visible ) continue;
+								delete o.scaleData;
+							}
+							delete designer.scaleStartAmount;
+							delete designer.scaleAmount;
+							designer.events.doNotScale = true;
+							$('input.scale').val(0);
+							$('.stage').focus();
+						});
+						$('.toolbox.transform .scale').bind('change input',function(){
+							if(designer.events.doNotScale){ delete designer.events.doNotScale; return; }
+							designer.scaleAmount = Number($(this).val()) - Number(designer.scaleStartAmount);
+							designer.functions.scale( designer.scaleAmount );
 						});
 					}
 

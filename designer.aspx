@@ -296,6 +296,9 @@
 			<string resource="blur"            value="<%=Resources.Strings.Blur %>"></string>
 			<string resource="offsetX"         value="<%=Resources.Strings.Offset %> X"></string>
 			<string resource="offsetY"         value="<%=Resources.Strings.Offset %> Y"></string>
+			<string resource="Scale"           value="<%=Resources.Strings.Scale %>"></string>
+			<string resource="Eyedropper"      value="<%=Resources.Strings.Eyedropper %>"></string>
+			
 
 			<!-- Template Editor -->
 			<string resource="LoadingTemplates" value="<%=Resources.Strings.LoadingTemplates %>"></string>
@@ -358,6 +361,7 @@
 			<string resource="Energy"           value="<%=Resources.Strings.Energy %>"></string>
 			<string resource="Type"             value="<%=Resources.Strings.Type %>"></string>
 			<string resource="Parameter"        value="<%=Resources.Strings.Parameter %>"></string>
+			
 			
 		</div>
 

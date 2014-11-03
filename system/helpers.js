@@ -240,6 +240,93 @@ $.extend( true, designer, {
 			}
 		},
 
+		scale : function( o, percent, scaleCenter ){
+			// scales an object from it's center (amount = percent)
+
+			w  = o.scaleData.width;
+			h  = o.scaleData.height;
+			x1 = o.scaleData.startX;
+			y1 = o.scaleData.startY;
+
+			cx = x1 + w/2;
+			cy = y1 + h/2;
+
+			if(o.type == 'path')
+			{
+				oldPath = o.scaleData.path;
+				x1 = o.scaleData.tlx;
+				y1 = o.scaleData.tly;
+				sx = o.scaleData.startX;
+				sy = o.scaleData.startY;
+				cx = x1 + w/2;
+				cy = y1 + h/2;
+			}
+
+			o.width  = w * (percent/100);
+			o.height = h * (percent/100);
+
+			if(o.type == 'text')
+			{
+				fontSize = o.scaleData.fontSize;
+				o.fontSize = fontSize * (percent/100);
+			}
+
+			if(o.type == 'ellipse')
+			{
+				rx = o.scaleData.rx;
+				ry = o.scaleData.ry;
+				o.rx = rx * (percent/100);
+				o.ry = ry * (percent/100);
+			}
+			
+			originalDistanceOfCXFromCenter = scaleCenter.x - cx;
+			originalDistanceOfCYFromCenter = scaleCenter.y - cy;
+
+			newDistanceOfCXFromCenter = originalDistanceOfCXFromCenter - ( originalDistanceOfCXFromCenter * ( percent/100 ) );
+			newDistanceOfCYFromCenter = originalDistanceOfCYFromCenter - ( originalDistanceOfCYFromCenter * ( percent/100 ) );
+
+			cx = cx + newDistanceOfCXFromCenter;
+			cy = cy + newDistanceOfCYFromCenter;
+
+			if(o.type == 'path')
+			{
+
+				o.topLeftX = x1 * (percent/100);
+				o.topLeftY = y1 * (percent/100);
+
+				o.startX = sx * (percent/100);
+				o.startY = sy * (percent/100);
+
+				var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+				$(path).attr('d',o.path);
+
+				var path2 = document.createElementNS("http://www.w3.org/2000/svg", "path");
+				$(path2).attr('d',oldPath);
+
+				pathLength = path.pathSegList.length || path.pathSegList.numberOfItems;
+
+				for(i=0;i<=pathLength-1;i++)
+				{
+					if(i==0) continue;
+
+					seg    = path.pathSegList.getItem(i);
+					segOld = path2.pathSegList.getItem(i);
+
+					if(segOld.x)  seg.x  = segOld.x  * (percent/100);
+					if(segOld.y)  seg.y  = segOld.y  * (percent/100);
+					if(segOld.x1) seg.x1 = segOld.x1 * (percent/100);
+					if(segOld.y1) seg.y1 = segOld.y1 * (percent/100);
+					if(segOld.x2) seg.x2 = segOld.x2 * (percent/100);
+					if(segOld.y2) seg.y2 = segOld.y2 * (percent/100);
+
+				}
+
+				o.path = path.getAttribute('d');
+			}
+
+			this.setByCenter(o,{x:cx,y:cy});
+		},
+
 		isOverActionPoint : function(){
 
 			var flag = false;
