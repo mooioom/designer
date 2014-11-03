@@ -158,12 +158,13 @@ $.extend( true, designer, {
 
 		flattenImage : function(){
 
+			if(!this.parent.objects.length) return;
+
 			popup = new Popup({
 				header    : getString('AreYouSure'),
 				content   : 'Flatten Image?',
 				closeText : getString('Cancel'),
 				action    : $.proxy(function(){
-
 					this.parent.history.save();
 					this.parent.draw.resetHelperCanvas();
 					//todo optimize canvas size to fit objects
@@ -176,14 +177,13 @@ $.extend( true, designer, {
 					this.parent.objects[0].src = src;
 					this.parent.redraw();
 					popup.close();
-
 				},this)
 			})
-
 		},
 
 		flattenSelecteds : function(){
 
+			//todo optimize canvas size to fit selected objects
 			this.parent.history.save();
 			this.parent.draw.resetHelperCanvas();
 

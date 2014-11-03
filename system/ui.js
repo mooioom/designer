@@ -562,6 +562,9 @@ $.extend( true, designer, {
 					$('.listOfShapes').empty();
 					$('.selectedShape').click(function(){$('.listOfShapes').toggle();});
 
+					shapeDiv = $('<div class="shapeItem" shapeid="-1"></div>');
+					$('.listOfShapes').append(shapeDiv);
+
 					for(i in designer.shapes)
 					{
 						shape = designer.shapes[i];
@@ -573,10 +576,12 @@ $.extend( true, designer, {
 
 					$('.listOfShapes').append('<div class="clear"></div>');
 					$('.shapeItem').click(function( e ){
-						designer.selectedShape = Number( $(e.target).attr('shapeid') );
+						shapeId = Number( $(e.target).attr('shapeid') );
+						designer.selectedShape = shapeId;
+						$('.listOfShapes').hide();
+						if(shapeId == -1) {designer.selectedShape = null; $('.selectedShape').empty(); return;}
 						$('.selectedShape').empty();
 						$('.selectedShape').append('<svg xmlns="http://www.w3.org/2000/svg" viewbox="-15 -15 330 330"><path d="'+designer.shapes[designer.selectedShape].data+'" /></svg>');
-						$('.listOfShapes').hide();
 					});
 				}
 

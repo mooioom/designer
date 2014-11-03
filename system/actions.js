@@ -469,7 +469,7 @@ $.extend( true, designer, {
 				}
 			},
 			mouseMove : function(){
-				if( this.parent.events.createShapeMode && this.parent.events.drag)
+				if( this.parent.events.createShapeMode && this.parent.events.drag && this.parent.selectedShape != null)
 				{
 					this.path.movedX = this.parent.helpers.getClosestSnapCoords( this.parent.events.mouseX - this.path.initX );
 					this.path.movedY = this.parent.helpers.getClosestSnapCoords( this.parent.events.mouseY - this.path.initY );
