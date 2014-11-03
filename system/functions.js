@@ -156,6 +156,49 @@ $.extend( true, designer, {
 			}
 		},
 
+		flattenImage : function(){
+
+			popup = new Popup({
+				header    : getString('AreYouSure'),
+				content   : 'Flatten Image?',
+				closeText : getString('Cancel'),
+				action    : $.proxy(function(){
+
+					this.parent.history.save();
+					this.parent.draw.resetHelperCanvas();
+					//todo optimize canvas size to fit objects
+					this.parent.draw.objects( this.parent.helperCtx );
+					src = this.parent.helperCanvas.toDataURL("image/png");
+					this.parent.selecteds = [];
+					for(o in this.parent.objects) this.select( this.parent.objects[o] );
+					this.delete();
+					this.parent.create.box(0,0,this.parent.width,this.parent.height);
+					this.parent.objects[0].src = src;
+					this.parent.redraw();
+					popup.close();
+
+				},this)
+			})
+
+		},
+
+		flattenSelecteds : function(){
+
+			this.parent.history.save();
+			this.parent.draw.resetHelperCanvas();
+
+			this.parent.helpers.forEachSelecteds($.proxy(function( object ) { 
+				this.parent.draw.drawObject( object, this.parent.helperCtx );
+				this.deleteObject( object.id );	
+			},this));
+
+			src = this.parent.helperCanvas.toDataURL("image/png");
+			this.parent.create.box(0,0,this.parent.width,this.parent.height);
+			this.parent.objects[ this.parent.objects.length-1 ].src = src;
+			this.parent.redraw();
+
+		},
+
 		exitEditMode : function(){
 
 			this.parent.editMode = false;

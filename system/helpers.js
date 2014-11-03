@@ -417,17 +417,31 @@ $.extend( true, designer, {
 			var target = null;
 			this.forEachObjects( $.proxy(function( o ){
 
+				ImageTransparentPixel = false;
+
 				this.parent.draw.clearCanvas( this.parent.helperCtx );
 
 				if(!target && o.visible && !o.locked)
 				{
-					//todo line
-					c = $.extend(true,{},o);
-					if(c.type=='text') c.type = 'box';
-					c.src = '';
-					this.parent.draw.drawObject( c, this.parent.helperCtx );
-					if (this.parent.helperCtx.isPointInPath(point.x,point.y)) target = o;
+					if(o.src)
+					{
+						this.parent.draw.drawObject(o,this.parent.helperCtx);
+						x = this.parent.events.mouseX;
+						y = this.parent.events.mouseY;
+						pixelData = this.parent.helperCtx.getImageData(x,y,1,1).data;
+						if(!pixelData[3]) ImageTransparentPixel = true;
+						this.parent.draw.clearCanvas( this.parent.helperCtx );
+					}
 
+					if(!ImageTransparentPixel)
+					{
+						//todo line
+						c = $.extend(true,{},o);
+						if(c.type=='text') c.type = 'box';
+						c.src = '';
+						this.parent.draw.drawObject( c, this.parent.helperCtx );
+						if (this.parent.helperCtx.isPointInPath(point.x,point.y)) target = o;
+					}
 				}
 
 			},this), true );
@@ -444,6 +458,18 @@ $.extend( true, designer, {
 				while(x--) { callback( this.parent.objects[x], x); }
 			}
 			else for(x in this.parent.objects) callback( this.parent.objects[x], x); 
+		},
+
+		forEachSelecteds : function( callback, startAtTop ){
+
+			// returns : callback(object, index)
+
+			if(startAtTop)
+			{
+				var x = this.parent.selecteds.length;
+				while(x--) { callback( this.parent.selecteds[x], x); }
+			}
+			else for(x in this.parent.selecteds) callback( this.parent.selecteds[x], x); 
 		},
 
 		collision : function( object1, object2 ){

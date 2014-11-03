@@ -40,6 +40,12 @@ $.extend( true, designer, {
 			ctx.clearRect(0, 0, this.parent.canvas.width, this.parent.canvas.height);
 		},
 
+		resetHelperCanvas : function(){
+			$('#helperCanvas').attr( 'width',  this.parent.width );
+			$('#helperCanvas').attr( 'height', this.parent.height );
+			this.clearCanvas( this.parent.helperCtx );
+		},
+
 		grid : function()
 		{
 

@@ -298,7 +298,8 @@
 			<string resource="offsetY"         value="<%=Resources.Strings.Offset %> Y"></string>
 			<string resource="Scale"           value="<%=Resources.Strings.Scale %>"></string>
 			<string resource="Eyedropper"      value="<%=Resources.Strings.Eyedropper %>"></string>
-			
+			<string resource="flattenImg"      value="Flatten Image"></string>
+			<string resource="flattenSel"      value="flatten Selecteds"></string>
 
 			<!-- Template Editor -->
 			<string resource="LoadingTemplates" value="<%=Resources.Strings.LoadingTemplates %>"></string>
