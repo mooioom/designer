@@ -82,7 +82,7 @@ $.extend( true, designer, {
 						$('.sortable').multisortable({
 							items         : ".objectsItem",
 							selectedClass : "selected",
-							stop          : $.proxy(function(){ 
+							stop          : $.proxy(function( e ){
 								this.parent.draw.reOrderByUi();
 								this.toggleOptions();
 							},this),

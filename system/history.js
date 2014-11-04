@@ -48,12 +48,8 @@ $.extend( true, designer, {
 
 			//todo undo : change prop, add resource, edit text
 
-			this.parent.render();
-			this.parent.draw.selectedBox();
-			this.parent.draw.selectionBox();
-			this.parent.draw.ui();
-			this.parent.draw.toolbar();
-
+			this.parent.selecteds = [];
+			this.parent.redraw();
 			this.index = index;
 
 		},
@@ -73,11 +69,8 @@ $.extend( true, designer, {
 
 			//todo undo : change prop, add resource, edit text
 
-			this.parent.render();
-			this.parent.draw.selectedBox();
-			this.parent.draw.selectionBox();
-			this.parent.draw.ui();
-			this.parent.draw.toolbar();
+			this.parent.selecteds = [];
+			this.parent.redraw();
 
 			this.index ++ ;
 

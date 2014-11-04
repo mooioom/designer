@@ -264,11 +264,14 @@
 			<string resource="file"            value="<%=Resources.Strings.File %>"></string>
 			<string resource="new"             value="<%=Resources.Strings.New %>"></string>
 			<string resource="save"            value="<%=Resources.Strings.SaveAs2 %>"></string>
+			<string resource="saveAs"          value="<%=Resources.Strings.SaveAs2 %>"></string>
 			<string resource="save2"           value="<%=Resources.Strings.Save %>"></string>
+			<string resource="FileName"        value="<%=Resources.Strings.FileName %>"></string>
 			<string resource="load"            value="<%=Resources.Strings.Load %>"></string>
 			<string resource="exportHtml"      value="<%=Resources.Strings.ExportHtml %>"></string>
 			<string resource="exportSvg"       value="<%=Resources.Strings.ExportSvg %>"></string>
 			<string resource="exportPng"       value="<%=Resources.Strings.ExportPng %>"></string>
+			<string resource="exportJpg"       value="<%=Resources.Strings.ExportJpg %>"></string>
 			<string resource="edit"            value="<%=Resources.Strings.Edit2 %>"></string>
 			<string resource="undo"            value="<%=Resources.Strings.Undo %>"></string>
 			<string resource="redo"            value="<%=Resources.Strings.Redo %>"></string>
@@ -299,7 +302,7 @@
 			<string resource="Scale"           value="<%=Resources.Strings.Scale %>"></string>
 			<string resource="Eyedropper"      value="<%=Resources.Strings.Eyedropper %>"></string>
 			<string resource="flattenImg"      value="Flatten Image"></string>
-			<string resource="flattenSel"      value="flatten Selecteds"></string>
+			<string resource="flattenSel"      value="Flatten Selecteds"></string>
 
 			<!-- Template Editor -->
 			<string resource="LoadingTemplates" value="<%=Resources.Strings.LoadingTemplates %>"></string>

@@ -99,14 +99,66 @@ $.extend( true, designer, {
 
 		save : function()
 		{
-			var blob = new Blob([this.getData()], {type: "text/plain;charset=utf-8"});
-			saveAs(blob, "untitled.eld");
+			popup = new Popup({
+				header    : getString('saveAs'),
+				closeText : getString('Cancel'),
+				inputs    : [{
+					label    : getString('FileName')+' :',
+					type     : 'text',
+					longText : true,
+					varName  : 'filename'
+				}],
+				action : $.proxy(function( d ){
+					filename = $('input[v=filename]').val();
+					var blob = new Blob([this.getData()], {type: "text/plain;charset=utf-8"});
+					saveAs(blob, filename+".eld");
+					popup.close();
+				},this)
+			});
 		},
 
 		load : function(){ $("#files").click(); },
 
 		savePng : function(){
-			canvas.toBlob(function(blob) { saveAs(blob, "image.png"); }, "image/png");
+			popup = new Popup({
+				header    : getString('saveAs'),
+				closeText : getString('Cancel'),
+				inputs    : [{
+					label    : getString('FileName')+' :',
+					type     : 'text',
+					longText : true,
+					varName  : 'filename'
+				}],
+				action : $.proxy(function( d ){
+					filename = $('input[v=filename]').val();
+					canvas.toBlob(function(blob) { saveAs(blob, filename+".png"); }, "image/png");
+					popup.close();
+				},this)
+			});
+		},
+
+		saveJpg : function(){
+			popup = new Popup({
+				header    : getString('saveAs'),
+				closeText : getString('Cancel'),
+				inputs    : [{
+					label    : getString('FileName')+' :',
+					type     : 'text',
+					longText : true,
+					varName  : 'filename'
+				}],
+				action : $.proxy(function( d ){
+					filename = $('input[v=filename]').val();
+					o = this.parent.create.object( 'box', 0, 0, this.parent.width, this.parent.height, {color1:'',color2:'#fff'});
+					this.parent.objects.unshift(o);
+					this.parent.render();
+					canvas.toBlob(function(blob) { saveAs(blob, filename+".jpg"); }, "image/jpeg");
+					this.parent.objects.splice(0,1);
+					this.parent.render();
+					popup.close();
+				},this)
+			});
+			
 		},
 
 		getHtml : function( data )
@@ -261,6 +313,7 @@ $.extend( true, designer, {
 					{
 						var str = '<image ';
 						str+= ' id="'		  + o.dynamicData + '"';
+						if(o.locked) str+= ' locked="1"';
 						if(o.url) str+= ' onclick="window.open(\''+o.url+'\',\'_blank\')" dataurl="'+o.url+'"';
 						str+= ' x="'		  + x + '"';
 						str+= ' y="'		  + y + '"';
@@ -276,6 +329,7 @@ $.extend( true, designer, {
 						if(!o.fill) fill = "rgba(0,0,0,0)"; else fill = o.fill;
 						var str = '<rect ';
 						str+= ' id="'		    + o.dynamicData + '"';
+						if(o.locked) str+= ' locked="1"';
 						if(o.url) str+= ' onclick="window.open(\''+o.url+'\',\'_blank\')" dataurl="'+o.url+'"';
 						str+= ' x="'		    + x + '"';
 						str+= ' y="'		    + y + '"';
@@ -300,6 +354,7 @@ $.extend( true, designer, {
 					fontComp = o.fontSize/10; // arial type
 					var str = '<text ';
 						str+= ' id="'		    + o.dynamicData + '"';
+						if(o.locked) str+= ' locked="1"';
 						if(o.url) str+= ' onclick="window.open(\''+o.url+'\',\'_blank\')" dataurl="'+o.url+'"';
 						str+= ' xml:space="preserve"';
 						str+= ' text-anchor="start"';
@@ -327,6 +382,7 @@ $.extend( true, designer, {
 					if(!o.fillStyle) fill = "none"; else fill = o.fillStyle;
 					var str = '<path ';
 						str+= ' id="'		  + o.dynamicData + '"';
+						if(o.locked) str+= ' locked="1"';
 						if(o.url) str+= ' onclick="window.open(\''+o.url+'\',\'_blank\')" dataurl="'+o.url+'"';
 						str+= ' d="'+o.path+'"';
 						str+= ' stroke-width="'+o.lineWidth+'"';
@@ -341,12 +397,13 @@ $.extend( true, designer, {
 					if(!o.fillStyle) fill = "none"; else fill = o.fillStyle;
 					var str = '<ellipse ';
 						str+= ' id="'		  + o.dynamicData + '"';
+						if(o.locked) str+= ' locked="1"';
 						if(o.url) str+= ' onclick="window.open(\''+o.url+'\',\'_blank\')" dataurl="'+o.url+'"';
 						str+= ' rx="'+(o.rx/2)+'"';
 						str+= ' ry="'+(o.ry/2)+'"';
 						str+= ' cx="'+o.cx+'"';
 						str+= ' cy="'+o.cy+'"';
-						str+= ' stroke-width="'+o.lineWidth / 2+'"';
+						str+= ' stroke-width="'+o.lineWidth+'"';
 						str+= ' stroke="'+o.strokeStyle+'"';
 						str+= ' fill="'+fill+'"';
 						if(o.rotate) str+= ' transform="rotate('+o.rotate+' '+(o.startX + (o.width/2))+' '+(o.startY + (o.height/2))+')"';
@@ -358,6 +415,7 @@ $.extend( true, designer, {
 					fill = "none";
 					var str = '<line ';
 						str+= ' id="'+ o.dynamicData + '"';
+						if(o.locked) str+= ' locked="1"';
 						str+= ' x1="'+o.startX+'"';
 						str+= ' y1="'+o.startY+'"';
 						str+= ' x2="'+o.endX+'"';
@@ -374,6 +432,7 @@ $.extend( true, designer, {
 					if(!o.fill) fill = "none"; else fill = o.fill;
 					var str = '<circle ';
 						str+= ' id="' + o.dynamicData + '"';
+						if(o.locked) str+= ' locked="1"';
 						if(o.url) str+= ' onclick="window.open(\''+o.url+'\',\'_blank\')" dataurl="'+o.url+'"';
 						str+= ' r="'+(o.r)+'"';
 						str+= ' cx="'+o.cx+'"';
@@ -396,7 +455,7 @@ $.extend( true, designer, {
 			//script+= '$("rect").mouseout( function(){ $(this).velocity({fill:"#fff"},250).stop() });';
 			//script+= '</script>';
 
-			//svg+='</svg>'+css+script;
+			svg+='</svg>';//+css+script;
 
 			return svg;
 		},

@@ -479,10 +479,12 @@ input[type='range'] {
 }
 .button.box{
 	background-image: url(../images/box.png);
+	background-size: 58%;
 }
 .button.text{
 	background-image: url(../images/text.png);
-	background-size: 45%;
+	background-size: 54%;
+	background-position-x: 7px;
 }
 .button.ellipse{
 	background-image: url(../images/circle.png);
@@ -490,6 +492,7 @@ input[type='range'] {
 }
 .button.line{
 	background-image: url(../images/line.png);
+	background-size: 58%;
 }
 .button.path{
 	background-image: url(../images/path.png);
@@ -497,7 +500,7 @@ input[type='range'] {
 }
 .button.eyedrop{
 	background-image: url(../images/eyedrop.png);
-	background-size: 60%;
+	background-size: 50%;
 }
 .colorTool .sp-replacer{
 	width: 20px;

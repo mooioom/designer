@@ -3,6 +3,8 @@ $.extend( true, designer, {
 
 	events : {
 
+		canvasEvents : false,
+
 		pressed           : [],
 		keyboardEvents    : [],
 		clickEvents       : [],
@@ -39,7 +41,7 @@ $.extend( true, designer, {
 		actionPointDrag     : false,
 
 		transformMode   : false,
-		
+
 		eyeDropperGuide : false,
 
 		init : function()
@@ -51,9 +53,12 @@ $.extend( true, designer, {
 			this.keyboardEvents.push({ action : this.parent.functions.move, scope : this.parent.functions, shortcut : 'down',  args : 'down'  });
 			this.keyboardEvents.push({ action : this.parent.functions.escapeKey, scope : this.parent.functions, shortcut : 'escape' });
 
+			this.removeDuplicateKeyboardEvents();
+
 			this.parent.canvas.addEventListener("mousemove",$.proxy(this.mouseMove,this),false);
 			this.parent.canvas.addEventListener("mousedown",$.proxy(this.mouseDown,this),false);
 			this.parent.canvas.addEventListener("mouseup",  $.proxy(this.mouseUp,this),false);
+			
 
 			$(document).unbind('keydown')
 					   .unbind('keyup');
@@ -257,6 +262,18 @@ $.extend( true, designer, {
 		endCreatePath : function(){
 			this.createPathMode = false;
 		},
+
+		removeDuplicateKeyboardEvents : function(){
+			for(i in this.keyboardEvents) {
+				flag = 0;
+				for(x in this.keyboardEvents){
+					if(this.keyboardEvents[i].shortcut == this.keyboardEvents[x].shortcut) flag ++ ;
+					if(flag > 1) this.keyboardEvents.splice(x,1);
+				}
+			}
+		},
+
+		addToolsEvents : function(){ $('.tools .button').unbind('click').bind('click', $.proxy(this.toolButton,this) ); },
 
 		browserDrop : function( e ){         for(i in this.browserDropEvents) this.browserDropEvents[i]( e ); },
 		canvasDrop  : function( event, ui ){ for(i in this.canvasDropEvents)  this.canvasDropEvents[i]( event, ui ); }

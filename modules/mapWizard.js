@@ -423,7 +423,7 @@ mapWizard = {
 						shadowOffsetX : '',
 						shadowOffsetY : '',
 						visible       : true,
-						locked        : false,
+						locked        : $(this).attr('locked') ? true : false,
 						stroke 	  	  : '',
 						lineWidth     : (Number($(this).attr('stroke-width')) * 2) || 0,
 						strokeStyle   : stroke,
@@ -456,7 +456,7 @@ mapWizard = {
 						shadowOffsetX : '',
 						shadowOffsetY : '',
 						visible       : true,
-						locked        : false,
+						locked        : $(this).attr('locked') ? true : false,
 						stroke 	  	  : '',
 						lineWidth     : $(this).attr('stroke-width'),
 						strokeStyle   : stroke,
@@ -500,7 +500,7 @@ mapWizard = {
 						shadowOffsetX : '',
 						shadowOffsetY : '',
 						visible       : true,
-						locked        : false,
+						locked        : $(this).attr('locked') ? true : false,
 						lineWidth     : Number($(this).attr('stroke-width')) || 0,
 						strokeStyle   : stroke,
 						fillStyle     : fill,
@@ -538,7 +538,7 @@ mapWizard = {
 						lineWidth     : $(this).attr('stroke-width') ? Number($(this).attr('stroke-width')) : 2,
 						rotate        : rotate,
 						visible       : true,
-						locked        : false,
+						locked        : $(this).attr('locked') ? true : false,
 						getPathSegs   : function(){
 							var p = document.createElementNS("http://www.w3.org/2000/svg", "path");
 							$(p).attr('d',this.path);
@@ -563,7 +563,7 @@ mapWizard = {
 						matrix        : matrix,
 						rotate        : rotate,
 						visible       : true,
-						locked        : false,
+						locked        : $(this).attr('locked') ? true : false,
 						drawByCenter  : true,
 						ry            : Number($(this).attr('ry')) * 2,
 						rx			  : Number($(this).attr('rx')) * 2,
@@ -586,7 +586,7 @@ mapWizard = {
 						matrix        : matrix,
 						rotate        : rotate,
 						visible       : true,
-						locked        : false,
+						locked        : $(this).attr('locked') ? true : false,
 						startX        : Number($(this).attr('x1')),
 						startY		  : Number($(this).attr('y1')),
 						endX		  : Number($(this).attr('x2')),
@@ -609,7 +609,7 @@ mapWizard = {
 						matrix        : matrix,
 						rotate        : rotate,
 						visible       : true,
-						locked        : false,
+						locked        : $(this).attr('locked') ? true : false,
 						drawByCenter  : true,
 						r             : Number($(this).attr('r')),
 						cy			  : Number($(this).attr('cy')),
@@ -641,13 +641,13 @@ mapWizard = {
 
 	setupUi : function(){
 
-		$('.tools').css('height','358px');
+		$('.tools').css('height','389px');
 
 		if( $('body').hasClass('ltr') )
 		{
 			$('.resources').css('left','0px');
 			$('.objects').css('left','0px');
-			$('.objects').css('top','441px');
+			$('.objects').css('top','467px');
 		}
 		else
 		{
@@ -661,12 +661,46 @@ mapWizard = {
 
 		designer.onLoad = function(){
 
+			// combo
+
+			$('.tools .combo').remove();
+			$('.tools .text').after('<div class="button combo" id="combo"></div>');
+
+			if(!$('.toolbar.combo').length) $('.toolbar:last').after('<div class="toolbar combo hidden"><div class="item">Params Box</div><div class="sep"></div><div class="item">Click to add new parameters box</div><div class="clear"></div></div>');
+
+			designer.actions.combo = {};
+
+			designer.actions.combo.mouseDown = function(){
+
+				this.parent.history.save();
+				
+				x = this.parent.helpers.getClosestSnapCoords( this.parent.events.mouseX );
+				y = this.parent.helpers.getClosestSnapCoords( this.parent.events.mouseY );
+
+				howMany = 3; w = 140; h = 30;
+
+				for(i=0;i<=howMany-1;i++)
+				{
+					this.parent.create.box(x,y+(h*i),w,h,{color1: "grey",color2:"rgba(0,0,0,0)",dontSnap : true});
+					this.parent.create.text((x+7),y+(h*i)+5,{color1: "black",text:"Param #"+String(i+1),font:'arial',fontSize:20,dontSnap : true});
+				}
+				this.parent.redraw();
+
+			};
+			designer.actions.combo.mouseMove = function(){
+
+			};
+			designer.actions.combo.mouseUp = function(){
+
+			};
+
+			designer.events.addToolsEvents();
+
 			// shapes
 
 			$('.tools .shape').remove();
 
 			$('.tools .text').after('<div class="button shape" id="shape"><svg class="shapeButton" xmlns="http://www.w3.org/2000/svg" width="24" height="24"><svg viewBox="-15 -15 330 330"><path fill="none" stroke="#000000" stroke-width="20" d="m7.454795,178.082489l67.605378,0m-67.605378,-54.850876l67.605393,0.000015m-0.155602,-30.065033l0,113.750015c194.70015,10.208389 199.234482,-124.687454 0,-113.750015zm217.618942,56.662766l-70.312149,0m-221.397258,-29.817062l6.68369,0l0,6.683685l-6.68369,0l0,-6.683685zm-0.314375,54.532364l6.68369,0l0,6.683685l-6.68369,0l0,-6.683685zm291.95109,-27.976547l6.683685,0l0,6.683685l-6.683685,0l0,-6.683685z"></path></svg></svg></div>');
-			$('.stage').before('<div class="toolbar shape hidden"><div class="item">Shape</div><div class="sep"></div><div class="item">Click and drag to add shape</div></div>');
 			$('.tools #shape').unbind('click').bind('click', function( e ){
 				$('.tools .button').removeClass('active');
 				$('.listOfShapes').toggle();
@@ -1077,12 +1111,12 @@ mapWizard = {
 
 var closeDesigner = $('<div class="closeDesignerWrapper hidden"></div>'),
 	saveMap       = $('<div class="saveMap  left button">'+getString('save2')+'</div>'),
-	closeButton   = $('<div class="closeDesigner left button">'+getString('Back')+'</div>'),
+	//closeButton   = $('<div class="closeDesigner left button">'+getString('Back')+'</div>'),
 	previewButton = $('<div class="previewSvg left button">'+getString('Preview')+'</div>'),
 	clearDiv      = $('<div class="clear"></div>');
 
 closeDesigner.append(saveMap);
-closeDesigner.append(closeButton);
+//closeDesigner.append(closeButton);
 closeDesigner.append(previewButton);
 closeDesigner.append(clearDiv);
 

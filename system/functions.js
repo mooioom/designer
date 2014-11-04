@@ -299,7 +299,7 @@ $.extend( true, designer, {
 
 			//todo save undo
 
-			this.parent.render();
+			this.parent.redraw();
 
 		}
 
@@ -307,30 +307,42 @@ $.extend( true, designer, {
 
 	create : {
 
-		box : function(x, y, w, h)
+		box : function(x, y, w, h, params)
 		{
 			this.parent.selecteds = [];
-			newObject 			  = this.object('box', x, y, w, h);
+			o 			          = this.object('box', x, y, w, h, params);
 			this.temp 	  		  = this.parent.current;
-			this.parent.functions.select( newObject );
-			this.parent.objects.push( newObject );
+			this.parent.functions.select( o );
+			this.parent.objects.push( o );
 			this.parent.current ++;
 		},
 
-		object : function(type, x, y, w, h)
+		text : function(x,y,params){
+			this.parent.selecteds = [];
+			o 			          = this.object('text', x, y, 0, 0, params);
+			this.temp 	  		  = this.parent.current;
+			this.parent.functions.select( o );
+			this.parent.objects.push( o );
+			this.parent.current ++;
+		},
+
+		object : function(type, x, y, w, h, params)
 		{
-			if(!type) type = this.parent.action;
+
+			if(!params) params = {};
+			if(!type)   type = this.parent.action;
+
 			if(typeof x === 'undefined') x = this.parent.events.mouseX;
 			if(typeof y === 'undefined') y = this.parent.events.mouseY;
 			if(typeof w === 'undefined') w = 0;
 			if(typeof h === 'undefined') h = 0;
 
 			var point = {
-				x : this.parent.helpers.getClosestSnapCoords( x ),
-				y : this.parent.helpers.getClosestSnapCoords( y )
+				x : params.dontSnap ? x : this.parent.helpers.getClosestSnapCoords( x ),
+				y : params.dontSnap ? y : this.parent.helpers.getClosestSnapCoords( y )
 			}
 
-			newObject = {
+			o = {
 				id     		  : this.parent.current,
 				layer  		  : 0,
 				type          : type,
@@ -349,73 +361,73 @@ $.extend( true, designer, {
 				locked        : false
 			};
 
-			switch(this.parent.action)
+			switch(type)
 			{
 				case 'box' :
-					newObject.stroke 	  = this.parent.defaults.box.stroke;
-					newObject.lineWidth   = this.parent.defaults.box.lineWidth;
-					newObject.strokeStyle = this.parent.color1;
-					newObject.fill 	      = this.parent.color2;
-					newObject.fillStyle   = this.parent.defaults.box.fillStyle;
-					newObject.radius      = this.parent.defaults.box.radius;
+					o.stroke 	  = params.stroke    || this.parent.defaults.box.stroke;
+					o.lineWidth   = params.lineWidth || this.parent.defaults.box.lineWidth;
+					o.strokeStyle = params.color1    || this.parent.color1;
+					o.fill 	      = params.color2    || this.parent.color2;
+					o.fillStyle   = params.fillStyle || this.parent.defaults.box.fillStyle;
+					o.radius      = params.radius    || this.parent.defaults.box.radius;
 					break;
 				case 'text' :
-					newObject.lineWidth     = this.parent.defaults.text.lineWidth;
-					newObject.fillStyle     = this.parent.color1;
-					newObject.strokeStyle   = this.parent.color2;
-					newObject.radius        = this.parent.defaults.text.radius;
-					newObject.text 		    = this.parent.defaults.text.text;
-					newObject.font          = this.parent.defaults.text.font;
-					newObject.fontSize      = this.parent.defaults.text.fontSize;
-					newObject.lineHeight    = this.parent.defaults.text.lineHeight;
-					newObject.isItalic      = this.parent.defaults.text.isItalic;
-					newObject.isBold        = this.parent.defaults.text.isBold;
-					newObject.stroke        = this.parent.defaults.text.stroke;
-					newObject.height        = this.parent.defaults.text.fontSize;
+					o.lineWidth     = params.lineWidth  || this.parent.defaults.text.lineWidth;
+					o.fillStyle     = params.color1     || this.parent.color1;
+					o.strokeStyle   = params.color2     || this.parent.color2;
+					o.radius        = params.radius     || this.parent.defaults.text.radius;
+					o.text 		    = params.text 	    || this.parent.defaults.text.text;
+					o.font          = params.font 	    || this.parent.defaults.text.font;
+					o.fontSize      = params.fontSize   || this.parent.defaults.text.fontSize;
+					o.lineHeight    = params.lineHeight || this.parent.defaults.text.lineHeight;
+					o.isItalic      = params.isItalic   || this.parent.defaults.text.isItalic;
+					o.isBold        = params.isBold     || this.parent.defaults.text.isBold;
+					o.stroke        = params.stroke     || this.parent.defaults.text.stroke;
+					o.height        = params.fontSize   || this.parent.defaults.text.fontSize;
 					break;
 				case 'line' :
-					newObject.stroke 	  = this.parent.defaults.box.stroke;
-					newObject.lineWidth   = this.parent.defaults.box.lineWidth;
-					newObject.strokeStyle = this.parent.color1;
+					o.stroke 	  = params.stroke    || this.parent.defaults.box.stroke;
+					o.lineWidth   = params.lineWidth || this.parent.defaults.box.lineWidth;
+					o.strokeStyle = params.color1    || this.parent.color1;
 					break;
 				case 'ellipse' :
-					newObject.stroke 	  = this.parent.defaults.box.lineWidth;
-					newObject.lineWidth   = this.parent.defaults.box.lineWidth;
-					newObject.strokeStyle = this.parent.color1;
-					newObject.fill 	      = this.parent.defaults.box.fill;
-					newObject.fillStyle   = this.parent.color2;
-					newObject.rx          = 0;
-					newObject.ry          = 0;
-					newObject.cx          = point.x;
-					newObject.cy          = point.y;
-					newObject.startX      = null;
-					newObject.startX      = null;
+					o.stroke 	  = params.lineWidth || this.parent.defaults.box.lineWidth;
+					o.lineWidth   = params.lineWidth || this.parent.defaults.box.lineWidth;
+					o.strokeStyle = params.color1    || this.parent.color1;
+					o.fill 	      = params.fill      || this.parent.defaults.box.fill;
+					o.fillStyle   = params.color2    || this.parent.color2;
+					o.rx          = 0;
+					o.ry          = 0;
+					o.cx          = point.x;
+					o.cy          = point.y;
+					o.startX      = null;
+					o.startX      = null;
 					break;
 				case 'path' :
-					newObject.stroke 	  = this.parent.defaults.box.lineWidth;
-					newObject.lineWidth   = this.parent.defaults.box.lineWidth;
-					newObject.strokeStyle = this.parent.color1;
-					newObject.fill 	      = this.parent.defaults.box.fill;
-					newObject.fillStyle   = this.parent.color2;
-					newObject.startX      = point.x;
-					newObject.startY      = point.y;
-					newObject.path        = 'm '+point.x+' '+point.y;
+					o.stroke 	  = params.lineWidth || this.parent.defaults.box.lineWidth;
+					o.lineWidth   = params.lineWidth || this.parent.defaults.box.lineWidth;
+					o.strokeStyle = params.color1    || this.parent.color1;
+					o.fill 	      = params.fill      || this.parent.defaults.box.fill;
+					o.fillStyle   = params.color2    || this.parent.color2;
+					o.startX      = point.x;
+					o.startY      = point.y;
+					o.path        = 'm '+point.x+' '+point.y;
 					if(this.parent.selectedShape != null){
-						newObject.path    = this.parent.shapes[ this.parent.selectedShape ].data;
+						o.path    = this.parent.shapes[ this.parent.selectedShape ].data;
 					}
-					newObject.getPathSegs = function(){
+					o.getPathSegs = function(){
 						var p = document.createElementNS("http://www.w3.org/2000/svg", "path");
 						$(p).attr('d',this.path);
 						return p.pathSegList;
 					}
-					newObject.getPath     = function(){
+					o.getPath     = function(){
 						var p = document.createElementNS("http://www.w3.org/2000/svg", "path");
 						$(p).attr('d',this.path);
 						return p;
 					}
 					break;
 			}
-			return newObject;
+			return o;
 		}
 
 	},

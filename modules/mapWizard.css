@@ -287,6 +287,11 @@
 	background-size: 100%;
 }
 
+.button.combo{
+	background-image: url(../modules/images/combo.png);
+	background-size: 100%;
+}
+
 .toolbarButtonB{
 	float: left;
 	margin-left: 3px;
