@@ -17,6 +17,7 @@ $.extend( true, designer, {
 		if(this.events.editMode) this.draw.actionPoints();
 		if(this.events.transformMode) this.draw.transformationBox();
 		if(this.events.eyeDropperGuide) this.draw.eyeDropperGuide();
+		if(this.events.cropMode) this.draw.cropArea();
 
 		//this.helpers.timer('stop','render');
 
@@ -548,6 +549,30 @@ $.extend( true, designer, {
 			stroke = 1;
 			opacity = 1;
 			this.rect( ctx, x, y, w, h, radius, lineWidth, strokeStyle, fill, stroke, opacity );
+		},
+
+		cropArea : function(){
+
+			
+			var sw = this.parent.width,
+				sh = this.parent.height,
+				x1 = this.parent.actions.crop.x1,
+				y1 = this.parent.actions.crop.y1,
+				x2 = this.parent.actions.crop.x2,
+				y2 = this.parent.actions.crop.y2,
+				w  = x2 - x1,
+				h  = y2 - y1;
+
+			if(!x1 || !x2 || !y1 || !y2) return;
+
+			this.parent.ctx.beginPath();
+			this.parent.ctx.rect( 0, 0, sw, y1 );
+			this.parent.ctx.rect( 0, y1, x1, h );
+			this.parent.ctx.rect( x2, y1, (sw - w - x1), h );
+			this.parent.ctx.rect( 0, y2, sw, (sh - h - y1) );
+
+			this.parent.ctx.fillStyle = 'rgba(0,0,0,0.8)';
+			this.parent.ctx.fill();
 		},
 
 		point : function(x,y,data){

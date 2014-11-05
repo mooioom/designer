@@ -160,6 +160,11 @@
 			<div class="item">Line</div>
 			<div class="sep"></div>
 			<div class="item"><%=Resources.Strings.Stroke %> <input type="text" class="lineWidth" /> &nbsp;<%=Resources.Strings.Color %> <input type="text" class="strokeStyle" data="string" /></div>
+			<div class="sep"></div>
+			<div class="item">
+				<div class="left toolbarBigButton edit"><%=Resources.Strings.ChangeNOUN %></div>
+				<div class="clear"></div>
+			</div>
 			<div class="clear"></div>
 		</div>
 

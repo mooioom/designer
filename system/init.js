@@ -23,7 +23,7 @@ $.extend( true, designer, {
 		$('#canvas, #gridCanvas, #helperCanvas').attr( 'width',  this.width );
 		$('#canvas, #gridCanvas, #helperCanvas').attr( 'height', this.height );
 
-		this.helpers.positionCanvas();
+		this.helpers.positionCanvas( this.width, this.height );
 
 		$('.stage').show();
 

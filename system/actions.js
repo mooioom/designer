@@ -177,6 +177,38 @@ $.extend( true, designer, {
 			}
 		},
 
+		crop : {
+
+			x1 : 0,
+			y1 : 0,
+			x2 : 0,
+			y2 : 0,
+
+			mouseDown : function(){
+
+				this.crop.x1 = 0;
+				this.crop.y1 = 0;
+				this.crop.x2 = 0;
+				this.crop.y2 = 0;
+
+				this.parent.events.cropReview = false;
+				this.parent.events.cropMode   = true;
+				
+				this.crop.x1 = this.parent.events.mouseX;
+				this.crop.y1 = this.parent.events.mouseY;
+			},
+			mouseMove : function(){
+				if(this.parent.events.drag && this.parent.events.cropMode && !this.parent.events.cropReview ){
+					this.crop.x2 = this.parent.events.mouseX;
+					this.crop.y2 = this.parent.events.mouseY;
+				}
+			},
+			mouseUp : function(){
+				this.parent.events.cropReview = true;
+			}
+
+		},
+
 		transform : 
 		{
 			mouseDown : function(){

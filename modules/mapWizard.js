@@ -8,6 +8,25 @@ mapWizard = {
 
 	maps : null,
 
+	meters : [
+		{
+			target   : 'var_11772_4352_1_1_1_2',
+			min      : 229,
+			max      : 237,
+			offColor : 'rgb(0, 0, 0)',
+			onColor  : 'rgb(0, 204, 11)',
+			levels   : 10
+		},
+		{
+			target   : 'var_11772_268_1_6_1_2',
+			min      : 0.79,
+			max      : 5.11,
+			offColor : 'rgb(0, 0, 0)',
+			onColor  : 'rgb(0, 204, 11)',
+			levels   : 10
+		}
+	],
+
 	init : function(){
 
 		document.title = getString('MapWizard');
@@ -17,8 +36,6 @@ mapWizard = {
 
 		this.load();
 		this.firstMenu();
-
-		
 
 	},
 
@@ -72,6 +89,17 @@ mapWizard = {
 		designer.ui.indicator.show( getString('Saving')+'...' );
 		objects = $.extend(true,{},designer.objects);
 
+		svg = designer.file.getSvg({objects:objects});
+
+		if(this.meters.length){
+
+			for(i in this.meters){
+				m = this.meters[i];
+				svg += '<meter id="'+(Number(i)+1)+'" target="'+m.target+'" offcolor="'+m.offColor+'" oncolor="'+m.onColor+'" levels="'+m.levels+'" min="'+m.min+'" max="'+m.max+'" style="display:none;" />';
+			}
+
+		}
+
 		//designer.file.getSvg({objects:designer.objects});
 
 		if(!this.mapId){
@@ -92,7 +120,7 @@ mapWizard = {
 
 			},{
 				mapTitle : this.title,
-				svg      : designer.file.getSvg({objects:objects}),
+				svg      : svg,
 				elements : data.elements,
 				links    : data.links
 			});
@@ -113,7 +141,7 @@ mapWizard = {
 			},{
 				mapId    : this.mapId,
 				mapTitle : this.title,
-				svg      : designer.file.getSvg({objects:objects}),
+				svg      : svg,
 				elements : data.elements,
 				links    : data.links
 			});
@@ -732,6 +760,8 @@ mapWizard = {
 				{title : 'Source AC',    data : 'm7.841724,149.837311l67.250737,0m149.928139,0.389923l67.250793,0m-67.653702,-0.227753a74.615135,74.615135 0 1 1-149.230286,0a74.615135,74.615135 0 1 1149.230286,0zm-126.528297,-1.996506c49.250984,-78.535637 61.230949,87.853104 103.826454,2.662094m-200.917796,-4.522659l6.717863,0l0,6.717896l-6.717863,0l0,-6.717896zm291.36706,0.642181l6.717865,0l0,6.717896l-6.717865,0l0,-6.717896z'},
 				{title : 'Source DC',    data : 'm221.862747,94.98175l0,31.813873m-21.510544,-15.906944l43.020996,0m48.613678,39.407722l-121.593582,0m-162.447085,0l115.809275,0m1.040596,-37.757935l7.284134,0l0,75.963058l-7.284134,0l0,-75.963058zm37.461227,-41.623596l7.284134,0l0,158.169647l-7.284134,0l0,-158.169647zm-161.255614,75.613235l6.954941,0l0,6.954971l-6.954941,0l0,-6.954971zm291.012953,0.175003l6.954956,0l0,6.954971l-6.954956,0l0,-6.954971z'},
 				{title : 'Speaker',      data : 'm21.35352,187l77,0m-83.70878,3.11937l0,-6.71786l6.71793,0l0,6.71786l-6.71793,0zm6.70878,-76.11937l77,0m-83.70878,3.11937l0,-6.71786l6.71793,0l0,6.71786l-6.71793,0zm155.70878,-32.61937l115,-83l0,296.5l-115,-82.5l0,-131zm-70.99999,0l70.99999,0l0,131l-70.99999,0l0,-131z'},
+				{title : 'Circles',		 data : 'm200,150m -100, 0 a 100,100 0 1,1 200,0 a 100,100 0 1,1 -200,0zm -100, 0 a 100,100 0 1,1 200,0 a 100,100 0 1,1 -200,0'},
+				{title : 'CirclesUpDown',data : 'm150,100m -100, 0 a 100,100 0 1,1 200,0 a 100,100 0 1,1 -200,0zm 0, 100 a 100,100 0 1,1 200,0 a 100,100 0 1,1 -200,0'}
 			];
 
 			$('.shapeItem').unbind('click').bind('click',function( e ){

@@ -86,6 +86,45 @@ $.extend( true, designer, {
 			}
 		},
 
+		enterKey : function(){
+			if(this.parent.events.createPathMode){
+				this.parent.actions.path.removeLastSeg();
+				this.parent.events.createPathMode = false;
+			}
+			if(this.parent.events.cropMode && this.parent.events.cropReview){
+				
+				this.crop({
+					x1 : this.parent.actions.crop.x1,
+					y1 : this.parent.actions.crop.y1,
+					x2 : this.parent.actions.crop.x2,
+					y2 : this.parent.actions.crop.y2,
+				});
+				
+			}
+		},
+
+		crop : function( dimensions ){
+		
+			w = dimensions.x2 - dimensions.x1;
+			h = dimensions.y2 - dimensions.y1;
+
+			$('#canvas, #gridCanvas, #helperCanvas').attr( 'width',  w );
+			$('#canvas, #gridCanvas, #helperCanvas').attr( 'height', h );
+
+			this.parent.helpers.positionCanvas( w, h );
+			this.parent.helpers.subtractFromPosition( dimensions.x1, dimensions.y1 );
+
+			this.parent.events.cropMode   = false;
+			this.parent.events.cropReview = false;
+			this.parent.actions.x1 = 0;
+			this.parent.actions.y1 = 0;
+			this.parent.actions.x2 = 0;
+			this.parent.actions.y2 = 0;
+
+			this.parent.draw.grid();
+			this.parent.redraw();
+		},
+
 		edit : function( what ){
 
 			$('.toolbox.text').hide();

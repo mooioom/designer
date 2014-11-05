@@ -30,6 +30,9 @@ $.extend( true, designer, {
 		drag         : false,
 
 		editMode        : false,
+
+		cropMode  		: false,
+		cropReview      : false,
 		
 		createPathMode  : false,
 		createShapeMode : false,
@@ -52,6 +55,7 @@ $.extend( true, designer, {
 			this.keyboardEvents.push({ action : this.parent.functions.move, scope : this.parent.functions, shortcut : 'right', args : 'right' });
 			this.keyboardEvents.push({ action : this.parent.functions.move, scope : this.parent.functions, shortcut : 'down',  args : 'down'  });
 			this.keyboardEvents.push({ action : this.parent.functions.escapeKey, scope : this.parent.functions, shortcut : 'escape' });
+			this.keyboardEvents.push({ action : this.parent.functions.enterKey,  scope : this.parent.functions, shortcut : 'enter'  });
 
 			this.removeDuplicateKeyboardEvents();
 

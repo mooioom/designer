@@ -3,12 +3,12 @@ $.extend( true, designer, {
 
 	helpers : {
 
-		positionCanvas : function(){
+		positionCanvas : function(w,h){
 
 			var stageW  = Number($('.stage').width()),
 				stageH  = Number($('.stage').height()),
-				marginW = (stageW - this.parent.width) / 2,
-				marginH = (stageH - this.parent.height) / 2;
+				marginW = (stageW - w) / 2,
+				marginH = (stageH - h) / 2;
 
 			if(marginH > 50 || marginH < 0) marginH = 50;
 
@@ -150,16 +150,11 @@ $.extend( true, designer, {
 
 			}
 
-			c = {
-				x : (x1 + x2) / 2,
-				y : (y1 + y2) / 2
-			}
+			c = { x : (x1 + x2) / 2, y : (y1 + y2) / 2 }
 
 			transformDimensions = {
-				x1 : x1,
-				y1 : y1,
-				x2 : x2,
-				y2 : y2,
+				x1 : x1, y1 : y1,
+				x2 : x2, y2 : y2,
 				c  : c
 			}
 
@@ -222,8 +217,8 @@ $.extend( true, designer, {
 				points = [];
 				x      = 0;
 				y      = 0;
-				cx     = o.topLeftX+(o.width/2);
-				cy     = o.topLeftY+(o.height/2);
+				cx     = o.topLeftX + ( o.width / 2  );
+				cy     = o.topLeftY + ( o.height / 2 );
 
 				pathLength = p.length || p.numberOfItems;
 
@@ -232,9 +227,9 @@ $.extend( true, designer, {
 					x = x + p.getItem(i).x;
 					y = y + p.getItem(i).y;
 
-					point = this.getRotatedPoint( cx, cy, x, y, o.rotate);
+					point = this.getRotatedPoint( cx, cy, x, y, o.rotate );
 
-					points.push(point);
+					points.push( point );
 				}
 				return points;
 			}
@@ -318,13 +313,38 @@ $.extend( true, designer, {
 					if(segOld.y1) seg.y1 = segOld.y1 * (percent/100);
 					if(segOld.x2) seg.x2 = segOld.x2 * (percent/100);
 					if(segOld.y2) seg.y2 = segOld.y2 * (percent/100);
+					if(segOld.r1) seg.r1 = segOld.r1 * (percent/100);
+					if(segOld.r2) seg.r2 = segOld.r2 * (percent/100);
 
 				}
 
 				o.path = path.getAttribute('d');
 			}
-
 			this.setByCenter(o,{x:cx,y:cy});
+		},
+
+		subtractFromPosition : function( w, h ){
+
+			for(i in this.parent.objects)
+			{
+				o = this.parent.objects[i];
+
+				if( o.type == 'ellipse' ){
+					o.cx = o.cx - w;
+					o.cy = o.cy - h;
+					continue;
+				}
+
+				o.startX = o.startX - w;
+				o.startY = o.startY - h;
+
+				if( o.type == 'line' )
+				{
+					o.endX = o.endX - w;
+					o.endY = o.endY - h;
+				}
+			}
+
 		},
 
 		isOverActionPoint : function(){

@@ -441,7 +441,7 @@ input[type='range'] {
 	height: 100%;
 	background: #eee;
 	position: absolute;
-	height: 294px;
+	height: 325px;
 	top: 74px;
 	z-index: 3;
 	width: 32px;
@@ -473,6 +473,9 @@ input[type='range'] {
 }
 .button.move{
 	background-image: url(../images/move.png);
+}
+.button.crop{
+	background-image: url(../images/crop.png);
 }
 .button.transform{
 	background-image: url(../images/transform.png);
