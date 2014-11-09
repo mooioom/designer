@@ -3,10 +3,19 @@ $.extend( true, designer, {
 
 	functions : {
 
-		select : function( o )
+		select : function( o, singleItem )
 		{
-			this.parent.selecteds.push( o );
+			if(typeof o.groupId != 'undefined' && !singleItem) {this.selectGroup( o.groupId );return;}
+			else this.parent.selecteds.push( o );
 			this.parent.onSelect();
+		},
+
+		selectGroup : function( groupId ){
+			for(i in this.parent.objects)
+			{
+				o = this.parent.objects[i];
+				if(typeof o.groupId != 'undefined' && o.groupId == groupId && !this.parent.helpers.isObjectSelected(o.id) ) this.parent.selecteds.push( o );
+			}
 		},
 
 		selectAll : function(){
@@ -15,6 +24,98 @@ $.extend( true, designer, {
 			this.parent.render();
 			this.parent.draw.ui();
 			this.parent.draw.toolbar();
+		},
+
+		group   : function(){
+
+			groupId = this.parent.groups.length;
+
+			this.parent.groups.push({
+				id        : groupId,
+				name      : getString('group') + ' ' + groupId,
+				collapsed : true,
+				visible   : true,
+				locked    : false
+				//parentGroup : 
+			});
+
+			for(i in this.parent.selecteds) this.parent.selecteds[i].groupId = groupId;
+
+			this.reorder();
+			this.parent.redraw();
+
+		},
+
+		ungroup : function(){
+
+			if(!this.parent.groups.length) return;
+			for(i in this.parent.selecteds) {
+				o = this.parent.selecteds[i]
+				if(typeof o.groupId != 'undefined'){
+					this.deleteGroup( o.groupId );
+					delete o.groupId;
+				}
+			}
+			this.parent.redraw();
+		},
+
+		deleteGroup : function( groupId ){
+			for(i in this.parent.groups){
+				group = this.parent.groups[i];
+				if(group.id == groupId) idx = i;
+			}
+			if(idx) this.parent.groups.splice(idx,1);
+		},
+
+		reorder : function(){
+
+			// remove empty groups
+			emptyGroups = [];
+			for(i in this.parent.groups)
+			{
+				flag = false;
+				g = this.parent.groups[i];
+				for(x in this.parent.objects)
+				{
+					o = this.parent.objects[x];
+					if(o.groupId == g.id) flag = true;	
+				}
+				if(flag == false) emptyGroups.push( g.id );
+			}
+			for(i in emptyGroups) this.deleteGroup( emptyGroups[i] );
+
+			order = [];
+
+			for(i in this.parent.objects)
+			{
+				o = this.parent.objects[i];
+				for(x in order) if(order[x]==o.id) continue;
+				//console.log(Number(i)+1);
+				if(typeof o.groupId != 'undefined'){
+					// is group inside group?
+					for(x in this.parent.objects)
+					{
+						gg = this.parent.objects[x];
+						if(typeof gg.groupId != 'undefined' && gg.groupId == o.groupId) order.push(gg.id);
+					}
+				}else{
+					// is in the middle of group?
+					order.push(o.id);
+				}
+			}
+
+			//selectedsClone = $.extend(true,{},this.parent.selecteds);
+
+			this.parent.selecteds = [];
+
+			for(i in order){
+				o = $.extend(true,{},this.getObject( order[i] ) );
+				this.deleteObject( order[i] );
+				this.parent.objects.push( o );
+				/*for(x in selectedsClone) 
+					if(selectedsClone[x].id == o.id) 
+						this.parent.selecteds.push( o );*/
+			}
 		},
 
 		unselect : function( t )
@@ -50,6 +151,41 @@ $.extend( true, designer, {
 			var object;
 			this.parent.helpers.forEachObjects($.proxy(function( obj ){ if(id == obj.id) object = obj; },this));
 			return object;
+		},
+
+		getGroup : function( groupId ){
+			for(i in this.parent.groups) if(this.parent.groups[i].id==groupId) return this.parent.groups[i];
+		},
+
+		getGroupObjects : function( groupId ){
+			var objects = [];
+			for(i in this.parent.objects)
+			{
+				var o = this.parent.objects[i];
+				if(typeof o.groupId != 'undefined' && o.groupId == groupId) objects.push(o);
+			}
+			return objects;
+		},
+
+		getGroupTopObject : function( groupId ){
+			var flag = false;
+			for(i in this.parent.objects)
+			{
+				//console.log(o);
+				var o = this.parent.objects[i];
+				if(typeof o.groupId != 'undefined' && o.groupId == groupId) flag = Number(i);
+			}
+			if(flag != false) return this.parent.objects[flag];
+			return false;
+		},
+
+		isGroupSelected : function( groupId ){
+			var flag         = false,
+				groupObjects = this.getGroupObjects( groupId );
+			if(!groupObjects) return false;
+			for(i in groupObjects) if( !this.parent.helpers.isObjectSelected( groupObjects[i].id ) ) flag = true;
+			if(flag) return false;
+			else return true;
 		},
 
 		deleteObject : function( id )

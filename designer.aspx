@@ -242,10 +242,21 @@
 				</div>
 			</div>
 			<!-- Objects toolbox item -->
-			<div class="objectsItem {{#selected}}selected{{/selected}}" objectid="{{id}}">
-				<div class="left objectName">{{title}}</div>
+			<div class="objectsItem {{#selected}}selected{{/selected}} {{#hidden}}hidden{{/hidden}}" objectid="{{id}}" groupid="{{groupId}}">
+				<div class="left objectName">{{#groupObject}}... {{/groupObject}}{{title}}</div>
 				<div class="right objectLock {{^locked}}unlocked{{/locked}}"></div>
 				<div class="right objectVisible {{^visible}}invisible{{/visible}}"></div>
+				<div class="clear"></div>
+			</div>
+			<div class="objectsItem objectsGroupItem {{#selected}}selected{{/selected}} groupItem" groupid="{{id}}">
+				<div class="left objectName groupItem">
+					<div class="left openClose groupItem {{#collapsed}}closed{{/collapsed}}{{^collapsed}}open{{/collapsed}}"></div>
+					<div class="left folderIcon groupItem "></div>
+					<div class="left groupName groupItem">{{name}}</div>
+					<div class="clear"></div>
+				</div>
+				<!--<div class="right objectLock {{^locked}}unlocked{{/locked}}"></div>
+				<div class="right objectVisible {{^visible}}invisible{{/visible}}"></div>-->
 				<div class="clear"></div>
 			</div>
 			
@@ -308,6 +319,9 @@
 			<string resource="Eyedropper"      value="<%=Resources.Strings.Eyedropper %>"></string>
 			<string resource="flattenImg"      value="Flatten Image"></string>
 			<string resource="flattenSel"      value="Flatten Selecteds"></string>
+			<string resource="group"           value="Group"></string>
+			<string resource="groupTitle"      value="Group"></string>
+			<string resource="ungroup"         value="Ungroup"></string>
 
 			<!-- Template Editor -->
 			<string resource="LoadingTemplates" value="<%=Resources.Strings.LoadingTemplates %>"></string>

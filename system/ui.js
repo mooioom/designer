@@ -69,6 +69,19 @@ $.extend( true, designer, {
 							this.parent.render();
 						},this));
 
+						$(document).on('click', '.toolbox .openClose', $.proxy(function( e ){
+							e.preventDefault(); e.stopPropagation();
+							//$(e.target).toggleClass('invisible');
+							id = Number($(e.target).parent().parent().attr('groupid'));
+							group = this.parent.functions.getGroup( id );
+							group.collapsed = $(e.target).hasClass('closed');
+							group.collapsed ? group.collapsed = false : group.collapsed = true;
+							//debugger;
+							//this.parent.functions.getObject(id).visible = !$(e.target).hasClass('invisible');
+							this.render( true );
+							//this.parent.render();
+						},this));
+
 						$('.delete',this.el).unbind('click').bind('click',$.proxy(function(){ this.parent.functions.delete(); },this));
 						$('.shadow',this.el).unbind('click').bind('click',$.proxy(function(){ $('.toolbox.shadow').show(); },this));
 						$('.transform',this.el).unbind('click').bind('click',$.proxy(function(){ $('.toolbox.transform').show(); },this));
@@ -79,6 +92,13 @@ $.extend( true, designer, {
 							this.parent.draw.toolbar();
 						},this));
 
+						$(document).on('mousedown', '.toolbox .objectsGroupItem', $.proxy(function( e ){
+							groupId = Number($(e.target).closest('.objectsGroupItem').attr('groupid'));
+							this.parent.functions.selectGroup( groupId );
+							$('.toolbox .objectsItem:not(.groupItem)[groupid='+groupId+']').addClass('selected')
+							console.log(groupId);
+						},this));
+
 						$('.sortable').multisortable({
 							items         : ".objectsItem",
 							selectedClass : "selected",
@@ -86,14 +106,29 @@ $.extend( true, designer, {
 								this.parent.draw.reOrderByUi();
 								this.toggleOptions();
 							},this),
-							click         : $.proxy(function(){
+							start         : $.proxy(function( e, ui ){
+								//debugger;
+								if( $(e.toElement).hasClass('groupItem')){
+									groupId = Number($(e.toElement).closest('.objectsGroupItem').attr('groupid'));
+									if( this.parent.functions.getGroup( groupId ).collapsed )
+										$('.toolbox.objects .placeholder').css('height','27px')
+								}
+							},this),
+							click         : $.proxy(function( e )
+							{
+								if( $(e.toElement).hasClass('groupItem')){
+									groupId = Number($(e.toElement).closest('.objectsGroupItem').attr('groupid'));
+									this.parent.functions.selectGroup( groupId );
+									$('.toolbox .objectsItem:not(.groupItem)[groupid='+groupId+']').addClass('selected')
+									//debugger;
+								}
 								this.parent.draw.reOrderByUi(); 
 								this.toggleOptions();
 							},this)
 						});
 					},
 
-					render  : function(){
+					render  : function( overrideCheck ){
 
 						//todo :: can be better if renders only the difference of current objects
 
@@ -102,26 +137,42 @@ $.extend( true, designer, {
 
 						else if( 
 							this.parent.helpers.equalObjects(this.currentObjects,   this.parent.objects) &&
-							this.parent.helpers.equalObjects(this.currentSelecteds, this.parent.selecteds)
+							this.parent.helpers.equalObjects(this.currentSelecteds, this.parent.selecteds) &&
+							!overrideCheck
 						) return;
 
 						$('.body',this.el).empty();
 						$('.body',this.el).removeClass('sortable').addClass('sortable');
 
-						//this.parent.helpers.timer('start','objects toolbox :: render');
+						this.parent.helpers.timer('start','objects toolbox :: render');
 
 						for(i in this.parent.objects)
 						{
-							object = $.extend(true,{},this.parent.objects[i]);
-							if(this.parent.helpers.isObjectSelected(object.id)) object.selected = true;
-							title = object.type; if(object.src) title = 'image';
-							title += ' ' + object.id; if(object.type == 'text') title += ' - ' + object.text;
+							o = $.extend(true,{},this.parent.objects[i]);
+
+							var groupTop = false, 
+								hidden   = false;
+
+							if(typeof o.groupId != 'undefined')
+							{
+								o.groupObject  = true;
+								group          = $.extend(true,{},this.parent.functions.getGroup( o.groupId ));
+								groupTopObject = this.parent.functions.getGroupTopObject( o.groupId );
+								group.selected = this.parent.functions.isGroupSelected( o.groupId );
+								if( group.collapsed ) o.hidden = true;
+								if( groupTopObject.id == o.id ) groupTop = true;
+							}
+
+							if(this.parent.helpers.isObjectSelected(o.id)) o.selected = true;
+							title = o.type; if(o.src) title = 'image';
+							title += ' ' + o.id; if(o.type == 'text') title += ' - ' + o.text;
 							title = title.capitalize();
-							object.title = title;
-							this.prepend('.body','.objectsItem',object);
+							o.title = title;
+							this.prepend('.body','.objectsItem',o);
+							if( groupTop ) this.prepend('.body','.objectsGroupItem',group);
 						}
 
-						//this.parent.helpers.timer('stop','objects toolbox :: render');
+						this.parent.helpers.timer('stop','objects toolbox :: render');
 
 						this.toggleOptions();
 
@@ -560,7 +611,7 @@ $.extend( true, designer, {
 				{
 					$('.toolbar.path .shapes').show();
 					$('.listOfShapes').empty();
-					$('.selectedShape').click(function(){$('.listOfShapes').toggle();});
+					$('.selectedShape').unbind('click').bind('click',function(){$('.listOfShapes').toggle();});
 
 					shapeDiv = $('<div class="shapeItem" shapeid="-1"></div>');
 					$('.listOfShapes').append(shapeDiv);

@@ -677,6 +677,50 @@ input[type='range'] {
 	background: #F0F0F0;
 }
 
+.toolbox .objectsGroupItem{
+    padding: 3px;
+    cursor: pointer;
+    border-bottom: 1px solid #D5D5D5;
+}
+
+.toolbox .objectsGroupItem.selected{
+	background: #F0F0F0;
+}
+
+.toolbox .objectsGroupItem .openClose{
+	cursor: pointer;
+	
+	width: 11px;
+	height: 16px;
+	background-size: 72%;
+	background-repeat: no-repeat;
+	background-position: center;
+	padding-top: 2px;
+	opacity: 0.3;
+}
+
+.left.openClose.closed {}
+.toolbox .objectsGroupItem .openClose.closed{
+	background-image: url(../images/TriangleClosed.png);
+}
+.toolbox .objectsGroupItem .openClose.open{
+	background-image: url(../images/TriangleOpen.png);
+	background-position: 1px;
+}
+
+.toolbox .objectsGroupItem .folderIcon{
+	background-image: url(../images/folder.png);
+	width: 20px;
+	height: 16px;
+	background-repeat: no-repeat;
+	background-size: 70%;
+	background-position: 2px,2px;
+	margin-left: 1px;
+	margin-right: 0px;
+	padding-top: 2px;
+}
+.toolbox .objectsGroupItem .groupName{}
+
 .toolbox .objectDisplay{
 	width: 91px;
 	height: 54px;

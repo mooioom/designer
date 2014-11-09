@@ -71,6 +71,8 @@ $.extend( true, designer, {
 
 		this.onLoad();
 
+		$('.resources').hide();
+
 	},
 
 	context : function( item )

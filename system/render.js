@@ -630,20 +630,30 @@ $.extend( true, designer, {
 
 		reOrderByUi : function( renderAllThumbs ){
 
-			var order       = [],
-				selecteds   = [],
-				tempObjects = [];
+			var order          = [],
+				selecteds      = [],
+				selectedGroups = [],
+				tempObjects    = [];
 
 			this.parent.selecteds = [];
 
 			$($('.toolbox.objects .body .objectsItem').get().reverse()).each(function(){
-				objectId = Number($(this).attr('objectid'));
-				order.push(objectId);
-				if( $(this).hasClass('selected') ) selecteds.push( objectId )
+
+				if( $(this).hasClass('objectsGroupItem') ) isGroup    = true; else isGroup = false;
+				if( $(this).hasClass('selected') )         isSelected = true; else isSelected = false;   
+
+				if( !isGroup ) objectId = Number($(this).attr('objectid'));
+				else           groupId  = Number($(this).attr('groupid'));
+
+				if( !isGroup ) order.push(objectId);
+
+				if( !isGroup && isSelected ) selecteds.push( objectId );
+				if( isGroup && isSelected )  selectedGroups.push( groupId );
 			});
 
 			for(i in order)     tempObjects.push( this.parent.functions.getObject( order[i] ) );
 			for(s in selecteds) this.parent.functions.select( this.parent.functions.getObject( selecteds[s] ) );
+			for(g in selectedGroups) this.parent.functions.selectGroup( selectedGroups[g] );
 
 			this.parent.objects = tempObjects;
 			this.parent.render();
