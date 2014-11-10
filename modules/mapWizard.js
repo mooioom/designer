@@ -324,7 +324,7 @@ mapWizard = {
 
 				$('#maps').change($.proxy(function(e){
 					item = $(e.target);
-					if(item.val() == "0") return;
+					if($('#maps').val() == "0") return;
 					this.api('GetMapCode',$.proxy(function( data ){
 						var map = JSON.parse(data.d);
 						//debugger;
@@ -332,7 +332,7 @@ mapWizard = {
 							$('.mapPreviewCanvas').html(map.Code);
 							w = Number($('.mapPreviewCanvas svg').width());
 							zoom = 670 / w;
-							$('.mapPreviewCanvas svg').css('zoom', zoom).css('-moz-transform','scale('+zoom+')');
+							$('.mapPreviewCanvas svg').attr('style', 'zoom:'+zoom+' ;-moz-transform:scale('+zoom+')');
 							$('.loadMapAction').removeClass('disabled').unbind('click').bind('click',$.proxy(function(){
 
 								this.mapId = Number($('#maps').val());
@@ -381,7 +381,7 @@ mapWizard = {
 							},this))
 						}
 					}),{
-						mapId : Number(item.val())
+						mapId : Number($('#maps').val())
 					})
 				},this));
 
@@ -421,15 +421,18 @@ mapWizard = {
 
 		if($('g',svg).length) PreviousMapWizard = true;
 
-		$('*',svg).each(function(){
-
+		$('*',svg).each(function()
+		{
 			var found     = false,
 				newObject = {},
 				matrix    = '',
-				rotate    = 0
+				rotate    = 0;
+
+			//debugger;
 
 			if($(this).attr('transform')){
 				transform = $(this).attr('transform');
+				//debugger;
 				if(transform.search('matrix')==0) matrix = transform.replace('matrix(','').replace(')','').split(' ').join(',');
 				if(transform.search('rotate')==0) rotate = Number(transform.replace('rotate(','').replace(')','').split(' ')[0]);
 			}
@@ -552,7 +555,7 @@ mapWizard = {
 						strokeStyle   : stroke,
 						fillStyle     : fill,
 						radius        : '',
-						text 		  : $(this).html(),
+						text 		  : $(this).text(),
 						font          : $(this).attr('font-family'),
 						fontSize      : fontSize,
 						lineHeight    : '',

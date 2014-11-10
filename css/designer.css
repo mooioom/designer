@@ -479,9 +479,11 @@ input[type='range'] {
 
 .button.select{
 	background-image: url(../images/select.png);
+	background-size: 50%;
 }
 .button.move{
 	background-image: url(../images/move.png);
+	background-size: 46%;
 }
 .button.crop{
 	background-image: url(../images/crop.png);
@@ -491,24 +493,24 @@ input[type='range'] {
 }
 .button.box{
 	background-image: url(../images/box.png);
-	background-size: 58%;
+	background-size: 50%;
 }
 .button.text{
 	background-image: url(../images/text.png);
-	background-size: 54%;
+	background-size: 50%;
 	background-position-x: 7px;
 }
 .button.ellipse{
 	background-image: url(../images/circle.png);
-	background-size: 65%;
+	background-size: 55%;
 }
 .button.line{
 	background-image: url(../images/line.png);
-	background-size: 58%;
+	background-size: 50%;
 }
 .button.path{
 	background-image: url(../images/path.png);
-	background-size: 60%;
+	background-size: 56%;
 }
 .button.eyedrop{
 	background-image: url(../images/eyedrop.png);

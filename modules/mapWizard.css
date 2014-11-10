@@ -213,6 +213,7 @@
 	direction: ltr;
 	background: white;
 	cursor: initial;
+	overflow: hidden;
 }
 
 .mapPreviewTitle{

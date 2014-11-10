@@ -62,7 +62,7 @@ $.extend( true, designer, {
 		{
 			visible     : true,
 			snap        : true,
-			size 		: 14, //22
+			size 		: 16, //22
 			lineWidth 	: 0.1,
 			strokeStyle : '#000'
 		},

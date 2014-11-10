@@ -62,10 +62,10 @@ $.extend( true, designer, {
 
 				for(var i = 0; i <= gridSteps; i++ )
 				{
-					this.parent.gridCtx.moveTo( i * size/* - 0.5*/, 0 );
-					this.parent.gridCtx.lineTo( i * size/* - 0.5*/, this.parent.height );
-					this.parent.gridCtx.moveTo( 0, i * size/* + 0.5*/ );
-					this.parent.gridCtx.lineTo( this.parent.width, i * size/* + 0.5*/ );
+					this.parent.gridCtx.moveTo( i * size - 0.5, 0.5 );
+					this.parent.gridCtx.lineTo( i * size - 0.5, this.parent.height );
+					this.parent.gridCtx.moveTo( 0.5, i * size + 0.5 );
+					this.parent.gridCtx.lineTo( this.parent.width, i * size + 0.5 );
 				}
 
 				this.parent.gridCtx.lineWidth   = 0.2;//this.parent.grid.lineWidth;
@@ -200,8 +200,8 @@ $.extend( true, designer, {
 				{
 					init = true;
 					pathInfo       = this.parent.helpers.getSvgPathInfo( path );
-					o.startX       = path.pathSegList[0].x;
-					o.startY       = path.pathSegList[0].y;
+					o.startX       = path.pathSegList.getItem(0).x;
+					o.startY       = path.pathSegList.getItem(0).y;
 					o.topLeftX     = pathInfo.x;
 					o.topLeftY     = pathInfo.y;
 					o.bottomRightX = pathInfo.x + pathInfo.w;
