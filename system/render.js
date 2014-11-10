@@ -50,27 +50,26 @@ $.extend( true, designer, {
 		grid : function()
 		{
 
-			this.parent.gridCtx.clearRect(0, 0, this.parent.canvas.width, this.parent.canvas.height);
+			this.parent.gridCtx.clearRect(0, 0, this.parent.width, this.parent.height);
 
 			if(this.parent.grid.visible)
 			{
 
-				var gridSteps = this.parent.canvas.width / this.parent.grid.size,
+				var gridSteps = this.parent.width / this.parent.grid.size,
 					size 	  = this.parent.grid.size;
 
 				this.parent.gridCtx.beginPath();
 
 				for(var i = 0; i <= gridSteps; i++ )
 				{
-					
-					this.parent.gridCtx.moveTo( i * size, 0 );
-					this.parent.gridCtx.lineTo( i * size, this.parent.canvas.height );
-					this.parent.gridCtx.moveTo( 0, i * size );
-					this.parent.gridCtx.lineTo( this.parent.canvas.width, i * size );
+					this.parent.gridCtx.moveTo( i * size/* - 0.5*/, 0 );
+					this.parent.gridCtx.lineTo( i * size/* - 0.5*/, this.parent.height );
+					this.parent.gridCtx.moveTo( 0, i * size/* + 0.5*/ );
+					this.parent.gridCtx.lineTo( this.parent.width, i * size/* + 0.5*/ );
 				}
 
-				this.parent.gridCtx.lineWidth   = this.parent.grid.lineWidth;
-				this.parent.gridCtx.strokeStyle = this.parent.grid.strokeStyle;
+				this.parent.gridCtx.lineWidth   = 0.2;//this.parent.grid.lineWidth;
+				this.parent.gridCtx.strokeStyle = '#333';//this.parent.grid.strokeStyle;
 				this.parent.gridCtx.stroke();
 			}	
 		},

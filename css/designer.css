@@ -467,7 +467,16 @@ input[type='range'] {
 .button.active{
 	background-color: #0068EC;
 	-webkit-filter: invert(100%);
+	filter: invert(100%);
 }
+
+@-moz-document url-prefix() 
+{
+    .button.active{
+		background-color: rgba(255, 150, 13, 1);
+	}
+}
+
 .button.select{
 	background-image: url(../images/select.png);
 }
@@ -539,7 +548,6 @@ input[type='range'] {
 .toolbox{
 	position: absolute;
 	top: 65px;
-	right: 20px;
 	background: #E2E2E2;
 	font-size: 11px;
 	color: #646060;
@@ -654,7 +662,6 @@ input[type='range'] {
 /* Toolbox - Objects */
 
 .toolbox.objects{
-	right: 263px;
 	top: 65px;
 }
 .rtl .toolbox.objects{

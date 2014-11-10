@@ -76,7 +76,7 @@ $.extend( true, designer, {
 
 			$("#canvas").droppable({drop:$.proxy(this.canvasDrop,this)});
 
-			$(window).resize( $.proxy(this.parent.helpers.positionCanvas,this));
+			$(window).resize($.proxy(this.positionCanvas,this));
 
 			$('.tools .button').unbind('click').bind('click', $.proxy(this.toolButton,this) );
 			$('.toolbar .edit').unbind('click').bind('click', $.proxy(this.edit,this) );
@@ -280,7 +280,11 @@ $.extend( true, designer, {
 		addToolsEvents : function(){ $('.tools .button').unbind('click').bind('click', $.proxy(this.toolButton,this) ); },
 
 		browserDrop : function( e ){         for(i in this.browserDropEvents) this.browserDropEvents[i]( e ); },
-		canvasDrop  : function( event, ui ){ for(i in this.canvasDropEvents)  this.canvasDropEvents[i]( event, ui ); }
+		canvasDrop  : function( event, ui ){ for(i in this.canvasDropEvents)  this.canvasDropEvents[i]( event, ui ); },
+
+		positionCanvas : function(){
+			this.parent.helpers.positionCanvas( this.parent.width, this.parent.height );
+		}
 
 	}
 

@@ -5,17 +5,26 @@ $.extend( true, designer, {
 
 		select : function( o, singleItem )
 		{
-			if(typeof o.groupId != 'undefined' && !singleItem) {this.selectGroup( o.groupId );return;}
+			if(typeof o.groupId != 'undefined' && !singleItem) 
+			{
+				this.selectGroup( o.groupId );
+				return;
+			}
 			else this.parent.selecteds.push( o );
 			this.parent.onSelect();
 		},
 
 		selectGroup : function( groupId ){
-			for(i in this.parent.objects)
+
+			var rootGroup      = this.getRootGroup( groupId ),
+				allRootObjects = this.getAllChildren( rootGroup.id );
+
+			for(i in allRootObjects)
 			{
-				o = this.parent.objects[i];
-				if(typeof o.groupId != 'undefined' && o.groupId == groupId && !this.parent.helpers.isObjectSelected(o.id) ) this.parent.selecteds.push( o );
+				o = allRootObjects[i];
+				this.select( o, true );
 			}
+
 		},
 
 		selectAll : function(){
@@ -28,7 +37,7 @@ $.extend( true, designer, {
 
 		group   : function(){
 
-			groupId = this.parent.groups.length;
+			var groupId = this.parent.groups.length;
 
 			this.parent.groups.push({
 				id        : groupId,
@@ -36,10 +45,16 @@ $.extend( true, designer, {
 				collapsed : true,
 				visible   : true,
 				locked    : false
-				//parentGroup : 
 			});
 
-			for(i in this.parent.selecteds) this.parent.selecteds[i].groupId = groupId;
+			for(i in this.parent.selecteds) 
+			{
+				o = this.parent.selecteds[i];
+				if(typeof o.groupId != 'undefined'){
+					this.setGroupParent(o.groupId, groupId)
+				}
+				else this.parent.selecteds[i].groupId = groupId;
+			}
 
 			this.reorder();
 			this.parent.redraw();
@@ -68,21 +83,6 @@ $.extend( true, designer, {
 		},
 
 		reorder : function(){
-
-			// remove empty groups
-			emptyGroups = [];
-			for(i in this.parent.groups)
-			{
-				flag = false;
-				g = this.parent.groups[i];
-				for(x in this.parent.objects)
-				{
-					o = this.parent.objects[x];
-					if(o.groupId == g.id) flag = true;	
-				}
-				if(flag == false) emptyGroups.push( g.id );
-			}
-			for(i in emptyGroups) this.deleteGroup( emptyGroups[i] );
 
 			order = [];
 
@@ -157,6 +157,18 @@ $.extend( true, designer, {
 			for(i in this.parent.groups) if(this.parent.groups[i].id==groupId) return this.parent.groups[i];
 		},
 
+		getRootGroup : function( groupId ){
+			group = this.getGroup( groupId )
+			if(typeof group.parentId == 'undefined') return group;
+			else return this.getRootGroup( group.parentId );
+		},
+
+		getParentGroup : function( groupId ){
+			group = this.getGroup( groupId )
+			if(typeof group.parentId != 'undefined') 
+				return this.getGroup( group.parentId );
+		},
+
 		getGroupObjects : function( groupId ){
 			var objects = [];
 			for(i in this.parent.objects)
@@ -165,6 +177,27 @@ $.extend( true, designer, {
 				if(typeof o.groupId != 'undefined' && o.groupId == groupId) objects.push(o);
 			}
 			return objects;
+		},
+
+		forEachParentGroups : function( groupId, callback ){
+			var group = this.getGroup( groupId );
+			callback( group );
+			if(typeof group.parentId != 'undefined') this.forEachParentGroups( group.parentId, callback )
+		},
+
+		getAllChildren : function( rootGroupId ){
+
+			var children = this.getGroupObjects( rootGroupId );
+
+			for(i in this.parent.groups){
+				group = this.parent.groups[i];
+				if(typeof group.parentId != 'undefined' && group.parentId == rootGroupId){
+					moreChildren = this.getAllChildren( group.id );
+					for(x in moreChildren) children.push(moreChildren[x]);
+				}
+			}
+
+			return children;
 		},
 
 		getGroupTopObject : function( groupId ){
@@ -186,6 +219,11 @@ $.extend( true, designer, {
 			for(i in groupObjects) if( !this.parent.helpers.isObjectSelected( groupObjects[i].id ) ) flag = true;
 			if(flag) return false;
 			else return true;
+		},
+
+		setGroupParent : function( groupId, parentId ){
+			group = this.getRootGroup( groupId );
+			if( group.id != parentId ) group.parentId = parentId;
 		},
 
 		deleteObject : function( id )

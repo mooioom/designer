@@ -384,6 +384,8 @@
 			<string resource="Energy"           value="<%=Resources.Strings.Energy %>"></string>
 			<string resource="Type"             value="<%=Resources.Strings.Type %>"></string>
 			<string resource="Parameter"        value="<%=Resources.Strings.Parameter %>"></string>
+			<string resource="Exit"             value="<%=Resources.Strings.Exit %>"></string>
+			
 			
 			
 		</div>

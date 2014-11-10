@@ -96,7 +96,7 @@ $.extend( true, designer, {
 							groupId = Number($(e.target).closest('.objectsGroupItem').attr('groupid'));
 							this.parent.functions.selectGroup( groupId );
 							$('.toolbox .objectsItem:not(.groupItem)[groupid='+groupId+']').addClass('selected')
-							console.log(groupId);
+							//console.log(groupId);
 						},this));
 
 						$('.sortable').multisortable({
@@ -144,7 +144,7 @@ $.extend( true, designer, {
 						$('.body',this.el).empty();
 						$('.body',this.el).removeClass('sortable').addClass('sortable');
 
-						this.parent.helpers.timer('start','objects toolbox :: render');
+						//this.parent.helpers.timer('start','objects toolbox :: render');
 
 						for(i in this.parent.objects)
 						{
@@ -172,7 +172,7 @@ $.extend( true, designer, {
 							if( groupTop ) this.prepend('.body','.objectsGroupItem',group);
 						}
 
-						this.parent.helpers.timer('stop','objects toolbox :: render');
+						//this.parent.helpers.timer('stop','objects toolbox :: render');
 
 						this.toggleOptions();
 

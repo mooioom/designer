@@ -28,6 +28,7 @@ namespace Satec.eXpertPowerPlus.Web
         [WebMethod]
         public static object getTemplateData(string type, int id, int isAudited)
         {
+            js.MaxJsonLength = Int32.MaxValue;
             DataTable dt = new BillTemplateBL(sessionHandler.LangID).getTemplateData(sessionHandler.CustomerID, type, id, isAudited);
 
             if (dt.Rows.Count == 1 && (type=="header"||type=="footer")) 

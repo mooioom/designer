@@ -20,6 +20,7 @@ templateEditor = {
 		this.load();
 
 		$('#new,#save,#load').hide();
+		$('.tools').css('height','294px');
 
 	},
 
@@ -91,7 +92,7 @@ templateEditor = {
 			}
 		});
 
-		$('#globalizedString').keyup(function(){
+		$('#globalizedString').bind('keyup',function(){
 
 			$('#globalizedStringChooser').empty().hide();
 			$('.globalizedGlobe').addClass('disabled');
@@ -102,7 +103,7 @@ templateEditor = {
 				type        : "POST",
 				contentType : "application/json; charset=utf-8",
 				data        : JSON.stringify({q:q}),
-				url         : "../../Login/OpenWebMethods.aspx/StringTexts",
+				url         : "../Login/OpenWebMethods.aspx/StringTexts",
 				dataType    : "json",
 				success     : function( data )
 				{
@@ -321,12 +322,13 @@ templateEditor = {
 			});
 
 			this.reposition();
+			this.events();
 
 		}),{
 			id 		  : this.id,
 			type 	  : this.type,
 			isAudited : this.isAudited
-		})
+		});
 
 	},
 

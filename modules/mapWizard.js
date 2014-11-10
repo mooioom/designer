@@ -91,16 +91,14 @@ mapWizard = {
 
 		svg = designer.file.getSvg({objects:objects});
 
-		if(this.meters.length){
+		// if(this.meters.length){
 
-			for(i in this.meters){
-				m = this.meters[i];
-				svg += '<meter id="'+(Number(i)+1)+'" target="'+m.target+'" offcolor="'+m.offColor+'" oncolor="'+m.onColor+'" levels="'+m.levels+'" min="'+m.min+'" max="'+m.max+'" style="display:none;" />';
-			}
+		// 	for(i in this.meters){
+		// 		m = this.meters[i];
+		// 		svg += '<meter id="'+(Number(i)+1)+'" target="'+m.target+'" offcolor="'+m.offColor+'" oncolor="'+m.onColor+'" levels="'+m.levels+'" min="'+m.min+'" max="'+m.max+'" style="display:none;" />';
+		// 	}
 
-		}
-
-		//designer.file.getSvg({objects:designer.objects});
+		// }
 
 		if(!this.mapId){
 
@@ -159,6 +157,7 @@ mapWizard = {
 		$('.mapWizardMenu').append('<div class="mapWizardMenuTitle">'+getString('MapWizard')+'</div>');
 		$('.mapWizardMenu').append('<div class="mapWizardMenuItem createMap clickable">'+getString('CreateNewMap')+'</div>');
 		$('.mapWizardMenu').append('<div class="mapWizardMenuItem loadMap clickable">'+getString('LoadMap')+'</div>');
+		$('.mapWizardMenu').append('<div class="mapWizardMenuItem exit clickable">'+getString('Exit')+'</div>');
 
 		//create
 		$('.createMap').click($.proxy(function(){
@@ -260,7 +259,9 @@ mapWizard = {
 						$('.closeDesignerWrapper').show();
 
 						$('.saveMap').click($.proxy(this.save,this));
-						$('.closeDesigner').click($.proxy(this.firstMenu,this));
+						$('.closeDesigner').click(function(){
+							location.reload();
+						});
 						$('.previewSvg').click($.proxy(this.previewSvg,this));
 
 						$('.bottomMenu').show();
@@ -283,6 +284,11 @@ mapWizard = {
 						    width   : Number(w),
 							height  : Number(h)
 						});
+
+						window.scrollTo(0,0);
+						a = $(window).height();
+						b = a - 47;
+						window.$('html').css('height',b+'px').css('overflow','hidden');
 
 					}else $('.validation').show().addClass('invalid').html(getString('MapNameExists'));
 
@@ -325,22 +331,24 @@ mapWizard = {
 						if(map.Code){
 							$('.mapPreviewCanvas').html(map.Code);
 							w = Number($('.mapPreviewCanvas svg').width());
-							zoom = 810 / w;
+							zoom = 670 / w;
 							$('.mapPreviewCanvas svg').css('zoom', zoom).css('-moz-transform','scale('+zoom+')');
 							$('.loadMapAction').removeClass('disabled').unbind('click').bind('click',$.proxy(function(){
 
 								this.mapId = Number($('#maps').val());
-								title = $('#maps option[value='+$('#maps').val()+']').html();
-								svg = $('.mapPreviewCanvas').html();
-								w = Number($(svg).attr('width').replace('px',''));
-								h = Number($(svg).attr('height').replace('px',''));
+								title      = $('#maps option[value='+$('#maps').val()+']').html();
+								svg        = $('.mapPreviewCanvas').html();
+								w          = Number($(svg).attr('width').replace('px',''));
+								h          = Number($(svg).attr('height').replace('px',''));
 
 								$('.resources').css('left','0px').css('top','620px').show();
 								$('.objects').css('left','0px').show();
 								$('.closeDesignerWrapper').show();
 
 								$('.saveMap').click($.proxy(this.save,this));
-								$('.closeDesigner').click($.proxy(this.firstMenu,this));
+								$('.closeDesigner').click(function(){
+									location.reload();
+								});
 								$('.previewSvg').click($.proxy(this.previewSvg,this));
 
 								$('.bottomMenu').show();
@@ -365,6 +373,11 @@ mapWizard = {
 									data    : this.parseSvg(svg)
 								});
 
+								window.scrollTo(0,0);
+								a = $(window).height();
+								b = a - 47;
+								window.$('html').css('height',b+'px').css('overflow','hidden');
+
 							},this))
 						}
 					}),{
@@ -374,9 +387,15 @@ mapWizard = {
 
 			});
 
-			
-
 		},this));
+
+		//exit
+
+		$('.exit').click(function(){
+
+			window.location = '../../eXpertpower/Dashboard/default.aspx';
+
+		});
 
 	},
 
@@ -1141,13 +1160,13 @@ mapWizard = {
 
 var closeDesigner = $('<div class="closeDesignerWrapper hidden"></div>'),
 	saveMap       = $('<div class="saveMap  left button">'+getString('save2')+'</div>'),
-	//closeButton   = $('<div class="closeDesigner left button">'+getString('Back')+'</div>'),
-	previewButton = $('<div class="previewSvg left button">'+getString('Preview')+'</div>'),
+	closeButton   = $('<div class="closeDesigner left button">'+getString('Back')+'</div>'),
+	//previewButton = $('<div class="previewSvg left button">'+getString('Preview')+'</div>'),
 	clearDiv      = $('<div class="clear"></div>');
 
 closeDesigner.append(saveMap);
-//closeDesigner.append(closeButton);
-closeDesigner.append(previewButton);
+closeDesigner.append(closeButton);
+//closeDesigner.append(previewButton);
 closeDesigner.append(clearDiv);
 
 $('body').append(closeDesigner);
