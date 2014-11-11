@@ -150,26 +150,38 @@ $.extend( true, designer, {
 						{
 							o = $.extend(true,{},this.parent.objects[i]);
 
-							var groupTop = false, 
-								hidden   = false;
+							var groups = [];
 
 							if(typeof o.groupId != 'undefined')
 							{
 								o.groupObject  = true;
 								group          = $.extend(true,{},this.parent.functions.getGroup( o.groupId ));
-								groupTopObject = this.parent.functions.getGroupTopObject( o.groupId );
-								group.selected = this.parent.functions.isGroupSelected( o.groupId );
-								if( group.collapsed ) o.hidden = true;
-								if( groupTopObject.id == o.id ) groupTop = true;
+								this.parent.functions.forEachParentGroups( group.id , $.proxy(function( g ){
+									if(g.collapsed) o.hidden = true;
+									groupTop = this.parent.functions.getGroupTopObject( g.id );
+									if( groupTop && groupTop.id == o.id ){
+										// this is group top
+										if( !$('.objectsGroupItem[groupid="'+g.id+'"]').length ){
+											if(g.parentId) 
+											{
+												g.subgroup = true;
+												pg = this.parent.functions.getGroup( g.parentId );
+												if(pg.collapsed) g.hidden = true;
+												else g.hidden = false;
+											}
+											if( this.parent.functions.isGroupSelected( g.id ) ) g.selected = true;
+											else g.selected = false;
+											groups.push( g );
+										}
+									}
+								},this));
 							}
 
-							if(this.parent.helpers.isObjectSelected(o.id)) o.selected = true;
-							title = o.type; if(o.src) title = 'image';
-							title += ' ' + o.id; if(o.type == 'text') title += ' - ' + o.text;
-							title = title.capitalize();
-							o.title = title;
-							this.prepend('.body','.objectsItem',o);
-							if( groupTop ) this.prepend('.body','.objectsGroupItem',group);
+							this.addObjectItem( o );
+
+							for(x in groups) this.addGroupItem( groups[x] );
+							
+							//if( groupTop ) this.addGroupItem( group );
 						}
 
 						//this.parent.helpers.timer('stop','objects toolbox :: render');
@@ -181,6 +193,20 @@ $.extend( true, designer, {
 
 						if( this.autoScrollOnSelect && $('.objectsItem.selected:eq(0)').length ) $('.body',this.el).scrollTop($('.objectsItem.selected:eq(0)').index() * 27 - (27*4));
 						
+					},
+
+					addObjectItem : function( object ){
+						var o = object;
+						if(this.parent.helpers.isObjectSelected(o.id)) o.selected = true;
+						title = o.type; if(o.src) title = 'image';
+						title += ' ' + o.id; if(o.type == 'text') title += ' - ' + o.text;
+						title = title.capitalize();
+						o.title = title;
+						this.prepend('.body','.objectsItem',o);
+					},
+
+					addGroupItem : function( group ){
+						this.prepend('.body','.objectsGroupItem',group);
 					},
 
 					events  : function(){},

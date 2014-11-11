@@ -201,24 +201,27 @@ $.extend( true, designer, {
 		},
 
 		getGroupTopObject : function( groupId ){
-			var flag = false;
-			for(i in this.parent.objects)
-			{
-				//console.log(o);
-				var o = this.parent.objects[i];
-				if(typeof o.groupId != 'undefined' && o.groupId == groupId) flag = Number(i);
-			}
-			if(flag != false) return this.parent.objects[flag];
-			return false;
+			var children = [];
+			children = this.getAllChildren( groupId );
+			if(children.length) return children[ children.length - 1];
+			else return false;
 		},
 
 		isGroupSelected : function( groupId ){
-			var flag         = false,
-				groupObjects = this.getGroupObjects( groupId );
-			if(!groupObjects) return false;
-			for(i in groupObjects) if( !this.parent.helpers.isObjectSelected( groupObjects[i].id ) ) flag = true;
-			if(flag) return false;
-			else return true;
+			var children = [], flag = false;
+			children = this.getAllChildren( groupId );
+			for(i in children) if(!flag) flag = !this.parent.helpers.isObjectSelected( children[i].id );
+			return !flag;
+		},
+
+		isEmptyGroup : function( groupId ){
+			var flag = false;
+			for(i in this.parent.objects)
+			{
+				var o = this.parent.objects[i];
+				if(typeof o.groupId != 'undefined' && o.groupId == groupId) flag = true;
+			}
+			return !flag;
 		},
 
 		setGroupParent : function( groupId, parentId ){

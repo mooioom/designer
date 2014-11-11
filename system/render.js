@@ -62,14 +62,14 @@ $.extend( true, designer, {
 
 				for(var i = 0; i <= gridSteps; i++ )
 				{
-					this.parent.gridCtx.moveTo( i * size - 0.5, 0.5 );
-					this.parent.gridCtx.lineTo( i * size - 0.5, this.parent.height );
-					this.parent.gridCtx.moveTo( 0.5, i * size + 0.5 );
+					this.parent.gridCtx.moveTo( i * size + 0.5, 0 );
+					this.parent.gridCtx.lineTo( i * size + 0.5, this.parent.height );
+					this.parent.gridCtx.moveTo( 0, i * size + 0.5 );
 					this.parent.gridCtx.lineTo( this.parent.width, i * size + 0.5 );
 				}
 
 				this.parent.gridCtx.lineWidth   = 0.2;//this.parent.grid.lineWidth;
-				this.parent.gridCtx.strokeStyle = '#333';//this.parent.grid.strokeStyle;
+				this.parent.gridCtx.strokeStyle = '#777';//this.parent.grid.strokeStyle;
 				this.parent.gridCtx.stroke();
 			}	
 		},
@@ -314,6 +314,16 @@ $.extend( true, designer, {
 			if (typeof stroke == "undefined" ) stroke = true;
 			if (typeof radius === "undefined") radius = 5;
 
+			// compensate for 0.5px blur
+			if(x == 0) w = w + 1;
+			if(y == 0) h = h + 1;
+			if(x) x = x + 1;
+			if(y) y = y + 1;
+			if(w > 0) w = w - 1;
+			if(h > 0) h = h - 1;
+			if(w < 0) {w = w + 1;x = x - 1;}
+			if(h < 0) {h = h + 1;y = y - 1;}
+
 			ctx.beginPath();
 			ctx.moveTo(x + radius, y);
 			ctx.lineTo(x + w - radius, y);
@@ -471,7 +481,7 @@ $.extend( true, designer, {
 				this.parent.ctx.setLineDash([6]);
 				this.parent.ctx.lineWidth   = this.parent.selectionBox.lineWidth;
 				this.parent.ctx.strokeStyle = this.parent.selectionBox.strokeStyle;
-				this.parent.ctx.rect( x1, y1, (x2 - x1), (y2 - y1) );
+				this.parent.ctx.rect( x1-0.5, y1-0.5, (x2 - x1), (y2 - y1) );
 				this.parent.ctx.stroke();
 				this.parent.ctx.setLineDash([0]);	
 			}

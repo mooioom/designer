@@ -178,6 +178,13 @@
 			<div class="clear"></div>
 		</div>
 
+		<div class="toolbar brush hidden">
+			<div class="item">Airbrush</div>
+			<div class="sep"></div>
+			<div class="item">Click to draw</div>
+			<div class="clear"></div>
+		</div>
+
 		<div class="stage">
 			<canvas id="canvas"></canvas>
 			<canvas id="gridCanvas"></canvas>
@@ -188,6 +195,7 @@
 			<div class="button move" id="move"></div>
 			<div class="button crop" id="crop"></div>
 			<div class="sep"></div>
+			<!-- <div class="button brush" id="brush"></div> -->
 			<div class="button box" id="box"></div>
 			<div class="button ellipse" id="ellipse"></div>
 			<div class="button line" id="line"></div>
@@ -221,9 +229,9 @@
 				<div class="right objectVisible {{^visible}}invisible{{/visible}}"></div>
 				<div class="clear"></div>
 			</div>
-			<div class="objectsItem objectsGroupItem {{#selected}}selected{{/selected}} groupItem" groupid="{{id}}">
+			<div class="objectsItem objectsGroupItem groupItem {{#selected}}selected{{/selected}} {{#hidden}}hidden{{/hidden}}" groupid="{{id}}" parentid="{{parentId}}">
 				<div class="left objectName groupItem">
-					<div class="left openClose groupItem {{#collapsed}}closed{{/collapsed}}{{^collapsed}}open{{/collapsed}}"></div>
+					{{#subgroup}}<div class="left groupItem subGroup"></div>{{/subgroup}}<div class="left openClose groupItem {{#collapsed}}closed{{/collapsed}}{{^collapsed}}open{{/collapsed}}"></div>
 					<div class="left folderIcon groupItem "></div>
 					<div class="left groupName groupItem">{{name}}</div>
 					<div class="clear"></div>

@@ -441,7 +441,7 @@ input[type='range'] {
 	height: 100%;
 	background: #eee;
 	position: absolute;
-	height: 325px;
+	height: 358px;
 	top: 74px;
 	z-index: 3;
 	width: 32px;
@@ -516,6 +516,11 @@ input[type='range'] {
 	background-image: url(../images/eyedrop.png);
 	background-size: 50%;
 }
+.button.brush{
+	background-image: url(../images/brush.png);
+	background-size: 50%;
+}
+
 .colorTool .sp-replacer{
 	width: 20px;
 	display: block;
@@ -730,6 +735,8 @@ input[type='range'] {
 }
 .toolbox .objectsGroupItem .groupName{}
 
+.toolbox .objectsGroupItem .subGroup{width: 11px;height: 10px;}
+
 .toolbox .objectDisplay{
 	width: 91px;
 	height: 54px;
@@ -773,9 +780,9 @@ input[type='range'] {
 	opacity: 0.2;
 }
 .toolbox .objectVisible{
-	width: 14px;
+	width: 16px;
 	height: 20px;
-	margin-right: 4px;
+	margin-right: 3px;
 	background-image: url(../images/visible.png);
 	background-position: center;
 	background-size: contain;

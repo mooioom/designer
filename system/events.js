@@ -29,6 +29,11 @@ $.extend( true, designer, {
 		mousePressed : false,
 		drag         : false,
 
+		brushMode   : false,
+		brushRoute  : [],
+		brushStartX : 0,
+		brushStartY : 0,
+
 		editMode        : false,
 
 		cropMode  		: false,

@@ -263,6 +263,30 @@ $.extend( true, designer, {
 			}
 		},
 
+		brush : 
+		{
+			mouseDown : function()
+			{
+				this.parent.history.save();
+				this.parent.selecteds = [];
+				this.parent.events.exitEditMode();
+				this.parent.events.brushMode = true;
+			},
+			mouseMove : function()
+			{
+				if(this.parent.events.brushMode){
+					this.parent.events.brushRoute.push({
+						x : this.parent.events.mouseX,
+						y : this.parent.events.mouseY
+					});
+				}
+			},
+			mouseUp : function()
+			{
+				this.parent.events.brushMode = false;
+			}
+		},
+
 		box : 
 		{
 			mouseDown : function()
