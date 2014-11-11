@@ -299,8 +299,8 @@ $.extend( true, designer, {
 				ctx.translate( -c.x,-c.y );
 
 				ctx.beginPath();
-				ctx.moveTo(o.startX, o.startY);
-				ctx.lineTo(o.endX, o.endY);
+				ctx.moveTo(o.startX + 0.5, o.startY + 0.5);
+				ctx.lineTo(o.endX + 0.5, o.endY + 0.5);
 				ctx.lineWidth   = o.lineWidth;
 				ctx.strokeStyle = o.strokeStyle;
 				if (o.strokeStyle && o.lineWidth) ctx.stroke();
@@ -557,7 +557,7 @@ $.extend( true, designer, {
 			fill = this.parent.color1;
 			stroke = 1;
 			opacity = 1;
-			this.rect( ctx, x, y, w, h, radius, lineWidth, strokeStyle, fill, stroke, opacity );
+			this.rect( ctx, x+0.5, y+0.5, w, h, radius, lineWidth, strokeStyle, fill, stroke, opacity );
 		},
 
 		cropArea : function(){

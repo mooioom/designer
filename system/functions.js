@@ -603,7 +603,7 @@ $.extend( true, designer, {
 					break;
 				case 'line' :
 					o.stroke 	  = params.stroke    || this.parent.defaults.box.stroke;
-					o.lineWidth   = params.lineWidth || this.parent.defaults.box.lineWidth;
+					o.lineWidth   = params.lineWidth || this.parent.defaults.box.lineWidth - 1;
 					o.strokeStyle = params.color1    || this.parent.color1;
 					break;
 				case 'ellipse' :
@@ -620,8 +620,8 @@ $.extend( true, designer, {
 					o.startX      = null;
 					break;
 				case 'path' :
-					o.stroke 	  = params.lineWidth || this.parent.defaults.box.lineWidth;
-					o.lineWidth   = params.lineWidth || this.parent.defaults.box.lineWidth;
+					o.stroke 	  = params.lineWidth || this.parent.defaults.box.lineWidth - 1;
+					o.lineWidth   = params.lineWidth || this.parent.defaults.box.lineWidth - 1;
 					o.strokeStyle = params.color1    || this.parent.color1;
 					o.fill 	      = params.fill      || this.parent.defaults.box.fill;
 					o.fillStyle   = params.color2    || this.parent.color2;
