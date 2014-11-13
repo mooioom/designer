@@ -314,16 +314,6 @@ $.extend( true, designer, {
 			if (typeof stroke == "undefined" ) stroke = true;
 			if (typeof radius === "undefined") radius = 5;
 
-			// compensate for 0.5px blur
-			if(x == 0) w = w + 1;
-			if(y == 0) h = h + 1;
-			if(x) x = x + 1;
-			if(y) y = y + 1;
-			if(w > 0) w = w - 1;
-			if(h > 0) h = h - 1;
-			if(w < 0) {w = w + 1;x = x - 1;}
-			if(h < 0) {h = h + 1;y = y - 1;}
-
 			ctx.beginPath();
 			ctx.moveTo(x + radius, y);
 			ctx.lineTo(x + w - radius, y);
@@ -634,39 +624,6 @@ $.extend( true, designer, {
 			this.parent.getToolbox('resources').redraw();
 
 			//this.parent.helpers.timer('stop','ui');
-
-		},
-
-		reOrderByUi : function( renderAllThumbs ){
-
-			var order          = [],
-				selecteds      = [],
-				selectedGroups = [],
-				tempObjects    = [];
-
-			this.parent.selecteds = [];
-
-			$($('.toolbox.objects .body .objectsItem').get().reverse()).each(function(){
-
-				if( $(this).hasClass('objectsGroupItem') ) isGroup    = true; else isGroup = false;
-				if( $(this).hasClass('selected') )         isSelected = true; else isSelected = false;   
-
-				if( !isGroup ) objectId = Number($(this).attr('objectid'));
-				else           groupId  = Number($(this).attr('groupid'));
-
-				if( !isGroup ) order.push(objectId);
-
-				if( !isGroup && isSelected ) selecteds.push( objectId );
-				if( isGroup && isSelected )  selectedGroups.push( groupId );
-			});
-
-			for(i in order)     tempObjects.push( this.parent.functions.getObject( order[i] ) );
-			for(s in selecteds) this.parent.functions.select( this.parent.functions.getObject( selecteds[s] ) );
-			for(g in selectedGroups) this.parent.functions.selectGroup( selectedGroups[g] );
-
-			this.parent.objects = tempObjects;
-			this.parent.render();
-			this.toolbar();
 
 		},
 

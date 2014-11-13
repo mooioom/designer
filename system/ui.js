@@ -34,6 +34,12 @@ $.extend( true, designer, {
 						$(el,this.el).prepend(html);
 					},
 
+					append : function( el, templateItem, data ){
+						html = $('#ceTemplates').find(templateItem).outerHTML();
+						html = Mustache.to_html(html,data);
+						$(el,this.el).append(html);
+					},
+
 					preLoad : function(){},
 
 					onLoad  : function(){
@@ -53,6 +59,20 @@ $.extend( true, designer, {
 					},
 					initEvents : function(){
 
+						// this.parent.events.documentClickEvents.push($.proxy(function( e ){
+							
+						// 	if(!$('.toolbox.objects .objectName input').length || $(e.target).hasClass('oInput') ) return;
+
+						// 	$('.toolbox.objects .objectName input').each($.proxy(function(i,ee)
+						// 	{
+						// 		var id = $(ee).closest('.objectTemplate').attr('objectid'),
+						// 			o  = this.parent.functions.getObject( id );
+						// 		o.title = $(ee).val();
+						// 		this.render();
+						// 	},this));
+
+						// },this));
+
 						$(document).on('click', '.toolbox .objectVisible', $.proxy(function( e ){
 							e.preventDefault(); e.stopPropagation();
 							$(e.target).toggleClass('invisible');
@@ -70,16 +90,17 @@ $.extend( true, designer, {
 						},this));
 
 						$(document).on('click', '.toolbox .openClose', $.proxy(function( e ){
+
 							e.preventDefault(); e.stopPropagation();
-							//$(e.target).toggleClass('invisible');
-							id = Number($(e.target).parent().parent().attr('groupid'));
-							group = this.parent.functions.getGroup( id );
+
+							var id    = Number($(e.target).parent().parent().parent().attr('groupid')),
+								group = this.parent.functions.getGroup( id );
+
 							group.collapsed = $(e.target).hasClass('closed');
 							group.collapsed ? group.collapsed = false : group.collapsed = true;
-							//debugger;
-							//this.parent.functions.getObject(id).visible = !$(e.target).hasClass('invisible');
+
 							this.render( true );
-							//this.parent.render();
+
 						},this));
 
 						$('.delete',this.el).unbind('click').bind('click',$.proxy(function(){ this.parent.functions.delete(); },this));
@@ -92,39 +113,41 @@ $.extend( true, designer, {
 							this.parent.draw.toolbar();
 						},this));
 
-						$(document).on('mousedown', '.toolbox .objectsGroupItem', $.proxy(function( e ){
-							groupId = Number($(e.target).closest('.objectsGroupItem').attr('groupid'));
-							this.parent.functions.selectGroup( groupId );
-							$('.toolbox .objectsItem:not(.groupItem)[groupid='+groupId+']').addClass('selected')
-							//console.log(groupId);
-						},this));
+						$(document).on('dblclick','.objectName',$.proxy(function(e){
+							var v  = $(e.target).html(),
+								id = $(e.target).closest('.objectTemplate').attr('objectid');
+							$(e.target).html('<input type="text" class="oInput" value="'+v+'"/>');
+							$('input',e.target).focus();
+							$('input',e.target).keydown($.proxy(function(ee){
+								if(ee.keyCode==13){
+									var o = this.parent.functions.getObject( id );
+									o.title = $('input',e.target).val();
+									this.render();
+								}
+							},this));
+						},this))
 
 						$('.sortable').multisortable({
 							items         : ".objectsItem",
 							selectedClass : "selected",
-							stop          : $.proxy(function( e ){
-								this.parent.draw.reOrderByUi();
-								this.toggleOptions();
-							},this),
+
 							start         : $.proxy(function( e, ui ){
-								//debugger;
-								if( $(e.toElement).hasClass('groupItem')){
-									groupId = Number($(e.toElement).closest('.objectsGroupItem').attr('groupid'));
-									if( this.parent.functions.getGroup( groupId ).collapsed )
-										$('.toolbox.objects .placeholder').css('height','27px')
-								}
+								$('.groupObjects').addClass('groupObjectsHelper');
 							},this),
-							click         : $.proxy(function( e )
-							{
-								if( $(e.toElement).hasClass('groupItem')){
-									groupId = Number($(e.toElement).closest('.objectsGroupItem').attr('groupid'));
-									this.parent.functions.selectGroup( groupId );
-									$('.toolbox .objectsItem:not(.groupItem)[groupid='+groupId+']').addClass('selected')
-									//debugger;
-								}
-								this.parent.draw.reOrderByUi(); 
+
+							stop          : $.proxy(function( e ){
+								$('.groupObjects').removeClass('groupObjectsHelper');
+								this.reorder();
+								this.toggleOptions();
+								this.render();
+							},this),
+
+							click         : $.proxy(function( e ){
+								//console.log('here');
+								this.reorder(); 
 								this.toggleOptions();
 							},this)
+
 						});
 					},
 
@@ -146,43 +169,45 @@ $.extend( true, designer, {
 
 						//this.parent.helpers.timer('start','objects toolbox :: render');
 
-						for(i in this.parent.objects)
-						{
-							o = $.extend(true,{},this.parent.objects[i]);
+						// create objects hirarchy
 
-							var groups = [];
+						this.parent.helpers.forEachObjects( $.proxy(function( object ){
 
-							if(typeof o.groupId != 'undefined')
-							{
-								o.groupObject  = true;
-								group          = $.extend(true,{},this.parent.functions.getGroup( o.groupId ));
-								this.parent.functions.forEachParentGroups( group.id , $.proxy(function( g ){
-									if(g.collapsed) o.hidden = true;
-									groupTop = this.parent.functions.getGroupTopObject( g.id );
-									if( groupTop && groupTop.id == o.id ){
-										// this is group top
-										if( !$('.objectsGroupItem[groupid="'+g.id+'"]').length ){
-											if(g.parentId) 
-											{
-												g.subgroup = true;
-												pg = this.parent.functions.getGroup( g.parentId );
-												if(pg.collapsed) g.hidden = true;
-												else g.hidden = false;
-											}
-											if( this.parent.functions.isGroupSelected( g.id ) ) g.selected = true;
-											else g.selected = false;
-											groups.push( g );
+							o = $.extend(true,{},object);
+							o = this.setupObjectItem( o );
+
+							if(typeof o.groupId != 'undefined'){
+
+								var group  = $.extend( true, {}, this.parent.functions.getGroup( o.groupId ) );
+								var flag   = false;
+								var groups = [];
+
+								this.parent.functions.forEachParentGroups(group.id,$.proxy(function( g ){
+									groups.push($.extend(true,{},g));
+								},this));
+
+								groups = groups.reverse();
+								var x = 0;
+
+								for(x in groups)
+								{
+									var g = groups[x];
+									if( !$('.objectsGroupItem[groupid="'+g.id+'"]').length ) {
+										g.selected = this.parent.functions.isGroupSelected( g.id );
+										this.addGroup( g, g.parentId );
+										if(g.id == o.groupId) {
+											flag = true;
+											this.appendToGroup( o, g.id );
 										}
 									}
-								},this));
+								}
+
+								if(!flag) this.appendToGroup( o, group.id )
+
 							}
+							else this.addObjectItem( o );
 
-							this.addObjectItem( o );
-
-							for(x in groups) this.addGroupItem( groups[x] );
-							
-							//if( groupTop ) this.addGroupItem( group );
-						}
+						},this), true);
 
 						//this.parent.helpers.timer('stop','objects toolbox :: render');
 
@@ -195,18 +220,30 @@ $.extend( true, designer, {
 						
 					},
 
-					addObjectItem : function( object ){
-						var o = object;
-						if(this.parent.helpers.isObjectSelected(o.id)) o.selected = true;
-						title = o.type; if(o.src) title = 'image';
-						title += ' ' + o.id; if(o.type == 'text') title += ' - ' + o.text;
-						title = title.capitalize();
-						o.title = title;
-						this.prepend('.body','.objectsItem',o);
+					addGroup : function( group, groupId ){
+						if(!groupId) this.append('.body','.objectsGroupItem',group);
+						else this.append('.objectsGroupItem[groupid="'+groupId+'"]>.groupObjects','.objectsGroupItem',group);
 					},
 
-					addGroupItem : function( group ){
-						this.prepend('.body','.objectsGroupItem',group);
+					appendToGroup : function( object, groupId ){
+						this.append('.objectsGroupItem[groupid="'+groupId+'"] .groupObjects','.objectTemplate',object);
+					},
+
+					addObjectItem : function( object ){
+						this.append('.body','.objectsItem',o);
+					},
+
+					setupObjectItem : function( object ){
+						var o = object;
+						if(this.parent.helpers.isObjectSelected(o.id)) o.selected = true;
+						//isObjectVisible, isObjectLocked
+						if(!o.title){
+							title = o.type; if(o.src) title = 'image';
+							title += ' ' + o.id; if(o.type == 'text') title += ' - ' + o.text;
+							title = title.capitalize();
+							o.title = title;
+						}
+						return o;
 					},
 
 					events  : function(){},
@@ -223,6 +260,39 @@ $.extend( true, designer, {
 							$('.transform',this.el).addClass('disabled');
 							$('.delete',   this.el).addClass('disabled');
 						}
+					},
+
+					reorder : function( renderAllThumbs ){
+
+						var order          = [],
+							selecteds      = [],
+							selectedGroups = [],
+							tempObjects    = [];
+
+						this.parent.selecteds = [];
+
+						$($('.toolbox.objects .body .objectTemplate').get().reverse()).each(function(){
+
+							if( $(this).hasClass('objectsGroupItem') ) isGroup    = true; else isGroup = false;
+							if( $(this).hasClass('selected') )         isSelected = true; else isSelected = false;   
+
+							if( !isGroup ) objectId = Number($(this).attr('objectid'));
+							else           groupId  = Number($(this).attr('groupid'));
+
+							if( !isGroup ) order.push(objectId);
+
+							if( !isGroup && isSelected ) selecteds.push( objectId );
+							if( isGroup && isSelected )  selectedGroups.push( groupId );
+						});
+
+						for(i in order)     tempObjects.push( this.parent.functions.getObject( order[i] ) );
+						for(s in selecteds) this.parent.functions.select( this.parent.functions.getObject( selecteds[s] ) );
+						for(g in selectedGroups) this.parent.functions.selectGroup( selectedGroups[g] );
+
+						this.parent.objects = tempObjects;
+						this.parent.render();
+						this.parent.draw.toolbar();
+
 					}
 
 				});

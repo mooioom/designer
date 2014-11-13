@@ -67,7 +67,6 @@ $.extend( true, designer, {
 			this.parent.canvas.addEventListener("mousemove",$.proxy(this.mouseMove,this),false);
 			this.parent.canvas.addEventListener("mousedown",$.proxy(this.mouseDown,this),false);
 			this.parent.canvas.addEventListener("mouseup",  $.proxy(this.mouseUp,this),false);
-			
 
 			$(document).unbind('keydown')
 					   .unbind('keyup');
@@ -149,7 +148,6 @@ $.extend( true, designer, {
 			this.parent.render();
 			this.parent.onMouseMove();
 		},
-
 
 		keyDown : function( e )
 		{

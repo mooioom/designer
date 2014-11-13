@@ -681,10 +681,22 @@ input[type='range'] {
 	overflow-x: hidden;
 }
 
+.toolbox.objects .objectTemplate{
+	padding: 3px;
+	border-bottom: 1px solid #D5D5D5;
+} 
+
+.toolbox.objects .collapsed .objectTemplate, .toolbox.objects .collapsed .objectsGroupItem{
+	display: none;
+} 
+
+.toolbox.objects .collapsed .objectsItem{
+	height: 0px;
+	padding: 0px;
+}
+
 .toolbox .objectsItem{
-    padding: 3px;
     cursor: pointer;
-    border-bottom: 1px solid #D5D5D5;
 }
 
 .toolbox .objectsItem.selected{
@@ -692,7 +704,11 @@ input[type='range'] {
 }
 
 .toolbox .objectsGroupItem{
-    padding: 3px;
+
+}
+
+.toolbox .objectsGroupItem .headerItem{
+	padding: 3px;
     cursor: pointer;
     border-bottom: 1px solid #D5D5D5;
 }
@@ -702,15 +718,24 @@ input[type='range'] {
 }
 
 .toolbox .objectsGroupItem .openClose{
-	cursor: pointer;
-	
-	width: 11px;
-	height: 16px;
-	background-size: 72%;
-	background-repeat: no-repeat;
-	background-position: center;
-	padding-top: 2px;
-	opacity: 0.3;
+	cursor              : pointer;
+	width               : 11px;
+	height              : 16px;
+	background-size     : 72%;
+	background-repeat   : no-repeat;
+	background-position : center;
+	padding-top         : 2px;
+	opacity             : 0.3;
+}
+
+.toolbox .placeholder{
+	/*height: 2px !important;
+	background-color: green;
+	box-sizing:border-box;*/
+}
+
+.toolbox .groupObjectsHelper{
+	border-bottom: 2px solid orange;
 }
 
 .left.openClose.closed {}
@@ -762,6 +787,17 @@ input[type='range'] {
 	width: 150px;
 	white-space: nowrap;
 }
+
+.toolbox .objectName input{
+    width: 140px;
+	height: 14px;
+	direction: ltr;
+	text-align: left;
+	padding-left: 3px;
+	position: relative;
+	left: -3px;
+}
+
 .toolbox .objectLock{
 	width: 14px;
 	height: 20px;
@@ -771,6 +807,10 @@ input[type='range'] {
 	background-size: contain;
 	background-repeat: no-repeat;
 	cursor: pointer;
+}
+.groupObjects .objectName{
+	position: relative;
+	left: 13px;
 }
 .rtl .toolbox .objectLock{
 	margin-right: initial;

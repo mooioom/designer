@@ -458,6 +458,7 @@ mapWizard = {
 					{
 						id     		  : current,
 						dynamicData   : $(this).attr('id'),
+						title         : $(this).attr('otitle') || '',
 						url           : $(this).attr('dataurl') || '',
 						layer  		  : 0,
 						type          : 'box',
@@ -490,6 +491,7 @@ mapWizard = {
 					{
 						id     		  : current,
 						dynamicData   : $(this).attr('id'),
+						title         : $(this).attr('otitle')  || '',
 						url           : $(this).attr('dataurl') || '',
 						layer  		  : 0,
 						type          : 'box',
@@ -535,6 +537,7 @@ mapWizard = {
 					{
 						id     		  : current,
 						dynamicData   : $(this).attr('id'),
+						title         : $(this).attr('otitle')  || '',
 						url           : $(this).attr('dataurl') || '',
 						layer  		  : 0,
 						type          : 'text',
@@ -578,6 +581,7 @@ mapWizard = {
 					{
 						id     		  : current,
 						dynamicData   : $(this).attr('id'),
+						title         : $(this).attr('otitle')  || '',
 						url           : $(this).attr('dataurl') || '',
 						type          : 'path',
 						opacity       : Number($(this).attr('opacity')) || 0,
@@ -607,6 +611,7 @@ mapWizard = {
 					{
 						id     		  : current,
 						dynamicData   : $(this).attr('id'),
+						title         : $(this).attr('otitle')  || '',
 						url           : $(this).attr('dataurl') || '',
 						type          : 'ellipse',
 						opacity       : Number($(this).attr('opacity')) || 0,
@@ -631,6 +636,7 @@ mapWizard = {
 					{
 						id     		  : current,
 						dynamicData   : $(this).attr('id'),
+						title         : $(this).attr('otitle') || '',
 						type          : 'line',
 						opacity       : Number($(this).attr('opacity')) || 0,
 						matrix        : matrix,
@@ -653,6 +659,7 @@ mapWizard = {
 					{
 						id     		  : current,
 						dynamicData   : $(this).attr('id'),
+						title         : $(this).attr('otitle')  || '',
 						url           : $(this).attr('dataurl') || '',
 						type          : 'circle',
 						opacity       : Number($(this).attr('opacity')) || 0,
@@ -685,7 +692,7 @@ mapWizard = {
 
 	hideOnInit : function(){
 
-		$('.tools, .toolbox, #new, #save, #load, .stage canvas').hide();
+		$('.tools, .toolbox, #new, #save, #load, .stage canvas, #group, #ungroup').hide();
 
 	},
 

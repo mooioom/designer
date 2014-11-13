@@ -259,6 +259,8 @@ $.extend( true, designer, {
 
 		getSvg : function( data )
 		{
+			console.log(data.excludeDesignerData);
+
 			svg = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="'+this.parent.width+'px" height="'+this.parent.height+'px">';
 
 			var counter = 0;
@@ -313,8 +315,11 @@ $.extend( true, designer, {
 					{
 						var str = '<image ';
 						str+= ' id="'		  + o.dynamicData + '"';
-						if(o.locked) str+= ' locked="1"';
-						if(o.url) str+= ' onclick="window.open(\''+o.url+'\',\'_blank\')" dataurl="'+o.url+'"';
+						if(data.excludeDesignerData != true){
+							if(o.locked) str+= ' locked="1"';
+							if(o.title)  str+= ' otitle="'+o.title+'"';
+							if(o.url)    str+= ' onclick="window.open(\''+o.url+'\',\'_blank\')" dataurl="'+o.url+'"';
+						}
 						str+= ' x="'		  + x + '"';
 						str+= ' y="'		  + y + '"';
 						str+= ' width="'	  + w + '"';
@@ -329,8 +334,11 @@ $.extend( true, designer, {
 						if(!o.fill) fill = "rgba(0,0,0,0)"; else fill = o.fill;
 						var str = '<rect ';
 						str+= ' id="'		    + o.dynamicData + '"';
-						if(o.locked) str+= ' locked="1"';
-						if(o.url) str+= ' onclick="window.open(\''+o.url+'\',\'_blank\')" dataurl="'+o.url+'"';
+						if(data.excludeDesignerData != true){
+							if(o.locked) str+= ' locked="1"';
+							if(o.title)  str+= ' otitle="'+o.title+'"';
+							if(o.url)    str+= ' onclick="window.open(\''+o.url+'\',\'_blank\')" dataurl="'+o.url+'"';
+						}
 						str+= ' x="'		    + x + '"';
 						str+= ' y="'		    + y + '"';
 						str+= ' width="'	    + w + '"';
@@ -354,8 +362,11 @@ $.extend( true, designer, {
 					fontComp = o.fontSize/10; // arial type
 					var str = '<text ';
 						str+= ' id="'		    + o.dynamicData + '"';
-						if(o.locked) str+= ' locked="1"';
-						if(o.url) str+= ' onclick="window.open(\''+o.url+'\',\'_blank\')" dataurl="'+o.url+'"';
+						if(data.excludeDesignerData != true){
+							if(o.locked) str+= ' locked="1"';
+							if(o.title)  str+= ' otitle="'+o.title+'"';
+							if(o.url)    str+= ' onclick="window.open(\''+o.url+'\',\'_blank\')" dataurl="'+o.url+'"';
+						}
 						str+= ' xml:space="preserve"';
 						str+= ' text-anchor="start"';
 						str+= ' x="'		    + x + '"';
@@ -382,8 +393,11 @@ $.extend( true, designer, {
 					if(!o.fillStyle) fill = "none"; else fill = o.fillStyle;
 					var str = '<path ';
 						str+= ' id="'		  + o.dynamicData + '"';
-						if(o.locked) str+= ' locked="1"';
-						if(o.url) str+= ' onclick="window.open(\''+o.url+'\',\'_blank\')" dataurl="'+o.url+'"';
+						if(data.excludeDesignerData != true){
+							if(o.locked) str+= ' locked="1"';
+							if(o.title)  str+= ' otitle="'+o.title+'"';
+							if(o.url)    str+= ' onclick="window.open(\''+o.url+'\',\'_blank\')" dataurl="'+o.url+'"';
+						}
 						str+= ' d="'+o.path+'"';
 						str+= ' stroke-width="'+o.lineWidth+'"';
 						str+= ' stroke="'+o.strokeStyle+'"';
@@ -397,8 +411,11 @@ $.extend( true, designer, {
 					if(!o.fillStyle) fill = "none"; else fill = o.fillStyle;
 					var str = '<ellipse ';
 						str+= ' id="'		  + o.dynamicData + '"';
-						if(o.locked) str+= ' locked="1"';
-						if(o.url) str+= ' onclick="window.open(\''+o.url+'\',\'_blank\')" dataurl="'+o.url+'"';
+						if(data.excludeDesignerData != true){
+							if(o.locked) str+= ' locked="1"';
+							if(o.title)  str+= ' otitle="'+o.title+'"';
+							if(o.url)    str+= ' onclick="window.open(\''+o.url+'\',\'_blank\')" dataurl="'+o.url+'"';
+						}
 						str+= ' rx="'+(o.rx/2)+'"';
 						str+= ' ry="'+(o.ry/2)+'"';
 						str+= ' cx="'+o.cx+'"';
@@ -415,7 +432,11 @@ $.extend( true, designer, {
 					fill = "none";
 					var str = '<line ';
 						str+= ' id="'+ o.dynamicData + '"';
-						if(o.locked) str+= ' locked="1"';
+						if(data.excludeDesignerData != true){
+							if(o.locked) str+= ' locked="1"';
+							if(o.title)  str+= ' otitle="'+o.title+'"';
+							if(o.url)    str+= ' onclick="window.open(\''+o.url+'\',\'_blank\')" dataurl="'+o.url+'"';
+						};
 						str+= ' x1="'+o.startX+'"';
 						str+= ' y1="'+o.startY+'"';
 						str+= ' x2="'+o.endX+'"';
@@ -432,8 +453,11 @@ $.extend( true, designer, {
 					if(!o.fill) fill = "none"; else fill = o.fill;
 					var str = '<circle ';
 						str+= ' id="' + o.dynamicData + '"';
-						if(o.locked) str+= ' locked="1"';
-						if(o.url) str+= ' onclick="window.open(\''+o.url+'\',\'_blank\')" dataurl="'+o.url+'"';
+						if(data.excludeDesignerData != true){
+							if(o.locked) str+= ' locked="1"';
+							if(o.title)  str+= ' otitle="'+o.title+'"';
+							if(o.url)    str+= ' onclick="window.open(\''+o.url+'\',\'_blank\')" dataurl="'+o.url+'"';
+						}
 						str+= ' r="'+(o.r)+'"';
 						str+= ' cx="'+o.cx+'"';
 						str+= ' cy="'+o.cy+'"';
@@ -479,7 +503,7 @@ $.extend( true, designer, {
 			var blob = new Blob(
 				[
 					this.getSvg({
-						objects : this.parent.objects
+						objects             : this.parent.objects
 					})
 				], {
 					type: "text/plain;charset=utf-8"
