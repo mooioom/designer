@@ -15,10 +15,12 @@ $.extend( true, designer, {
 	resources : [],
 	images    : [],
 	clipboard : [],
-	selecteds : [],
 	temps     : [],
 	temp      : null,
 	toolboxes : [],
+
+	selecteds       : [],
+	selectedsGroups : [],
 
 	color1 : 'black',
 	color2 : 'white',

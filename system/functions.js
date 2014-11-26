@@ -3,28 +3,11 @@ $.extend( true, designer, {
 
 	functions : {
 
-		select : function( o, singleItem )
+		select : function( o )
 		{
-			if(typeof o.groupId != 'undefined' && !singleItem) 
-			{
-				this.selectGroup( o.groupId );
-				return;
-			}
-			else this.parent.selecteds.push( o );
+			this.parent.selectedsGroups = [];
+			this.parent.selecteds.push( o );
 			this.parent.onSelect();
-		},
-
-		selectGroup : function( groupId ){
-
-			var rootGroup      = this.getRootGroup( groupId ),
-				allRootObjects = this.getAllChildren( rootGroup.id );
-
-			for(i in allRootObjects)
-			{
-				o = allRootObjects[i];
-				this.select( o, true );
-			}
-
 		},
 
 		selectAll : function(){
@@ -37,85 +20,14 @@ $.extend( true, designer, {
 
 		group   : function(){
 
-			var groupId = this.parent.groups.length;
-
-			this.parent.groups.push({
-				id        : groupId,
-				name      : getString('group') + ' ' + groupId,
-				collapsed : true,
-				visible   : true,
-				locked    : false
-			});
-
-			for(i in this.parent.selecteds) 
-			{
-				o = this.parent.selecteds[i];
-				if(typeof o.groupId != 'undefined'){
-					this.setGroupParent(o.groupId, groupId)
-				}
-				else this.parent.selecteds[i].groupId = groupId;
-			}
-
-			this.reorder();
-			this.parent.redraw();
+			this.parent.getToolbox('objects').group();
 
 		},
 
 		ungroup : function(){
 
-			if(!this.parent.groups.length) return;
-			for(i in this.parent.selecteds) {
-				o = this.parent.selecteds[i]
-				if(typeof o.groupId != 'undefined'){
-					this.deleteGroup( o.groupId );
-					delete o.groupId;
-				}
-			}
-			this.parent.redraw();
-		},
-
-		deleteGroup : function( groupId ){
-			for(i in this.parent.groups){
-				group = this.parent.groups[i];
-				if(group.id == groupId) idx = i;
-			}
-			if(idx) this.parent.groups.splice(idx,1);
-		},
-
-		reorder : function(){
-
-			order = [];
-
-			for(i in this.parent.objects)
-			{
-				o = this.parent.objects[i];
-				for(x in order) if(order[x]==o.id) continue;
-				//console.log(Number(i)+1);
-				if(typeof o.groupId != 'undefined'){
-					// is group inside group?
-					for(x in this.parent.objects)
-					{
-						gg = this.parent.objects[x];
-						if(typeof gg.groupId != 'undefined' && gg.groupId == o.groupId) order.push(gg.id);
-					}
-				}else{
-					// is in the middle of group?
-					order.push(o.id);
-				}
-			}
-
-			//selectedsClone = $.extend(true,{},this.parent.selecteds);
-
-			this.parent.selecteds = [];
-
-			for(i in order){
-				o = $.extend(true,{},this.getObject( order[i] ) );
-				this.deleteObject( order[i] );
-				this.parent.objects.push( o );
-				/*for(x in selectedsClone) 
-					if(selectedsClone[x].id == o.id) 
-						this.parent.selecteds.push( o );*/
-			}
+			this.parent.getToolbox('objects').ungroup();
+			
 		},
 
 		unselect : function( t )
@@ -157,18 +69,6 @@ $.extend( true, designer, {
 			for(i in this.parent.groups) if(this.parent.groups[i].id==groupId) return this.parent.groups[i];
 		},
 
-		getRootGroup : function( groupId ){
-			group = this.getGroup( groupId )
-			if(typeof group.parentId == 'undefined') return group;
-			else return this.getRootGroup( group.parentId );
-		},
-
-		getParentGroup : function( groupId ){
-			group = this.getGroup( groupId )
-			if(typeof group.parentId != 'undefined') 
-				return this.getGroup( group.parentId );
-		},
-
 		getGroupObjects : function( groupId ){
 			var objects = [];
 			for(i in this.parent.objects)
@@ -179,10 +79,17 @@ $.extend( true, designer, {
 			return objects;
 		},
 
-		forEachParentGroups : function( groupId, callback ){
-			var group = this.getGroup( groupId );
-			callback( group );
-			if(typeof group.parentId != 'undefined') this.forEachParentGroups( group.parentId, callback )
+		getObjectGroups : function( objectId )
+		{
+			var o   = this.getObject( objectId ); if(!o || !o.groupId) return [];
+			var gid = o.groupId, g = [], gs = this.getParentGroups( gid );
+			g.push( this.getGroup( gid ) );
+			for(i in gs) g.push( this.getGroup( gs[i] ) );
+			return g;
+		},
+
+		getParentGroups : function( groupId ){
+			return this.parent.getToolbox('objects').getParentGroups( groupId );
 		},
 
 		getAllChildren : function( rootGroupId ){
@@ -191,7 +98,7 @@ $.extend( true, designer, {
 
 			for(i in this.parent.groups){
 				group = this.parent.groups[i];
-				if(typeof group.parentId != 'undefined' && group.parentId == rootGroupId){
+				if(typeof group.groupId != 'undefined' && group.groupId == rootGroupId){
 					moreChildren = this.getAllChildren( group.id );
 					for(x in moreChildren) children.push(moreChildren[x]);
 				}
@@ -200,33 +107,11 @@ $.extend( true, designer, {
 			return children;
 		},
 
-		getGroupTopObject : function( groupId ){
-			var children = [];
-			children = this.getAllChildren( groupId );
-			if(children.length) return children[ children.length - 1];
-			else return false;
-		},
-
 		isGroupSelected : function( groupId ){
 			var children = [], flag = false;
 			children = this.getAllChildren( groupId );
 			for(i in children) if(!flag) flag = !this.parent.helpers.isObjectSelected( children[i].id );
 			return !flag;
-		},
-
-		isEmptyGroup : function( groupId ){
-			var flag = false;
-			for(i in this.parent.objects)
-			{
-				var o = this.parent.objects[i];
-				if(typeof o.groupId != 'undefined' && o.groupId == groupId) flag = true;
-			}
-			return !flag;
-		},
-
-		setGroupParent : function( groupId, parentId ){
-			group = this.getRootGroup( groupId );
-			if( group.id != parentId ) group.parentId = parentId;
 		},
 
 		deleteObject : function( id )
@@ -241,23 +126,40 @@ $.extend( true, designer, {
 		},
 
 		paste : function(){
+			var clonedGroups = [], clonedGroupsData = [];
 			this.parent.history.save();
 			this.parent.selecteds = [];
 			for(i in this.parent.clipboard)
 			{
 				var o = jQuery.extend(true, {}, this.parent.clipboard[i]);
+				if( o.groupId ){
+					var gs = this.getObjectGroups( o.id );
+					for(x in gs){
+						var g = gs[x];
+						if(clonedGroups.indexOf(g.id) == -1){
+							clonedGroups.push(g.id);
+							clonedGroupsData.push( $.extend(true,{},g) );
+							clonedGroupsData[ clonedGroupsData.length-1 ].id = this.parent.groups.length + clonedGroupsData.length;
+							clonedGroupsData[ clonedGroupsData.length-1 ].title;
+						}
+					}
+					var p = clonedGroups.indexOf( o.groupId );
+					o.groupId = clonedGroupsData[p].id;
+				}
 				o.id  = this.parent.current;
 				this.parent.objects.push( o );
 				this.parent.current ++;
 				this.select( o );
 			}
+			if(clonedGroupsData.length) for(i in clonedGroupsData) this.parent.groups.push( clonedGroupsData[i] );
 			this.parent.render();
 			this.parent.draw.toolbar();
 			this.parent.draw.ui();
 		},
 
 		escapeKey : function(){
-			if(this.parent.events.createPathMode){
+			if(this.parent.events.createPathMode)
+			{
 				this.parent.actions.path.removeLastSeg();
 				this.parent.events.createPathMode = false;
 			}

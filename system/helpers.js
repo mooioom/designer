@@ -26,6 +26,59 @@ $.extend( true, designer, {
 			};
 		},
 
+		getNested : function( objects, groups, selecteds, selectedsGroups )
+		{
+
+			var a = [], b = [];
+
+			function processObject( o, gid ){ createAtGid( gid, { 
+				type     : 'object', 
+				title    : o.title, 
+				id       : o.id,
+				visible  : o.visible,
+				locked   : o.locked,
+				src      : o.src ? true : false,
+				oType    : o.type,
+				text     : o.text,
+				selected : selecteds.indexOf( o.id ) != -1
+			}) }
+			function getGroup( id ){ for(i in groups) if(groups[i].id == id) return groups[i]; }
+			function createAtGid( gid, data ){
+				if(!gid) a.push(data);
+				else for(i in a) if( a[i].type == 'group') createAtGidPath( a[i], gid, data );
+			}
+			function createAtGidPath( obj, gid, data ){
+				if( obj.gid == gid ) { obj.objects.push( data ); return; }
+				else for(i in obj.objects) if( obj.objects[i].type == 'group' ) createAtGidPath( obj.objects[i], gid, data );
+			}
+
+			function processGroup( g ){
+				if( b.indexOf( g.id ) == -1 ){
+					if(g.groupId && b.indexOf( g.groupId ) == -1) processGroup( getGroup( g.groupId ), g.groupId );
+					b.push( g.id ); createAtGid(g.groupId,{
+						type      : 'group',
+						title     : g.title,
+						gid       : g.id,
+						visible   : g.visible,
+						locked    : g.locked,
+						collapsed : g.collapsed,
+						selected  : selectedsGroups.indexOf( g.id ) != -1,
+						objects   : []
+					})
+				}
+			}
+
+			for(i in objects)
+			{
+				var o = objects[i];
+				if(o.groupId) { processGroup( getGroup( o.groupId ), o.groupId ); processObject( o, o.groupId );
+				}else processObject( o );
+			}
+
+			return a;
+
+		},
+
 		clickSelect : function()
 		{
 			if(!this.parent.events.ctrl) this.parent.selecteds = [];

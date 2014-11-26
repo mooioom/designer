@@ -241,27 +241,6 @@
 					<img class="resourceImage dropItem" />
 				</div>
 			</div>
-			<!-- Objects toolbox item -->
-			<div class="objectsItem objectItem {{#selected}}selected{{/selected}} {{#hidden}}hidden{{/hidden}} objectTemplate" objectid="{{id}}" groupid="{{groupId}}">
-				<div class="left objectName">{{#groupObject}}... {{/groupObject}}{{title}}</div>
-				<div class="right objectLock {{^locked}}unlocked{{/locked}}"></div>
-				<div class="right objectVisible {{^visible}}invisible{{/visible}}"></div>
-				<div class="clear"></div>
-			</div>
-			<div class="objectsItem objectsGroupItem {{#selected}}selected{{/selected}} {{#hidden}}hidden{{/hidden}} {{#collapsed}}collapsed{{/collapsed}}" groupid="{{id}}" parentid="{{parentId}}">
-				<div class="headerItem">
-					<div class="left objectName groupItem">
-						{{#subgroup}}<div class="left groupItem subGroup"></div>{{/subgroup}}<div class="left openClose groupItem {{#collapsed}}closed{{/collapsed}}{{^collapsed}}open{{/collapsed}}"></div>
-						<div class="left folderIcon groupItem "></div>
-						<div class="left groupName groupItem">{{name}}</div>
-						<div class="clear"></div>
-					</div>
-					<div class="right objectLock {{^locked}}unlocked{{/locked}}"></div>
-					<div class="right objectVisible {{^visible}}invisible{{/visible}}"></div>
-					<div class="clear"></div>
-				</div>
-				<div class="groupObjects"></div>
-			</div>
 		</div>
 
 		<div class="hidden">

@@ -581,7 +581,7 @@ input[type='range'] {
 	left: 0px;
 	right: initial;
 }
-.toolbox .header{
+.toolbox>.header{
 	padding: 3px;
 	background: #FD9B1D;
 	color: #fff;
@@ -595,7 +595,7 @@ input[type='range'] {
 
 .toolbox .body .item{
 	border-bottom: 1px solid #D3D3D3;
-	padding: 7px;
+	padding: 3px;
 }
 .toolbox .body .item .title{
 
@@ -671,53 +671,92 @@ input[type='range'] {
 .toolbox.objects{
 	top: 65px;
 }
+
 .rtl .toolbox.objects{
 	right: initial;
 	left : 263px;
 }
 .toolbox.objects .body{
-	max-height: 245px;
+	
+}
+
+.toolbox.objects .body {
+	-webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    max-height: 245px;
 	overflow-y: auto;
 	overflow-x: hidden;
 }
 
-.toolbox.objects .objectTemplate{
-	padding: 3px;
-	border-bottom: 1px solid #D5D5D5;
-} 
+.toolbox.objects .object{
+	background: #E2E2E2;
+}
 
-.toolbox.objects .collapsed .objectTemplate, .toolbox.objects .collapsed .objectsGroupItem{
+.toolbox.objects .ui-dragging{
+	position: absolute;
+	z-index: 1000;
+	padding: 3px;
+}
+
+.toolbox.objects .groupOpenClose{
+	line-height: 20px;
+	width: 15px;
+	text-align: center;
+	background: #CACACA;
+}
+
+.toolbox.objects .groupOpenClose.open{
+	background: #515151;
+}
+
+.toolbox.objects .group .group{
+	position: relative;
+	left: 10px;
+	width: calc(100% - 10px);
+}
+
+.toolbox.objects .group .object{
+	position: relative;
+	left: 10px;
+	width: calc(100% - 16px);
+}
+
+.rtl .toolbox.objects .group .group{
+	position: relative;
+	left: 0px;
+	right: 10px;
+	width: calc(100% - 10px);
+}
+
+.rtl .toolbox.objects .group .object{
+	position: relative;
+	left: 0px;
+	right: 10px;
+	width: calc(100% - 16px);
+}
+
+.toolbox.objects .collapsed .group, .toolbox.objects .collapsed .object{
 	display: none;
-} 
-
-.toolbox.objects .collapsed .objectsItem{
-	height: 0px;
-	padding: 0px;
 }
 
-.toolbox .objectsItem{
+.toolbox.objects .item{
     cursor: pointer;
 }
 
-.toolbox .objectsItem.selected{
-	background: #F0F0F0;
+.toolbox.objects .placeholder{
+	height: 24px;
+	background: rgb(247, 230, 198);
 }
 
-.toolbox .objectsGroupItem{
-
+.toolbox.objects .placeholder.disabled{
+	display: none;
 }
 
-.toolbox .objectsGroupItem .headerItem{
-	padding: 3px;
-    cursor: pointer;
-    border-bottom: 1px solid #D5D5D5;
-}
-
-.toolbox .objectsGroupItem.selected{
-	background: #F0F0F0;
-}
-
-.toolbox .objectsGroupItem .openClose{
+.toolbox .group>.header .openClose{
 	cursor              : pointer;
 	width               : 11px;
 	height              : 16px;
@@ -728,11 +767,10 @@ input[type='range'] {
 	opacity             : 0.3;
 }
 
-.toolbox .placeholder{
-	/*height: 2px !important;
-	background-color: green;
-	box-sizing:border-box;*/
+.toolbox.objects .selected {
+	background: #F2F2F2 !important;
 }
+
 
 .toolbox .groupObjectsHelper{
 	border-bottom: 2px solid orange;
@@ -784,8 +822,12 @@ input[type='range'] {
 	overflow: hidden;
 	height: 20px;
 	text-overflow: ellipsis;
-	width: 150px;
 	white-space: nowrap;
+}
+
+.rtl .toolbox .objectName{
+	padding-left: 0px;
+	padding-right: 4px;
 }
 
 .toolbox .objectName input{

@@ -3,15 +3,20 @@ $.extend( true, designer, {
 	
 	history : {
 
-		objects   : [],
-		selecteds : [],
+		objects         : [],
+		selecteds       : [],
+		groups          : [],
+		selectedsGroups : [],
+
 		index     : 0,
 		last      : -1,
 
 		save : function( keepOld )
 		{
-			var objects     = jQuery.extend(true, [], this.parent.objects ),
-				selecteds   = jQuery.extend(true, [], this.parent.selectedObjects ),
+			var objects     	= jQuery.extend(true, [], this.parent.objects ),
+				selecteds   	= jQuery.extend(true, [], this.parent.selectedObjects ),
+				groups      	= jQuery.extend(true, [], this.parent.groups ),
+				selectedsGroups = jQuery.extend(true, [], this.parent.selectedsGroups ),
 				spliceItems = this.objects.length - this.index;
 
 			if(!keepOld) {
@@ -22,6 +27,8 @@ $.extend( true, designer, {
 
 			this.objects.push( objects );
 			this.selecteds.push( selecteds );
+			this.groups.push( groups );
+			this.selectedsGroups.push( selectedsGroups );
 			this.index ++ ;
 		},
 
@@ -29,13 +36,12 @@ $.extend( true, designer, {
 		{
 			if( this.index == 0 ) return;
 
-			var index 	       = this.index - 1,
-				last 		   = this.last,
-				item 		   = this.objects[ index ], 
-				itemSelecteds  = this.selecteds[ index ],
-				historyLength  = this.objects.length - 1,
-				historyObjects = this.objects,
-				o;
+			var index 	        = this.index - 1,
+				last 		    = this.last,
+			   	objects 	    = this.objects[ index ], 
+				selecteds       = this.selecteds[ index ],
+				groups 	        = this.groups[ index ], 
+				selectedsGroups = this.selectedsGroups[ index ];
 
 			if( index > last )
 			{
@@ -43,8 +49,10 @@ $.extend( true, designer, {
 				this.save( true );
 			}
 
-			this.parent.selectedObjects = itemSelecteds;
-			if( item ) this.parent.objects = item;
+			this.parent.selectedObjects = selecteds;
+			if( objects ) 		  this.parent.objects = objects;
+			if( groups ) 		  this.parent.groups = groups;
+			if( selectedsGroups ) this.parent.selectedsGroups = selectedsGroups;
 
 			//todo undo : change prop, add resource, edit text
 
@@ -59,13 +67,16 @@ $.extend( true, designer, {
 
 			if( this.index == this.objects.length - 1 || !this.objects.length ) return;
 
-			var index 		  = this.index + 1,
-				item 		  = this.objects[ index ],
-				itemSelecteds = this.selecteds[ index ], 
-				o;
+			var index 		      = this.index + 1,
+				objects 		  = this.objects[ index ],
+				itemSelecteds 	  = this.selecteds[ index ],
+				groups 	       	  = this.groups[ index ], 
+				selectedsGroups   = this.selectedsGroups[ index ];
 
 			this.parent.selectedObjects = itemSelecteds;
-			this.parent.objects         = item;
+			if( objects ) 		  this.parent.objects = objects;
+			if( groups ) 		  this.parent.groups = groups;
+			if( selectedsGroups ) this.parent.selectedsGroups = selectedsGroups;
 
 			//todo undo : change prop, add resource, edit text
 

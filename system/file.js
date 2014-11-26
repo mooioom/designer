@@ -20,8 +20,9 @@ $.extend( true, designer, {
 				    {
 				        loadObj = JSON.parse(evt.target.result);	        
 				        this.parent.reset();
-				        this.parent.objects   = loadObj.objects;
-				        this.parent.resources = loadObj.resources;
+				        this.parent.objects   = loadObj.objects   || [];
+				        this.parent.groups    = loadObj.groups    || [];
+				        this.parent.resources = loadObj.resources || [];
 				        this.parent.current   = this.parent.helpers.getLastId() + 1;
 				        this.parent.render();
 				        this.parent.draw.ui();
@@ -87,9 +88,10 @@ $.extend( true, designer, {
 		},
 
 		getData : function(){
-
+			// todo : width,height of canvas
 			var saveObj = {
 				objects   : this.parent.objects,
+				groups    : this.parent.groups,
 				resources : this.parent.resources
 			}
 

@@ -59,48 +59,34 @@ $.extend( true, designer, {
 					},
 					initEvents : function(){
 
-						// this.parent.events.documentClickEvents.push($.proxy(function( e ){
-							
-						// 	if(!$('.toolbox.objects .objectName input').length || $(e.target).hasClass('oInput') ) return;
-
-						// 	$('.toolbox.objects .objectName input').each($.proxy(function(i,ee)
-						// 	{
-						// 		var id = $(ee).closest('.objectTemplate').attr('objectid'),
-						// 			o  = this.parent.functions.getObject( id );
-						// 		o.title = $(ee).val();
-						// 		this.render();
-						// 	},this));
-
-						// },this));
-
-						$(document).on('click', '.toolbox .objectVisible', $.proxy(function( e ){
+						$(document).off('mousedown', '.toolbox.objects .objectVisible');
+						$(document).on('mousedown', '.toolbox.objects .objectVisible', $.proxy(function( e ){
 							e.preventDefault(); e.stopPropagation();
 							$(e.target).toggleClass('invisible');
-							id = Number($(e.target).parent().attr('objectid'));
-							this.parent.functions.getObject(id).visible = !$(e.target).hasClass('invisible');
-							this.parent.render();
+							var item = $(e.target).closest('.item');
+							if(item.hasClass('header')){
+								id = Number( item.parent().attr('gid') );
+								this.parent.functions.getGroup(id).visible = !$(e.target).hasClass('invisible');
+							}else{
+								id = Number( item.attr('oid') );
+								this.parent.functions.getObject(id).visible = !$(e.target).hasClass('invisible');
+							}
+							this.refresh();
 						},this));
 
-						$(document).on('click', '.toolbox .objectLock',$.proxy(function( e ){
+						$(document).off('mousedown', '.toolbox.objects .objectLock');
+						$(document).on('mousedown', '.toolbox.objects .objectLock',$.proxy(function( e ){
 							e.preventDefault(); e.stopPropagation();
 							$(e.target).toggleClass('unlocked');
-							id = Number($(e.target).parent().attr('objectid'));
-							this.parent.functions.getObject(id).locked = !$(e.target).hasClass('unlocked');
-							this.parent.render();
-						},this));
-
-						$(document).on('click', '.toolbox .openClose', $.proxy(function( e ){
-
-							e.preventDefault(); e.stopPropagation();
-
-							var id    = Number($(e.target).parent().parent().parent().attr('groupid')),
-								group = this.parent.functions.getGroup( id );
-
-							group.collapsed = $(e.target).hasClass('closed');
-							group.collapsed ? group.collapsed = false : group.collapsed = true;
-
-							this.render( true );
-
+							var item = $(e.target).closest('.item');
+							if(item.hasClass('header')){
+								id = Number( item.parent().attr('gid') );
+								this.parent.functions.getGroup(id).locked = !$(e.target).hasClass('unlocked');
+							}else{
+								id = Number( item.attr('oid') );
+								this.parent.functions.getObject(id).locked = !$(e.target).hasClass('unlocked');
+							}
+							this.refresh();
 						},this));
 
 						$('.delete',this.el).unbind('click').bind('click',$.proxy(function(){ this.parent.functions.delete(); },this));
@@ -113,101 +99,182 @@ $.extend( true, designer, {
 							this.parent.draw.toolbar();
 						},this));
 
-						$(document).on('dblclick','.objectName',$.proxy(function(e){
-							var v  = $(e.target).html(),
-								id = $(e.target).closest('.objectTemplate').attr('objectid');
-							$(e.target).html('<input type="text" class="oInput" value="'+v+'"/>');
+						$(document).off('dblclick','.toolbox.objects .objectName');
+						$(document).on('dblclick','.toolbox.objects .objectName',$.proxy(function(e){
+							var v  = $(e.target).html();
+							$(e.target).html('<input type="text" class="oInput" value="'+v+'" oldValue="'+v+'"/>');
 							$('input',e.target).focus();
 							$('input',e.target).keydown($.proxy(function(ee){
 								if(ee.keyCode==13){
-									var o = this.parent.functions.getObject( id );
+									if( $(e.target).parent().parent().hasClass('object') ){
+										var id = $(e.target).closest('.object').attr('oid'),
+											o  = this.parent.functions.getObject( id );
+									}else{
+										var id = Number( $(e.target).parent().closest('.group').attr('gid') ),
+											o  = this.parent.functions.getGroup( id );
+									}
 									o.title = $('input',e.target).val();
+									$(e.target).html( o.title );
 									this.render();
+								}else if(ee.keyCode==27){
+									$(e.target).html( $('input',e.target).attr('oldValue') );
 								}
 							},this));
 						},this))
 
-						$('.sortable').multisortable({
-							items         : ".objectsItem",
-							selectedClass : "selected",
+						$(document).off('mousedown','.toolbox.objects .groupOpenClose');
+						$(document).on('mousedown','.toolbox.objects .groupOpenClose',$.proxy(function( e ){
+							$(e.target).parent().parent().toggleClass('collapsed'); 
+							if(!$(e.target).parent().parent().hasClass('collapsed')) $(e.target).addClass('open');
+							else $(e.target).removeClass('open');
+							this.refresh();
+						},this));
 
-							start         : $.proxy(function( e, ui ){
-								$('.groupObjects').addClass('groupObjectsHelper');
-							},this),
+						// sortable
 
-							stop          : $.proxy(function( e ){
-								$('.groupObjects').removeClass('groupObjectsHelper');
-								this.reorder();
-								this.toggleOptions();
-								this.render();
-							},this),
+						var mousedown = false,
+							drag 	  = false,
+							sx 		  = null,
+							sy 		  = null;
 
-							click         : $.proxy(function( e ){
-								//console.log('here');
-								this.reorder(); 
-								this.toggleOptions();
-							},this)
+						onmousemove = null;
+						onmousemove = function(e)
+						{
 
+							ex = e.clientX;
+							ey = e.clientY;
+							
+							if(mousedown && ex != sx && ey != sy)
+							{
+								drag = true;
+								var selecteds = 0;
+								$('.selected').each(function(){
+									$(this).addClass('ui-dragging');
+									$(this).css('width',$('.toolbox.objects .body').width()+'px');
+									$(this).css('position','fixed');
+									$(this).css('top',ey + (selecteds * 24));
+									$(this).css('left',ex);
+									selecteds ++ ;
+								});
+							}
+							if(drag)
+							{
+								items = 0;
+								totalHeight = 0;
+								$('.toolbox.objects .item:not(.selected):visible').each(function(){
+									/*
+									 * CAN BE MUCH BETTER
+									*/
+									i = $(this);
+									offset = $(this).offset();
+									height = $(this).height();
+									if(e.clientY > offset.top && e.clientY < (offset.top + height))
+									{
+										$('.toolbox.objects .placeholder').remove();
+										if( i.hasClass('header') && i.closest('.toolbox.objects .group').hasClass('collapsed') )
+											 $('.toolbox.objects .body .item:not(.selected):visible:eq('+items+')').parent().after('<div class="placeholder"></div>');
+										else $('.toolbox.objects .body .item:not(.selected):visible:eq('+items+')').after('<div class="placeholder"></div>');	
+									}
+									else if( $('.toolbox.objects .body .item:not(.selected):visible:eq(0)').length && e.clientY < $('.toolbox.objects .body .item:not(.selected):visible:eq(0)').offset().top ){
+										$('.toolbox.objects .placeholder').remove();
+										$('.toolbox.objects .body').prepend('<div class="placeholder"></div>')
+									}
+									items ++ ;
+								});
+								$('.toolbox.objects .placeholder').parents('.toolbox.objects .group').each(function(){
+									p = $(this);
+									if( $($('.header',p)[0]).hasClass('ui-dragging') ) $('.toolbox.objects .placeholder').addClass('disabled');
+								});
+								if(ey > $('.toolbox.objects').offset().top + $('.toolbox.objects').height() )
+									$('.toolbox.objects .body').scrollTop( $('.toolbox.objects .body').scrollTop() + 20 );
+								if(ey < $('.toolbox').offset().top ) 
+									$('.toolbox.objects .body').scrollTop( $('.toolbox.objects .body').scrollTop() - 20 );
+							}
+						}
+
+						$(document).off('mousedown','.toolbox.objects .body .item');
+						$(document).on('mousedown','.toolbox.objects .body .item',function( e )
+						{
+							if( $('.toolbox.objects').hasClass('ui-draggable') ) $('.toolbox.objects').draggable( 'destroy' );
+
+							if( !$(this).hasClass('selected') )
+							{
+								if( !e.ctrlKey ) $('.selected').not(this).toggleClass('selected');
+								$(this).addClass('selected');
+							}
+							mousedown = true;
+							sx = e.clientX;
+							sy = e.clientY;
 						});
+
+						$(document).off('mouseup','.toolbox.objects .body .item');
+						$(document).on('mouseup','.toolbox.objects .body .item',$.proxy(function( e )
+						{
+							$('.toolbox.objects').draggable();
+
+							if( !e.ctrlKey && !drag) {
+								$('.toolbox.objects .selected').not( $(e.target).closest('.item')[0] ).toggleClass('selected');
+							}
+
+							mousedown = false;
+
+							if(drag)
+							{
+								drag = false;
+								if( $('.toolbox.objects .placeholder').length && !$('.toolbox.objects .placeholder').hasClass('disabled') )
+								{
+									$('.toolbox.objects .ui-dragging').each(function()
+									{
+										if(!$(this).hasClass('header')) $(this).insertBefore('.toolbox.objects .placeholder'); 
+										else $(this).parent().insertBefore('.toolbox.objects .placeholder');
+									});
+									$('.toolbox.objects .item').removeClass('ui-dragging').attr('style','');
+									$('.toolbox.objects .placeholder').remove();	
+								}
+								else
+								{
+									$('.toolbox.objects .item').removeClass('ui-dragging').attr('style','');
+									$('.toolbox.objects .placeholder').remove();
+								}
+								$('.toolbox.objects .group').each(function(){
+									if(!$('.object',this).length) $(this).remove();
+								});
+								this.refresh();
+							}
+							this.refresh( 'doNotRender' );
+							
+						},this));
 					},
 
 					render  : function( overrideCheck ){
 
 						//todo :: can be better if renders only the difference of current objects
 
-						if(!this.currentObjects)   this.currentObjects   = $.extend(true,[],this.parent.objects);
-						if(!this.currentSelecteds) this.currentSelecteds = $.extend(true,[],this.parent.selecteds);
+						// if(!this.currentObjects)   this.currentObjects   = $.extend(true,[],this.parent.objects);
+						// if(!this.currentSelecteds) this.currentSelecteds = $.extend(true,[],this.parent.selecteds);
 
-						else if( 
-							this.parent.helpers.equalObjects(this.currentObjects,   this.parent.objects) &&
-							this.parent.helpers.equalObjects(this.currentSelecteds, this.parent.selecteds) &&
-							!overrideCheck
-						) return;
+						// else if( 
+						// 	this.parent.helpers.equalObjects(this.currentObjects,   this.parent.objects) &&
+						// 	this.parent.helpers.equalObjects(this.currentSelecteds, this.parent.selecteds) &&
+						// 	!overrideCheck
+						// ) return;
 
 						$('.body',this.el).empty();
-						$('.body',this.el).removeClass('sortable').addClass('sortable');
 
-						//this.parent.helpers.timer('start','objects toolbox :: render');
+						var o         = $.extend(true,[],this.parent.objects),
+							selecteds = [];
 
-						// create objects hirarchy
+						for(i in this.parent.selecteds) selecteds.push( this.parent.selecteds[i].id );
 
-						this.parent.helpers.forEachObjects( $.proxy(function( object ){
+						var nested = this.parent.helpers.getNested( o.reverse(), 
+																	this.parent.groups, 
+																	selecteds, 
+																	this.parent.selectedsGroups );
 
-							o = $.extend(true,{},object);
-							o = this.setupObjectItem( o );
+						this.g = 0;
 
-							if(typeof o.groupId != 'undefined'){
-
-								var group  = $.extend( true, {}, this.parent.functions.getGroup( o.groupId ) );
-								var flag   = false;
-								var groups = [];
-
-								this.parent.functions.forEachParentGroups(group.id,$.proxy(function( g ){
-									groups.push($.extend(true,{},g));
-								},this));
-
-								groups = groups.reverse();
-								var x = 0;
-
-								for(x in groups)
-								{
-									var g = groups[x];
-									if( !$('.objectsGroupItem[groupid="'+g.id+'"]').length ) {
-										g.selected = this.parent.functions.isGroupSelected( g.id );
-										this.addGroup( g, g.parentId );
-										if(g.id == o.groupId) {
-											flag = true;
-											this.appendToGroup( o, g.id );
-										}
-									}
-								}
-
-								if(!flag) this.appendToGroup( o, group.id )
-
-							}
-							else this.addObjectItem( o );
-
-						},this), true);
+						this.drawGroup( nested , '.toolbox.objects .body' );
+						$('.toolbox.objects .group, .toolbox.objects .object').removeAttr('groupid');
 
 						//this.parent.helpers.timer('stop','objects toolbox :: render');
 
@@ -220,30 +287,43 @@ $.extend( true, designer, {
 						
 					},
 
-					addGroup : function( group, groupId ){
-						if(!groupId) this.append('.body','.objectsGroupItem',group);
-						else this.append('.objectsGroupItem[groupid="'+groupId+'"]>.groupObjects','.objectsGroupItem',group);
-					},
+					g : 0,
 
-					appendToGroup : function( object, groupId ){
-						this.append('.objectsGroupItem[groupid="'+groupId+'"] .groupObjects','.objectTemplate',object);
-					},
+					drawGroup : function( objects, target ){
+						// requires a nested object (helpers.getNested) to create the objects tree
+						// init using - drawGroup( nested , '.target' );
+						var t = $(target);
+						for(i in objects)
+						{
+							var o = objects[i];
+							if(o.type == 'object'){
+								var visible  = o.visible  ? ''         : 'invisible',
+									locked   = !o.locked  ? 'unlocked' : '',
+									selected = o.selected ? 'selected' : '';
+								if(!o.title)
+								{
+									title = o.oType; if(o.src) title = 'image';
+									title += ' ' + o.id; if(o.oType == 'text') title += ' - ' + o.text;
+									title = title.capitalize();
+									o.title = title;
+								}
+								t.append('<div class="object item '+selected+'" groupid="'+this.g+'" oid="'+o.id+'" ><div class="header"><div class="left objectName">'+o.title+'</div><div class="right objectLock '+locked+'"></div><div class="right objectVisible '+visible+'"></div><div class="clear"></div></div></div>');
+								if( $('>.header', $('.object[oid="'+o.id+'"]').parents('.group') ).hasClass('selected') ) $('.object[oid="'+o.id+'"]').removeClass('selected');
+							}
+							if(o.type == 'group')
+							{
+								this.g++;
+								var visible   = o.visible   ? ''          : 'invisible',
+									locked    = !o.locked   ? 'unlocked'  : '',
+									collapsed = o.collapsed ? 'collapsed' : '',
+									open      = o.collapsed ? ''          : 'open',
+									selected  = o.selected  ? 'selected'  : '';
 
-					addObjectItem : function( object ){
-						this.append('.body','.objectsItem',o);
-					},
-
-					setupObjectItem : function( object ){
-						var o = object;
-						if(this.parent.helpers.isObjectSelected(o.id)) o.selected = true;
-						//isObjectVisible, isObjectLocked
-						if(!o.title){
-							title = o.type; if(o.src) title = 'image';
-							title += ' ' + o.id; if(o.type == 'text') title += ' - ' + o.text;
-							title = title.capitalize();
-							o.title = title;
+								t.append('<div class="group '+collapsed+'" groupid="'+this.g+'" gid="'+o.gid+'"><div class="header item '+selected+'"><div class="left groupOpenClose '+open+'">></div><div class="left objectName">'+o.title+'</div><div class="right objectLock '+locked+'"></div><div class="right objectVisible '+visible+'"></div><div class="clear"></div></div></div>');
+								if( $('>.header', $('.group[gid="'+o.gid+'"]').parents('.group') ).hasClass('selected') ) $('.group[gid="'+o.gid+'"]>.header').removeClass('selected');
+								this.drawGroup( o.objects, '.group[groupid="'+this.g+'"]' )
+							}
 						}
-						return o;
 					},
 
 					events  : function(){},
@@ -262,37 +342,120 @@ $.extend( true, designer, {
 						}
 					},
 
-					reorder : function( renderAllThumbs ){
+					refresh : function( doNotRender ){
 
-						var order          = [],
-							selecteds      = [],
-							selectedGroups = [],
-							tempObjects    = [];
+						var objects   		= [],
+							groups    		= [],
+							selecteds 		= [],
+							selectedsGroups = [];
 
-						this.parent.selecteds = [];
+						// dom to data
 
-						$($('.toolbox.objects .body .objectTemplate').get().reverse()).each(function(){
-
-							if( $(this).hasClass('objectsGroupItem') ) isGroup    = true; else isGroup = false;
-							if( $(this).hasClass('selected') )         isSelected = true; else isSelected = false;   
-
-							if( !isGroup ) objectId = Number($(this).attr('objectid'));
-							else           groupId  = Number($(this).attr('groupid'));
-
-							if( !isGroup ) order.push(objectId);
-
-							if( !isGroup && isSelected ) selecteds.push( objectId );
-							if( isGroup && isSelected )  selectedGroups.push( groupId );
+						$('.toolbox.objects .object').each(function(){
+							objects.push({
+								id      : Number( $(this).attr('oid') ),
+								title   : $('>.header>.objectName',this).html(),
+								groupId : Number( $(this).closest('.group').attr('gid') ) || undefined,
+								visible : !$('>.header>.objectVisible',this).hasClass('invisible'),
+								locked  : !$('>.header>.objectLock',this).hasClass('unlocked')
+							});
 						});
 
-						for(i in order)     tempObjects.push( this.parent.functions.getObject( order[i] ) );
-						for(s in selecteds) this.parent.functions.select( this.parent.functions.getObject( selecteds[s] ) );
-						for(g in selectedGroups) this.parent.functions.selectGroup( selectedGroups[g] );
+						$('.toolbox.objects .group').each(function(){
+							groups.push({
+								id        : Number( $(this).attr('gid') ),
+								title     : $('>.header>.objectName',this).html(),
+								groupId   : Number( $(this).closest('.group:not([gid="'+$(this).attr('gid')+'"])').attr('gid') ) || undefined,
+								visible   : !$('>.header>.objectVisible',this).hasClass('invisible'),
+								locked    : !$('>.header>.objectLock',this).hasClass('unlocked'),
+								collapsed : !$('>.header>.groupOpenClose',this).hasClass('open'),
+							})
+						});
 
-						this.parent.objects = tempObjects;
+						$('.toolbox.objects .selected').each(function(){
+							if($(this).hasClass('object')) selecteds.push( Number($(this).attr('oid')) )
+							else selectedsGroups.push( Number($(this).parent().attr('gid')) )
+						});
+
+						var objectsTemp   = [],
+							selectedsTemp = [];
+
+						for(i in objects.reverse() )
+						{
+							var newO         = $.extend(true,{},this.parent.functions.getObject( objects[i].id ));
+								newO.title   = objects[i].title,
+								newO.groupId = objects[i].groupId,
+								newO.visible = objects[i].visible,
+								newO.locked  = objects[i].locked;
+
+							objectsTemp.push( newO );
+						}
+
+						this.parent.objects = objectsTemp;
+
+						for(i in selectedsGroups){
+							var g = selectedsGroups[i];
+							$('.group[gid="'+g+'"] .item').each(function(){
+								if($(this).hasClass('object') && selecteds.indexOf( Number($(this).attr('oid')) ) == -1 ) 
+									selecteds.push( Number($(this).attr('oid')) )
+								else if(!$(this).hasClass('object') && selectedsGroups.indexOf( Number($(this).parent().attr('gid')) ) == -1 ) 
+									selectedsGroups.push( Number($(this).parent().attr('gid')) )
+							})
+						}
+
+						for(i in selecteds) 
+							selectedsTemp.push( this.parent.functions.getObject( selecteds[i] ) );
+
+						this.parent.groups    		= groups;
+						this.parent.selecteds 		= selectedsTemp.reverse();
+						this.parent.selectedsGroups = selectedsGroups;
+
+						if(!doNotRender) this.render();
 						this.parent.render();
 						this.parent.draw.toolbar();
 
+					},
+
+					group : function(){
+						this.parent.history.save();
+						if( !$('.selected').length ) return;
+						var biggestId = 1;
+						for(i in this.parent.groups) {
+							var g = this.parent.groups[i];
+							if(Number(g.id) >= biggestId) 
+								biggestId = Number(g.id) + 1;
+						}
+						first = $('.selected:first');
+						if( first.hasClass('header') ) first = first.parent();
+						first.before('<div class="group newGroup" gid="'+biggestId+'"><div class="header item selected"><div class="left groupOpenClose open">></div><div class="left objectName">Group '+Number(this.parent.groups.length+1)+'</div><div class="right objectLock unlocked"></div><div class="right objectVisible"></div><div class="clear"></div></div></div>');
+						$('.selected').each(function(){
+							if(  $(this).hasClass('header') ) $(this).parent().appendTo('.newGroup');	
+							else $(this).appendTo('.newGroup');	
+						});
+						$('.newGroup').removeClass('newGroup');
+						this.refresh();
+					},
+					ungroup : function(){
+						this.parent.history.save();
+						if( !$('.selected').length ) return;
+						toUngroup = [];
+						$('.selected').each(function(){
+							var gid = null;
+							if( $(this).hasClass('header') ) gid = $(this).parent().attr('gid') || null;
+							else gid = $(this).prevAll('.header').parent().attr('gid') || null;
+							if(gid!=null && toUngroup.indexOf(gid)==-1) toUngroup.push( gid );
+						});
+						for(i in toUngroup){
+							var gid = toUngroup[i];
+							$('.group[gid="'+gid+'"] > *:not(.header)').insertBefore('.group[gid="'+gid+'"]');
+							$('.group[gid="'+gid+'"]').remove();
+						}
+						this.refresh();
+					},
+					getParentGroups : function( groupId ){
+						var a = [];
+						$('.group[gid="'+groupId+'"]').parents('.group').each(function(){a.push(Number($(this).attr('gid')))})
+						return a;
 					}
 
 				});
@@ -468,7 +631,6 @@ $.extend( true, designer, {
 						},this));
 
 						$('#visible',this.el).change($.proxy(function(){
-							console.log('change');
 							this.parent.grid.visible = $('#visible',this.el).prop('checked');
 							this.parent.draw.grid();
 						},this));
@@ -537,7 +699,7 @@ $.extend( true, designer, {
 							delete designer.rotateAmount;
 							designer.events.doNotRotate = true;
 							$('input.rotate').val(180);
-							$('.stage').focus();
+							//$('.stage').focus();
 						});
 						$('.toolbox.transform .rotate').bind('change input',function(){
 							if(designer.events.doNotRotate){ delete designer.events.doNotRotate; return; }
@@ -584,7 +746,7 @@ $.extend( true, designer, {
 							delete designer.scaleAmount;
 							designer.events.doNotScale = true;
 							$('input.scale').val(0);
-							$('.stage').focus();
+							//$('.stage').focus();
 						});
 						$('.toolbox.transform .scale').bind('change input',function(){
 							if(designer.events.doNotScale){ delete designer.events.doNotScale; return; }
