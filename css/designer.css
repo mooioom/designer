@@ -704,13 +704,43 @@ input[type='range'] {
 
 .toolbox.objects .groupOpenClose{
 	line-height: 20px;
-	width: 15px;
+	width: 12px;
 	text-align: center;
-	background: #CACACA;
+	background-image: url(../images/TriangleClosed.png);
+	height: 19px;
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: 72%;
+	opacity: 0.27;
+	margin-right: -2px;
+}
+
+.rtl .toolbox.objects .groupOpenClose{
+	margin-right: 0px;
+	margin-left: -2px;
 }
 
 .toolbox.objects .groupOpenClose.open{
-	background: #515151;
+	background-image: url(../images/TriangleOpen.png);
+}
+
+.toolbox .group>.header .openClose{
+	cursor              : pointer;
+	width               : 11px;
+	height              : 16px;
+	background-size     : 72%;
+	background-repeat   : no-repeat;
+	background-position : center;
+	padding-top         : 2px;
+	opacity             : 0.3;
+}
+
+.toolbox .objectsGroupItem .openClose.closed{
+	background-image: url(../images/TriangleClosed.png);
+}
+.toolbox .objectsGroupItem .openClose.open{
+	background-image: url(../images/TriangleOpen.png);
+	background-position: 1px;
 }
 
 .toolbox.objects .group .group{
@@ -756,17 +786,6 @@ input[type='range'] {
 	display: none;
 }
 
-.toolbox .group>.header .openClose{
-	cursor              : pointer;
-	width               : 11px;
-	height              : 16px;
-	background-size     : 72%;
-	background-repeat   : no-repeat;
-	background-position : center;
-	padding-top         : 2px;
-	opacity             : 0.3;
-}
-
 .toolbox.objects .selected {
 	background: #F2F2F2 !important;
 }
@@ -777,13 +796,6 @@ input[type='range'] {
 }
 
 .left.openClose.closed {}
-.toolbox .objectsGroupItem .openClose.closed{
-	background-image: url(../images/TriangleClosed.png);
-}
-.toolbox .objectsGroupItem .openClose.open{
-	background-image: url(../images/TriangleOpen.png);
-	background-position: 1px;
-}
 
 .toolbox .objectsGroupItem .folderIcon{
 	background-image: url(../images/folder.png);

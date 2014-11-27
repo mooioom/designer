@@ -83,7 +83,7 @@ $.extend( true, designer, {
 
 			this.current = object;
 
-			if(object.visible == false) return;
+			if(object.visible == false || object.parentInvisible) return;
 
 			if(!ctx) ctx = this.parent.ctx;
 
@@ -215,7 +215,7 @@ $.extend( true, designer, {
 				w = o.width;
 				h = o.height;
 
-				pathInfo = this.parent.helpers.getSvgPathInfo( path );
+				pathInfo       = this.parent.helpers.getSvgPathInfo( path );
 				o.topLeftX     = pathInfo.x;
 				o.topLeftY     = pathInfo.y;
 				o.bottomRightX = pathInfo.x + pathInfo.w;

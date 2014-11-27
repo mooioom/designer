@@ -28,6 +28,7 @@ $.extend( true, designer, {
 	action : "select", // select, move, rotate, scale, box, line, colorpick etc...
 
 	selectAndMove : false,
+	selectGroup   : false,
 
 	selectionBox :
 	{

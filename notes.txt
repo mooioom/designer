@@ -22,6 +22,15 @@ BUGS :
 - after canvas resize - image drop is wrong coordinates
 - after canvas resize - clicking on layers renders wrong
 
+GROUPS TODOS :
+
+- Dragging in objects toolbox is not ideal
+- Currently using calc css method which is not supported in ie8
+- renaming objects / groups not ideal
+- coping objects within groups also copies the groups, not always wanted
+- exporting svg groups
+
+
 FEATURES :
 
 - grid before / after canvas ( change z-index and capture click on gridCanvas instead )

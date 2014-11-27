@@ -6,7 +6,16 @@ $.extend( true, designer, {
 		select : function( o )
 		{
 			this.parent.selectedsGroups = [];
-			this.parent.selecteds.push( o );
+			if(!this.parent.selectGroup || !o.groupId) this.parent.selecteds.push( o );
+			else{
+				var rootGroupId = this.getRootGroup( o.groupId ).id;
+				this.parent.selectedsGroups.push( rootGroupId );
+				var children = this.getAllChildren( rootGroupId );
+				for(i in children) {
+					if(this.parent.selecteds.indexOf( children[i] ) == -1)
+						this.parent.selecteds.push( children[i] );
+				}
+			}
 			this.parent.onSelect();
 		},
 
@@ -69,6 +78,12 @@ $.extend( true, designer, {
 			for(i in this.parent.groups) if(this.parent.groups[i].id==groupId) return this.parent.groups[i];
 		},
 
+		getRootGroup : function( groupId ){
+			var group = this.getGroup( groupId );
+			if(typeof group.groupId == 'undefined') return group;
+			else return this.getRootGroup( group.groupId );
+		},
+
 		getGroupObjects : function( groupId ){
 			var objects = [];
 			for(i in this.parent.objects)
@@ -126,13 +141,14 @@ $.extend( true, designer, {
 		},
 
 		paste : function(){
-			var clonedGroups = [], clonedGroupsData = [];
+			var cloned = [], clonedGroups = [], clonedGroupsData = [];
 			this.parent.history.save();
 			this.parent.selecteds = [];
 			for(i in this.parent.clipboard)
 			{
 				var o = jQuery.extend(true, {}, this.parent.clipboard[i]);
-				if( o.groupId ){
+				if( o.groupId )
+				{
 					var gs = this.getObjectGroups( o.id );
 					for(x in gs){
 						var g = gs[x];
@@ -140,18 +156,23 @@ $.extend( true, designer, {
 							clonedGroups.push(g.id);
 							clonedGroupsData.push( $.extend(true,{},g) );
 							clonedGroupsData[ clonedGroupsData.length-1 ].id = this.parent.groups.length + clonedGroupsData.length;
-							clonedGroupsData[ clonedGroupsData.length-1 ].title;
 						}
 					}
 					var p = clonedGroups.indexOf( o.groupId );
 					o.groupId = clonedGroupsData[p].id;
 				}
-				o.id  = this.parent.current;
+				o.id = this.parent.current;
 				this.parent.objects.push( o );
 				this.parent.current ++;
-				this.select( o );
+				cloned.push( o ); 
+			}
+			for(i in clonedGroupsData)
+			{
+				var cg = clonedGroupsData[i];
+				if(cg.groupId) cg.groupId = clonedGroupsData[ clonedGroups.indexOf( cg.groupId ) ].id;
 			}
 			if(clonedGroupsData.length) for(i in clonedGroupsData) this.parent.groups.push( clonedGroupsData[i] );
+			for(i in cloned) this.select( cloned[i] );
 			this.parent.render();
 			this.parent.draw.toolbar();
 			this.parent.draw.ui();
@@ -533,21 +554,26 @@ $.extend( true, designer, {
 					if(this.parent.selectedShape != null){
 						o.path    = this.parent.shapes[ this.parent.selectedShape ].data;
 					}
-					o.getPathSegs = function(){
-						var p = document.createElementNS("http://www.w3.org/2000/svg", "path");
-						$(p).attr('d',this.path);
-						return p.pathSegList;
-					}
-					o.getPath     = function(){
-						var p = document.createElementNS("http://www.w3.org/2000/svg", "path");
-						$(p).attr('d',this.path);
-						return p;
-					}
+					this.attachPathFunctions( o );
 					break;
 			}
 			return o;
+		},
+
+		attachPathFunctions : function( o )
+		{
+			o.getPathSegs = function(){
+				var p = document.createElementNS("http://www.w3.org/2000/svg", "path");
+				$(p).attr('d',this.path);
+				return p.pathSegList;
+			}
+			o.getPath     = function(){
+				var p = document.createElementNS("http://www.w3.org/2000/svg", "path");
+				$(p).attr('d',this.path);
+				return p;
+			}
 		}
 
-	},
+	}
 
 })

@@ -24,6 +24,11 @@ $.extend( true, designer, {
 				        this.parent.groups    = loadObj.groups    || [];
 				        this.parent.resources = loadObj.resources || [];
 				        this.parent.current   = this.parent.helpers.getLastId() + 1;
+				        for(i in this.parent.objects)
+				        {
+				        	var o = this.parent.objects[i];
+				        	if(o.type=='path') this.parent.create.attachPathFunctions( o );
+				        }
 				        this.parent.render();
 				        this.parent.draw.ui();
 						this.parent.draw.toolbar();
@@ -261,8 +266,6 @@ $.extend( true, designer, {
 
 		getSvg : function( data )
 		{
-			console.log(data.excludeDesignerData);
-
 			svg = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="'+this.parent.width+'px" height="'+this.parent.height+'px">';
 
 			var counter = 0;

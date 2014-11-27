@@ -159,10 +159,10 @@ $.extend( true, designer, {
 							x    = this.parent.events.movedX,
 							y    = this.parent.events.movedY;
 
-						if( o.locked   ) return;
-						if( !o.visible ) return;
+						if( o.locked || o.parentLocked || !o.visible) continue;
 
-						if(o.type == 'ellipse'){
+						if(o.type == 'ellipse')
+						{
 							o.cx = this.parent.helpers.getClosestSnapCoords( temp.startX + o.rx / 2 + x );
 							o.cy = this.parent.helpers.getClosestSnapCoords( temp.startY + o.ry / 2 + y );
 							continue;

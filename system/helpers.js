@@ -266,7 +266,7 @@ $.extend( true, designer, {
 
 			if(o.type == 'path')
 			{
-				p      = o.getPathSegs();
+				p      = o.getPathSegs();	
 				points = [];
 				x      = 0;
 				y      = 0;

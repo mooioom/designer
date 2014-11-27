@@ -59,44 +59,37 @@ $.extend( true, designer, {
 					},
 					initEvents : function(){
 
-						$(document).off('mousedown', '.toolbox.objects .objectVisible');
-						$(document).on('mousedown', '.toolbox.objects .objectVisible', $.proxy(function( e ){
-							e.preventDefault(); e.stopPropagation();
-							$(e.target).toggleClass('invisible');
-							var item = $(e.target).closest('.item');
-							if(item.hasClass('header')){
-								id = Number( item.parent().attr('gid') );
-								this.parent.functions.getGroup(id).visible = !$(e.target).hasClass('invisible');
-							}else{
-								id = Number( item.attr('oid') );
-								this.parent.functions.getObject(id).visible = !$(e.target).hasClass('invisible');
-							}
-							this.refresh();
-						},this));
-
-						$(document).off('mousedown', '.toolbox.objects .objectLock');
-						$(document).on('mousedown', '.toolbox.objects .objectLock',$.proxy(function( e ){
-							e.preventDefault(); e.stopPropagation();
-							$(e.target).toggleClass('unlocked');
-							var item = $(e.target).closest('.item');
-							if(item.hasClass('header')){
-								id = Number( item.parent().attr('gid') );
-								this.parent.functions.getGroup(id).locked = !$(e.target).hasClass('unlocked');
-							}else{
-								id = Number( item.attr('oid') );
-								this.parent.functions.getObject(id).locked = !$(e.target).hasClass('unlocked');
-							}
-							this.refresh();
-						},this));
-
 						$('.delete',this.el).unbind('click').bind('click',$.proxy(function(){ this.parent.functions.delete(); },this));
+
 						$('.shadow',this.el).unbind('click').bind('click',$.proxy(function(){ $('.toolbox.shadow').show(); },this));
+
 						$('.transform',this.el).unbind('click').bind('click',$.proxy(function(){ $('.toolbox.transform').show(); },this));
+
 						$('.add',this.el).unbind('click').bind('click',$.proxy(function(){
 							this.parent.create.box(0,0,this.parent.width,this.parent.height);
 							this.parent.render(); 
 							this.parent.draw.ui();
 							this.parent.draw.toolbar();
+						},this));
+
+						$(document).off('mousedown', '.toolbox.objects .objectVisible, .toolbox.objects .objectLock');
+						$(document).on('mousedown', '.toolbox.objects .objectVisible, .toolbox.objects .objectLock', $.proxy(function( e ){
+							e.preventDefault(); e.stopPropagation();
+							var isVisible = $(e.target).hasClass('objectVisible'),
+								className = isVisible ? 'invisible'       : 'unlocked',
+								propName  = isVisible ? 'visible'         : 'locked';
+							$(e.target).toggleClass(className);
+							var item = $(e.target).closest('.item');
+							if(item.hasClass('header'))
+							{
+								id = Number( item.parent().attr('gid') );
+								this.parent.functions.getGroup(id)[propName] = !$(e.target).hasClass(className);
+							}else{
+								id = Number( item.attr('oid') );
+								this.parent.functions.getObject(id)[propName] = !$(e.target).hasClass(className);
+							}
+							//this.parent.render();
+							this.refresh();
 						},this));
 
 						$(document).off('dblclick','.toolbox.objects .objectName');
@@ -248,17 +241,6 @@ $.extend( true, designer, {
 
 					render  : function( overrideCheck ){
 
-						//todo :: can be better if renders only the difference of current objects
-
-						// if(!this.currentObjects)   this.currentObjects   = $.extend(true,[],this.parent.objects);
-						// if(!this.currentSelecteds) this.currentSelecteds = $.extend(true,[],this.parent.selecteds);
-
-						// else if( 
-						// 	this.parent.helpers.equalObjects(this.currentObjects,   this.parent.objects) &&
-						// 	this.parent.helpers.equalObjects(this.currentSelecteds, this.parent.selecteds) &&
-						// 	!overrideCheck
-						// ) return;
-
 						$('.body',this.el).empty();
 
 						var o         = $.extend(true,[],this.parent.objects),
@@ -275,8 +257,6 @@ $.extend( true, designer, {
 
 						this.drawGroup( nested , '.toolbox.objects .body' );
 						$('.toolbox.objects .group, .toolbox.objects .object').removeAttr('groupid');
-
-						//this.parent.helpers.timer('stop','objects toolbox :: render');
 
 						this.toggleOptions();
 
@@ -319,11 +299,19 @@ $.extend( true, designer, {
 									open      = o.collapsed ? ''          : 'open',
 									selected  = o.selected  ? 'selected'  : '';
 
-								t.append('<div class="group '+collapsed+'" groupid="'+this.g+'" gid="'+o.gid+'"><div class="header item '+selected+'"><div class="left groupOpenClose '+open+'">></div><div class="left objectName">'+o.title+'</div><div class="right objectLock '+locked+'"></div><div class="right objectVisible '+visible+'"></div><div class="clear"></div></div></div>');
+								t.append('<div class="group '+collapsed+'" groupid="'+this.g+'" gid="'+o.gid+'"><div class="header item '+selected+'"><div class="left groupOpenClose '+open+'"></div><div class="left objectName">'+o.title+'</div><div class="right objectLock '+locked+'"></div><div class="right objectVisible '+visible+'"></div><div class="clear"></div></div></div>');
 								if( $('>.header', $('.group[gid="'+o.gid+'"]').parents('.group') ).hasClass('selected') ) $('.group[gid="'+o.gid+'"]>.header').removeClass('selected');
 								this.drawGroup( o.objects, '.group[groupid="'+this.g+'"]' )
 							}
 						}
+						$('.objects.toolbox .group').each(function(){
+							var objects   = $('.object' , this).length,
+								selecteds = $('.object.selected' , this).length;
+							if(objects == selecteds) {
+								$('>.header',this).addClass('selected');
+								$('.object', this).removeClass('selected');
+							}
+						})
 					},
 
 					events  : function(){},
@@ -393,7 +381,8 @@ $.extend( true, designer, {
 
 						this.parent.objects = objectsTemp;
 
-						for(i in selectedsGroups){
+						for(i in selectedsGroups)
+						{
 							var g = selectedsGroups[i];
 							$('.group[gid="'+g+'"] .item').each(function(){
 								if($(this).hasClass('object') && selecteds.indexOf( Number($(this).attr('oid')) ) == -1 ) 
@@ -409,6 +398,27 @@ $.extend( true, designer, {
 						this.parent.groups    		= groups;
 						this.parent.selecteds 		= selectedsTemp.reverse();
 						this.parent.selectedsGroups = selectedsGroups;
+
+						// reset lock and visibility
+
+						for(i in this.parent.objects)
+						{
+							var o = this.parent.objects[i], flagVisible = false, flagLock = false;
+							if(!o.groupId) continue;
+							var groups = this.getParentGroups( o.groupId );
+							groups.push(o.groupId);
+							for(x in groups)
+							{
+								var g = this.parent.functions.getGroup(groups[x]);
+								if(!g.visible) flagVisible = true;
+								if(g.locked)   flagLock    = true;
+							}
+							if(flagVisible) o.parentInvisible = true;
+							else delete o.parentInvisible;
+							if(flagLock) o.parentLocked = true;
+							else delete o.parentLocked;
+
+						}
 
 						if(!doNotRender) this.render();
 						this.parent.render();
@@ -427,7 +437,7 @@ $.extend( true, designer, {
 						}
 						first = $('.selected:first');
 						if( first.hasClass('header') ) first = first.parent();
-						first.before('<div class="group newGroup" gid="'+biggestId+'"><div class="header item selected"><div class="left groupOpenClose open">></div><div class="left objectName">Group '+Number(this.parent.groups.length+1)+'</div><div class="right objectLock unlocked"></div><div class="right objectVisible"></div><div class="clear"></div></div></div>');
+						first.before('<div class="group newGroup" gid="'+biggestId+'"><div class="header item selected"><div class="left groupOpenClose open"></div><div class="left objectName">Group '+Number(this.parent.groups.length+1)+'</div><div class="right objectLock unlocked"></div><div class="right objectVisible"></div><div class="clear"></div></div></div>');
 						$('.selected').each(function(){
 							if(  $(this).hasClass('header') ) $(this).parent().appendTo('.newGroup');	
 							else $(this).appendTo('.newGroup');	
@@ -895,6 +905,7 @@ $.extend( true, designer, {
 				}
 
 				$('#selectAndMove').click(function(){ designer.selectAndMove = $(this).prop('checked'); });
+				$('#selectGroup').click(function(){ designer.selectGroup = $(this).prop('checked'); });
 
 				$('.toolbar .link').unbind('click').bind('click',function(){
 					$(this).toggleClass('unlinked');
