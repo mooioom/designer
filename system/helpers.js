@@ -26,45 +26,61 @@ $.extend( true, designer, {
 			};
 		},
 
-		getNested : function( objects, groups, selecteds, selectedsGroups )
+		getNested : function( fullVersion, keepOriginalOrder )
 		{
 
-			var a = [], b = [];
+			var objects   		= keepOriginalOrder ? $.extend(true,[],this.parent.objects) : $.extend(true,[],this.parent.objects).reverse(),
+				selecteds 		= [], 
+				groups    		= this.parent.groups,
+				selectedsGroups = this.parent.selectedsGroups,
+				a = [], b = [];
 
-			function processObject( o, gid ){ createAtGid( gid, { 
-				type     : 'object', 
-				title    : o.title, 
-				id       : o.id,
-				visible  : o.visible,
-				locked   : o.locked,
-				src      : o.src ? true : false,
-				oType    : o.type,
-				text     : o.text,
-				selected : selecteds.indexOf( o.id ) != -1
-			}) }
+			for(i in this.parent.selecteds) selecteds.push( this.parent.selecteds[i].id );
+
+			function processObject( o, gid ){
+				var data = {};
+				if(fullVersion){
+					data = o; data.oType = 'object';
+				}else{
+					data = { 
+						oType    : 'object', 
+						title    : o.title, 
+						id       : o.id,
+						visible  : o.visible,
+						locked   : o.locked,
+						src      : o.src ? true : false,
+						type     : o.type,
+						text     : o.text,
+						selected : selecteds.indexOf( o.id ) != -1
+					}
+				}
+				createAtGid( gid, data ) 
+			}
 			function getGroup( id ){ for(i in groups) if(groups[i].id == id) return groups[i]; }
 			function createAtGid( gid, data ){
 				if(!gid) a.push(data);
-				else for(i in a) if( a[i].type == 'group') createAtGidPath( a[i], gid, data );
+				else for(i in a) if( a[i].oType == 'group') createAtGidPath( a[i], gid, data );
 			}
 			function createAtGidPath( obj, gid, data ){
 				if( obj.gid == gid ) { obj.objects.push( data ); return; }
-				else for(i in obj.objects) if( obj.objects[i].type == 'group' ) createAtGidPath( obj.objects[i], gid, data );
+				else for(i in obj.objects) if( obj.objects[i].oType == 'group' ) createAtGidPath( obj.objects[i], gid, data );
 			}
-
 			function processGroup( g ){
 				if( b.indexOf( g.id ) == -1 ){
 					if(g.groupId && b.indexOf( g.groupId ) == -1) processGroup( getGroup( g.groupId ), g.groupId );
-					b.push( g.id ); createAtGid(g.groupId,{
-						type      : 'group',
+					b.push( g.id );
+					var data = {
+						oType     : 'group',
 						title     : g.title,
 						gid       : g.id,
+						groupId   : g.groupId,
 						visible   : g.visible,
 						locked    : g.locked,
 						collapsed : g.collapsed,
 						selected  : selectedsGroups.indexOf( g.id ) != -1,
 						objects   : []
-					})
+					} 
+					createAtGid(g.groupId,data)
 				}
 			}
 

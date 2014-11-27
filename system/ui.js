@@ -243,15 +243,7 @@ $.extend( true, designer, {
 
 						$('.body',this.el).empty();
 
-						var o         = $.extend(true,[],this.parent.objects),
-							selecteds = [];
-
-						for(i in this.parent.selecteds) selecteds.push( this.parent.selecteds[i].id );
-
-						var nested = this.parent.helpers.getNested( o.reverse(), 
-																	this.parent.groups, 
-																	selecteds, 
-																	this.parent.selectedsGroups );
+						var nested = this.parent.helpers.getNested();
 
 						this.g = 0;
 
@@ -276,21 +268,21 @@ $.extend( true, designer, {
 						for(i in objects)
 						{
 							var o = objects[i];
-							if(o.type == 'object'){
+							if(o.oType == 'object'){
 								var visible  = o.visible  ? ''         : 'invisible',
 									locked   = !o.locked  ? 'unlocked' : '',
 									selected = o.selected ? 'selected' : '';
 								if(!o.title)
 								{
-									title = o.oType; if(o.src) title = 'image';
-									title += ' ' + o.id; if(o.oType == 'text') title += ' - ' + o.text;
+									title = o.type; if(o.src) title = 'image';
+									title += ' ' + o.id; if(o.type == 'text') title += ' - ' + o.text;
 									title = title.capitalize();
 									o.title = title;
 								}
 								t.append('<div class="object item '+selected+'" groupid="'+this.g+'" oid="'+o.id+'" ><div class="header"><div class="left objectName">'+o.title+'</div><div class="right objectLock '+locked+'"></div><div class="right objectVisible '+visible+'"></div><div class="clear"></div></div></div>');
 								if( $('>.header', $('.object[oid="'+o.id+'"]').parents('.group') ).hasClass('selected') ) $('.object[oid="'+o.id+'"]').removeClass('selected');
 							}
-							if(o.type == 'group')
+							if(o.oType == 'group')
 							{
 								this.g++;
 								var visible   = o.visible   ? ''          : 'invisible',

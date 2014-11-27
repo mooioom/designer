@@ -419,7 +419,7 @@ mapWizard = {
 			current           = 0,
 			PreviousMapWizard = false;
 
-		if($('g',svg).length) PreviousMapWizard = true;
+		//if($('g',svg).length) PreviousMapWizard = true;
 
 		$('*',svg).each(function()
 		{
@@ -457,6 +457,7 @@ mapWizard = {
 					newObject = 
 					{
 						id     		  : current,
+						groupId       : Number( $(this).attr('ogid') ) || '',
 						dynamicData   : $(this).attr('id'),
 						title         : $(this).attr('otitle') || '',
 						url           : $(this).attr('dataurl') || '',
@@ -490,6 +491,7 @@ mapWizard = {
 					newObject = 
 					{
 						id     		  : current,
+						groupId       : Number( $(this).attr('ogid') ) || '',
 						dynamicData   : $(this).attr('id'),
 						title         : $(this).attr('otitle')  || '',
 						url           : $(this).attr('dataurl') || '',
@@ -536,6 +538,7 @@ mapWizard = {
 					newObject = 
 					{
 						id     		  : current,
+						groupId       : Number( $(this).attr('ogid') ) || '',
 						dynamicData   : $(this).attr('id'),
 						title         : $(this).attr('otitle')  || '',
 						url           : $(this).attr('dataurl') || '',
@@ -580,6 +583,7 @@ mapWizard = {
 					newObject = 
 					{
 						id     		  : current,
+						groupId       : Number( $(this).attr('ogid') ) || '',
 						dynamicData   : $(this).attr('id'),
 						title         : $(this).attr('otitle')  || '',
 						url           : $(this).attr('dataurl') || '',
@@ -610,6 +614,7 @@ mapWizard = {
 					newObject = 
 					{
 						id     		  : current,
+						groupId       : Number( $(this).attr('ogid') ) || '',
 						dynamicData   : $(this).attr('id'),
 						title         : $(this).attr('otitle')  || '',
 						url           : $(this).attr('dataurl') || '',
@@ -635,6 +640,7 @@ mapWizard = {
 					newObject = 
 					{
 						id     		  : current,
+						groupId       : Number( $(this).attr('ogid') ) || '',
 						dynamicData   : $(this).attr('id'),
 						title         : $(this).attr('otitle') || '',
 						type          : 'line',
@@ -658,6 +664,7 @@ mapWizard = {
 					newObject = 
 					{
 						id     		  : current,
+						groupId       : Number( $(this).attr('ogid') ) || '',
 						dynamicData   : $(this).attr('id'),
 						title         : $(this).attr('otitle')  || '',
 						url           : $(this).attr('dataurl') || '',
@@ -685,6 +692,20 @@ mapWizard = {
 					break;
 			}
 			if(found) {data.objects.push(newObject);current++;}
+		});
+
+		data.groups = [];
+
+		$('g',svg).each(function(){
+			
+			data.groups.push({
+				id 		  : Number($(this).attr('gid')),
+				collapsed : $(this).attr('gcollapsed') == 'true' ? true : false,
+				locked 	  : $(this).attr('glocked')    == 'true' ? true : false,
+				title     : $(this).attr('gtitle'),
+				visible   : $(this).attr('gvisible')   == 'true' ? true : false,
+				groupId   : $(this).attr('groupid')    == 'undefined' ? undefined : Number($(this).attr('groupid'))
+			})
 		});
 
 		return data;

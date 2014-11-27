@@ -55,6 +55,7 @@ $.extend( true, designer, {
 			d = data.data;
 			if(typeof d != 'object') d = JSON.parse(data.data);
 			this.objects   = d.objects;
+			this.groups    = d.groups;
 			this.resources = d.resources;
 			this.current   = this.helpers.getLastId() + 1;
 			this.redraw();

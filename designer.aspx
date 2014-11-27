@@ -115,6 +115,8 @@
 			<div class="item"><%=Resources.Strings.Select %></div>
 			<div class="sep"></div>
 			<div class="item"><%=Resources.Strings.ClickOrDragToSelect%></div>
+			<div class="sep"></div>
+			<div class="item"><input type="checkbox" id="selectGroup" />Select Group</div>
 			<div class="clear"></div>
 		</div>
 

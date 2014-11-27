@@ -264,228 +264,250 @@ $.extend( true, designer, {
 			return html;
 		},
 
-		getSvg : function( data )
-		{
-			svg = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="'+this.parent.width+'px" height="'+this.parent.height+'px">';
+		counter : 0,
 
-			var counter = 0;
-			
-			for(x in data.objects)
+		getSvgElement : function( o, data ){
+			//switch
+			var absCoords = this.parent.helpers.getAbsCoords(o.startX,o.startY,o.width,o.height),
+				x = absCoords.x,y = absCoords.y,w = absCoords.w,h = absCoords.h,cx = x + (w/2),cy = y + (h/2),
+				sx = o.shadowOffsetX, sy = o.shadowOffsetY, sb = o.shadowBlur, sc = o.shadowColor, addShadow = false;
+
+			this.counter ++ ;
+
+			if(!sc) sc = 'rgba(0,0,0,1)';
+
+			color       = $.parseColor(sc);
+			colorString = "rgb("+color[0]+","+color[1]+","+color[2]+")";
+			opacity     = color[3];
+
+			if(!sx) sx = '0'; if(!sy) sy = '0'; if(!sb) sb = '0';
+
+			if(sx != "0" || sy != "0" || sb != "0")
 			{
 
-				o = data.objects[x];
+				str+= '<filter id="f'+counter+'" height="150%" width="150%">';
+				str+= '<feGaussianBlur in="SourceAlpha" stdDeviation="'+(sb/3)+'"/>';
+				str+= '<feOffset dx="'+(sx/1.5)+'" dy="'+(sy/1.5)+'" result="offsetblur"/>';
+				str+= '<feFlood flood-opacity="'+opacity+'" flood-color="'+colorString+'"/>';
+				str+= '<feComposite in2="offsetblur" operator="in"/>';
+				str+= '<feMerge>';
+				str+= '<feMergeNode/>';
+				str+= '<feMergeNode in="SourceGraphic"/>';
+				str+= '</feMerge>';
+				str+= '</filter>';
 
-				var absCoords = this.parent.helpers.getAbsCoords(o.startX,o.startY,o.width,o.height),
-					x = absCoords.x,y = absCoords.y,w = absCoords.w,h = absCoords.h,cx = x + (w/2),cy = y + (h/2),
-					sx = o.shadowOffsetX, sy = o.shadowOffsetY, sb = o.shadowBlur, sc = o.shadowColor, addShadow = false;
+				svg+=str;
 
-				counter ++ ;
-
-				if(!sc) sc = 'rgba(0,0,0,1)';
-
-				color       = $.parseColor(sc);
-				colorString = "rgb("+color[0]+","+color[1]+","+color[2]+")";
-				opacity     = color[3];
-
-				if(!sx) sx = '0'; if(!sy) sy = '0'; if(!sb) sb = '0';
-
-				if(sx != "0" || sy != "0" || sb != "0")
-				{
-
-					str+= '<filter id="f'+counter+'" height="150%" width="150%">';
-					str+= '<feGaussianBlur in="SourceAlpha" stdDeviation="'+(sb/3)+'"/>';
-					str+= '<feOffset dx="'+(sx/1.5)+'" dy="'+(sy/1.5)+'" result="offsetblur"/>';
-					str+= '<feFlood flood-opacity="'+opacity+'" flood-color="'+colorString+'"/>';
-					str+= '<feComposite in2="offsetblur" operator="in"/>';
-					str+= '<feMerge>';
-					str+= '<feMergeNode/>';
-					str+= '<feMergeNode in="SourceGraphic"/>';
-					str+= '</feMerge>';
-					str+= '</filter>';
-
-					svg+=str;
-
-					addShadow = true;
-
-				}
-
-				if(w == 0) w = '0.1';
-				if(h == 0) h = '0.1';
-
-				if(!o.dynamicData) o.dynamicData = '';
-
-				if(o.type == 'box')
-				{
-					if(o.src)
-					{
-						var str = '<image ';
-						str+= ' id="'		  + o.dynamicData + '"';
-						if(data.excludeDesignerData != true){
-							if(o.locked) str+= ' locked="1"';
-							if(o.title)  str+= ' otitle="'+o.title+'"';
-							if(o.url)    str+= ' onclick="window.open(\''+o.url+'\',\'_blank\')" dataurl="'+o.url+'"';
-						}
-						str+= ' x="'		  + x + '"';
-						str+= ' y="'		  + y + '"';
-						str+= ' width="'	  + w + '"';
-						str+= ' height="'	  + h + '"';
-						if(o.rotate)  str+= ' transform="rotate('+o.rotate+' '+cx+' '+cy+')"';
-						if(addShadow) str+= ' style="filter:url(#f'+counter+')"';
-						if(o.opacity) str+= ' opacity = "'+o.opacity+'"';
-						str+= ' xlink:href="' + o.src + '"';
-						str+= ' />';
-					}else
-					{
-						if(!o.fill) fill = "rgba(0,0,0,0)"; else fill = o.fill;
-						var str = '<rect ';
-						str+= ' id="'		    + o.dynamicData + '"';
-						if(data.excludeDesignerData != true){
-							if(o.locked) str+= ' locked="1"';
-							if(o.title)  str+= ' otitle="'+o.title+'"';
-							if(o.url)    str+= ' onclick="window.open(\''+o.url+'\',\'_blank\')" dataurl="'+o.url+'"';
-						}
-						str+= ' x="'		    + x + '"';
-						str+= ' y="'		    + y + '"';
-						str+= ' width="'	    + w + '"';
-						str+= ' height="'	    + h + '"';
-						if(o.radius) str+= ' rx="' + o.radius + '"';
-						if(o.radius) str+= ' ry="' + o.radius + '"';
-						str+= ' stroke="'	    + o.strokeStyle + '"';
-						str+= ' stroke-width="' + o.lineWidth / 2 + '"';
-						if(o.rotate)  str+= ' transform="rotate('+o.rotate+' '+cx+' '+cy+')"';
-						if(addShadow) str+= ' style="filter:url(#f'+counter+')"';
-						if(o.opacity) str+= ' opacity = "'+o.opacity+'"';
-						str+= ' fill="' + fill + '"';
-						str+= ' />';
-					}
-					svg+=str;
-				}
-				if(o.type == 'text')
-				{
-					if(!o.fillStyle) fill = "#000"; else fill = o.fillStyle;
-					//todo fontsize compensation
-					fontComp = o.fontSize/10; // arial type
-					var str = '<text ';
-						str+= ' id="'		    + o.dynamicData + '"';
-						if(data.excludeDesignerData != true){
-							if(o.locked) str+= ' locked="1"';
-							if(o.title)  str+= ' otitle="'+o.title+'"';
-							if(o.url)    str+= ' onclick="window.open(\''+o.url+'\',\'_blank\')" dataurl="'+o.url+'"';
-						}
-						str+= ' xml:space="preserve"';
-						str+= ' text-anchor="start"';
-						str+= ' x="'		    + x + '"';
-						str+= ' y="'		    + (y + (o.fontSize - fontComp)) + '"';
-						str+= ' font-size="'	+ o.fontSize + '"';
-						str+= ' font-family="'	+ o.font + '"';
-						str+= ' fill="'	        + fill + '"';
-						str+= ' stroke="'	    + o.strokeStyle + '"';
-						str+= ' stroke-width="'	+ o.lineWidth + '"';
-						if(o.isBold)   str+= ' font-weight="bold"';
-						if(o.isItalic) str+= ' font-style="italic"';
-						str+= ' style="';
-						if(addShadow) str+= 'filter:url(#f'+counter+'); ';
-						str+= '"';
-						//str+= ' alignment-baseline="before-edge"'; // equiv to Top
-						if(o.rotate) str+= ' transform="rotate('+o.rotate+' '+cx+' '+cy+')"';
-						if(o.opacity) str+= ' opacity = "'+o.opacity+'"';
-						str+= ' >'+o.text+'</text>';
-
-					svg+=str;
-				}
-				if(o.type == 'path')
-				{
-					if(!o.fillStyle) fill = "none"; else fill = o.fillStyle;
-					var str = '<path ';
-						str+= ' id="'		  + o.dynamicData + '"';
-						if(data.excludeDesignerData != true){
-							if(o.locked) str+= ' locked="1"';
-							if(o.title)  str+= ' otitle="'+o.title+'"';
-							if(o.url)    str+= ' onclick="window.open(\''+o.url+'\',\'_blank\')" dataurl="'+o.url+'"';
-						}
-						str+= ' d="'+o.path+'"';
-						str+= ' stroke-width="'+o.lineWidth+'"';
-						str+= ' stroke="'+o.strokeStyle+'"';
-						str+= ' fill="'+fill+'"';
-						if(o.rotate) str+= ' transform="rotate('+o.rotate+' '+(o.topLeftX + (o.width/2))+' '+(o.topLeftY + (o.height/2))+')"';
-						str+= '></path>';
-						svg+=str;
-				}
-				if(o.type == 'ellipse')
-				{
-					if(!o.fillStyle) fill = "none"; else fill = o.fillStyle;
-					var str = '<ellipse ';
-						str+= ' id="'		  + o.dynamicData + '"';
-						if(data.excludeDesignerData != true){
-							if(o.locked) str+= ' locked="1"';
-							if(o.title)  str+= ' otitle="'+o.title+'"';
-							if(o.url)    str+= ' onclick="window.open(\''+o.url+'\',\'_blank\')" dataurl="'+o.url+'"';
-						}
-						str+= ' rx="'+(o.rx/2)+'"';
-						str+= ' ry="'+(o.ry/2)+'"';
-						str+= ' cx="'+o.cx+'"';
-						str+= ' cy="'+o.cy+'"';
-						str+= ' stroke-width="'+o.lineWidth+'"';
-						str+= ' stroke="'+o.strokeStyle+'"';
-						str+= ' fill="'+fill+'"';
-						if(o.rotate) str+= ' transform="rotate('+o.rotate+' '+(o.startX + (o.width/2))+' '+(o.startY + (o.height/2))+')"';
-						str+= '></ellipse>';
-						svg+=str;
-				}
-				if(o.type == 'line')
-				{
-					fill = "none";
-					var str = '<line ';
-						str+= ' id="'+ o.dynamicData + '"';
-						if(data.excludeDesignerData != true){
-							if(o.locked) str+= ' locked="1"';
-							if(o.title)  str+= ' otitle="'+o.title+'"';
-							if(o.url)    str+= ' onclick="window.open(\''+o.url+'\',\'_blank\')" dataurl="'+o.url+'"';
-						};
-						str+= ' x1="'+o.startX+'"';
-						str+= ' y1="'+o.startY+'"';
-						str+= ' x2="'+o.endX+'"';
-						str+= ' y2="'+o.endY+'"';
-						str+= ' stroke-width="'+o.lineWidth+'"';
-						str+= ' stroke="'+o.strokeStyle+'"';
-						str+= ' fill="'+fill+'"';
-						if(o.rotate) str+= ' transform="rotate('+o.rotate+' '+(o.startX + (o.width/2))+' '+(o.startY + (o.height/2))+')"';
-						str+= '></line>';
-						svg+=str;
-				}
-				if(o.type == 'circle')
-				{
-					if(!o.fill) fill = "none"; else fill = o.fill;
-					var str = '<circle ';
-						str+= ' id="' + o.dynamicData + '"';
-						if(data.excludeDesignerData != true){
-							if(o.locked) str+= ' locked="1"';
-							if(o.title)  str+= ' otitle="'+o.title+'"';
-							if(o.url)    str+= ' onclick="window.open(\''+o.url+'\',\'_blank\')" dataurl="'+o.url+'"';
-						}
-						str+= ' r="'+(o.r)+'"';
-						str+= ' cx="'+o.cx+'"';
-						str+= ' cy="'+o.cy+'"';
-						str+= ' stroke-width="'+o.lineWidth+'"';
-						str+= ' stroke="'+o.strokeStyle+'"';
-						str+= ' fill="'+fill+'"';
-						str+= '></circle>';
-						svg+=str;
-				}
+				addShadow = true;
 
 			}
 
-			//css = '<style type="text/css">';
-			//css += 'rect{transition:all 0.3s ease-in; fill : #fff;}rect:hover{fill:#000}';
-			//css += '</style>';
+			if(w == 0) w = '0.1';
+			if(h == 0) h = '0.1';
 
-			//script = '<script type="text/javascript">';
-			//script+= '$("rect").mouseover(function(){ $(this).velocity({fill:"#000"},250).stop() });';
-			//script+= '$("rect").mouseout( function(){ $(this).velocity({fill:"#fff"},250).stop() });';
-			//script+= '</script>';
+			if(!o.dynamicData) o.dynamicData = '';
 
-			svg+='</svg>';//+css+script;
+			if(o.type == 'box')
+			{
+				if(o.src)
+				{
+					var str = '<image ';
+					str+= ' id="'		  + o.dynamicData + '"';
+					if(data.excludeDesignerData != true){
+						if(o.locked) str+= ' locked="1"';
+						if(o.title)  str+= ' otitle="'+o.title+'"';
+						if(o.url)    str+= ' onclick="window.open(\''+o.url+'\',\'_blank\')" dataurl="'+o.url+'"';
+						if(o.groupId)str+= ' ogid="'+o.groupId+'"';
+					}
+					str+= ' x="'		  + x + '"';
+					str+= ' y="'		  + y + '"';
+					str+= ' width="'	  + w + '"';
+					str+= ' height="'	  + h + '"';
+					if(o.rotate)  str+= ' transform="rotate('+o.rotate+' '+cx+' '+cy+')"';
+					if(addShadow) str+= ' style="filter:url(#f'+counter+')"';
+					if(o.opacity) str+= ' opacity = "'+o.opacity+'"';
+					str+= ' xlink:href="' + o.src + '"';
+					str+= ' />';
+				}else
+				{
+					if(!o.fill) fill = "rgba(0,0,0,0)"; else fill = o.fill;
+					var str = '<rect ';
+					str+= ' id="'		    + o.dynamicData + '"';
+					if(data.excludeDesignerData != true){
+						if(o.locked) str+= ' locked="1"';
+						if(o.title)  str+= ' otitle="'+o.title+'"';
+						if(o.url)    str+= ' onclick="window.open(\''+o.url+'\',\'_blank\')" dataurl="'+o.url+'"';
+						if(o.groupId)str+= ' ogid="'+o.groupId+'"';
+					}
+					str+= ' x="'		    + x + '"';
+					str+= ' y="'		    + y + '"';
+					str+= ' width="'	    + w + '"';
+					str+= ' height="'	    + h + '"';
+					if(o.radius) str+= ' rx="' + o.radius + '"';
+					if(o.radius) str+= ' ry="' + o.radius + '"';
+					str+= ' stroke="'	    + o.strokeStyle + '"';
+					str+= ' stroke-width="' + o.lineWidth / 2 + '"';
+					if(o.rotate)  str+= ' transform="rotate('+o.rotate+' '+cx+' '+cy+')"';
+					if(addShadow) str+= ' style="filter:url(#f'+counter+')"';
+					if(o.opacity) str+= ' opacity = "'+o.opacity+'"';
+					str+= ' fill="' + fill + '"';
+					str+= ' />';
+				}
+				svg+=str;
+			}
+			if(o.type == 'text')
+			{
+				if(!o.fillStyle) fill = "#000"; else fill = o.fillStyle;
+				//todo fontsize compensation
+				fontComp = o.fontSize/10; // arial type
+				var str = '<text ';
+					str+= ' id="'		    + o.dynamicData + '"';
+					if(data.excludeDesignerData != true){
+						if(o.locked) str+= ' locked="1"';
+						if(o.title)  str+= ' otitle="'+o.title+'"';
+						if(o.url)    str+= ' onclick="window.open(\''+o.url+'\',\'_blank\')" dataurl="'+o.url+'"';
+						if(o.groupId)str+= ' ogid="'+o.groupId+'"';
+					}
+					str+= ' xml:space="preserve"';
+					str+= ' text-anchor="start"';
+					str+= ' x="'		    + x + '"';
+					str+= ' y="'		    + (y + (o.fontSize - fontComp)) + '"';
+					str+= ' font-size="'	+ o.fontSize + '"';
+					str+= ' font-family="'	+ o.font + '"';
+					str+= ' fill="'	        + fill + '"';
+					str+= ' stroke="'	    + o.strokeStyle + '"';
+					str+= ' stroke-width="'	+ o.lineWidth + '"';
+					if(o.isBold)   str+= ' font-weight="bold"';
+					if(o.isItalic) str+= ' font-style="italic"';
+					str+= ' style="';
+					if(addShadow) str+= 'filter:url(#f'+counter+'); ';
+					str+= '"';
+					//str+= ' alignment-baseline="before-edge"'; // equiv to Top
+					if(o.rotate) str+= ' transform="rotate('+o.rotate+' '+cx+' '+cy+')"';
+					if(o.opacity) str+= ' opacity = "'+o.opacity+'"';
+					str+= ' >'+o.text+'</text>';
 
+				svg+=str;
+			}
+			if(o.type == 'path')
+			{
+				if(!o.fillStyle) fill = "none"; else fill = o.fillStyle;
+				var str = '<path ';
+					str+= ' id="'		  + o.dynamicData + '"';
+					if(data.excludeDesignerData != true){
+						if(o.locked) str+= ' locked="1"';
+						if(o.title)  str+= ' otitle="'+o.title+'"';
+						if(o.url)    str+= ' onclick="window.open(\''+o.url+'\',\'_blank\')" dataurl="'+o.url+'"';
+						if(o.groupId)str+= ' ogid="'+o.groupId+'"';
+					}
+					str+= ' d="'+o.path+'"';
+					str+= ' stroke-width="'+o.lineWidth+'"';
+					str+= ' stroke="'+o.strokeStyle+'"';
+					str+= ' fill="'+fill+'"';
+					if(o.rotate) str+= ' transform="rotate('+o.rotate+' '+(o.topLeftX + (o.width/2))+' '+(o.topLeftY + (o.height/2))+')"';
+					str+= '></path>';
+					svg+=str;
+			}
+			if(o.type == 'ellipse')
+			{
+				if(!o.fillStyle) fill = "none"; else fill = o.fillStyle;
+				var str = '<ellipse ';
+					str+= ' id="'		  + o.dynamicData + '"';
+					if(data.excludeDesignerData != true){
+						if(o.locked) str+= ' locked="1"';
+						if(o.title)  str+= ' otitle="'+o.title+'"';
+						if(o.url)    str+= ' onclick="window.open(\''+o.url+'\',\'_blank\')" dataurl="'+o.url+'"';
+						if(o.groupId)str+= ' ogid="'+o.groupId+'"';
+					}
+					str+= ' rx="'+(o.rx/2)+'"';
+					str+= ' ry="'+(o.ry/2)+'"';
+					str+= ' cx="'+o.cx+'"';
+					str+= ' cy="'+o.cy+'"';
+					str+= ' stroke-width="'+o.lineWidth+'"';
+					str+= ' stroke="'+o.strokeStyle+'"';
+					str+= ' fill="'+fill+'"';
+					if(o.rotate) str+= ' transform="rotate('+o.rotate+' '+(o.startX + (o.width/2))+' '+(o.startY + (o.height/2))+')"';
+					str+= '></ellipse>';
+					svg+=str;
+			}
+			if(o.type == 'line')
+			{
+				fill = "none";
+				var str = '<line ';
+					str+= ' id="'+ o.dynamicData + '"';
+					if(data.excludeDesignerData != true){
+						if(o.locked) str+= ' locked="1"';
+						if(o.title)  str+= ' otitle="'+o.title+'"';
+						if(o.url)    str+= ' onclick="window.open(\''+o.url+'\',\'_blank\')" dataurl="'+o.url+'"';
+						if(o.groupId)str+= ' ogid="'+o.groupId+'"';
+					};
+					str+= ' x1="'+o.startX+'"';
+					str+= ' y1="'+o.startY+'"';
+					str+= ' x2="'+o.endX+'"';
+					str+= ' y2="'+o.endY+'"';
+					str+= ' stroke-width="'+o.lineWidth+'"';
+					str+= ' stroke="'+o.strokeStyle+'"';
+					str+= ' fill="'+fill+'"';
+					if(o.rotate) str+= ' transform="rotate('+o.rotate+' '+(o.startX + (o.width/2))+' '+(o.startY + (o.height/2))+')"';
+					str+= '></line>';
+					svg+=str;
+			}
+			if(o.type == 'circle')
+			{
+				if(!o.fill) fill = "none"; else fill = o.fill;
+				var str = '<circle ';
+					str+= ' id="' + o.dynamicData + '"';
+					if(data.excludeDesignerData != true){
+						if(o.locked) str+= ' locked="1"';
+						if(o.title)  str+= ' otitle="'+o.title+'"';
+						if(o.url)    str+= ' onclick="window.open(\''+o.url+'\',\'_blank\')" dataurl="'+o.url+'"';
+						if(o.groupId)str+= ' ogid="'+o.groupId+'"';
+					}
+					str+= ' r="'+(o.r)+'"';
+					str+= ' cx="'+o.cx+'"';
+					str+= ' cy="'+o.cy+'"';
+					str+= ' stroke-width="'+o.lineWidth+'"';
+					str+= ' stroke="'+o.strokeStyle+'"';
+					str+= ' fill="'+fill+'"';
+					str+= '></circle>';
+					svg+=str;
+			}
+			return str;
+		},
+
+		drawGroup : function( objects, data ){
+			var svgStr = '';
+			for(i in objects){
+				var o = objects[i];
+				if(o.oType=='object') svgStr += this.getSvgElement( o, data );
+				if(o.oType=='group')
+				{
+					if(!data.excludeDesignerData)
+					{
+						var title 	  = o.title,
+							gid       = o.gid,
+							groupId   = o.groupId,
+							visible   = o.visible,
+							locked    = o.locked,
+							collapsed = o.collapsed;
+						svgStr += '<g gtitle="'+title+'" gid="'+gid+'" groupid="'+groupId+'" gvisible="'+visible+'" glocked="'+locked+'" gcollapsed="'+collapsed+'">';
+					}else svgStr += '<g title="'+o.title+'">';
+					
+					svgStr += this.drawGroup(o.objects, data );
+					svgStr += '</g>';
+				}
+			}
+			return svgStr;
+		},
+
+		getSvg : function( data )
+		{
+			//data = {}; data.excludeDesignerData = false;//
+			this.counter = 0;
+			svg = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="'+this.parent.width+'px" height="'+this.parent.height+'px">';
+			var nested = this.parent.helpers.getNested( 'getFullVersion', 'keepOriginalOrder' );
+			svg += this.drawGroup( nested, data );
+			svg += '</svg>';
 			return svg;
 		},
 
