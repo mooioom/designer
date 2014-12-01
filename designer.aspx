@@ -311,6 +311,10 @@
 			<string resource="hue"             value="Hue"></string>
 			<string resource="saturation"      value="Saturation"></string>
 			<string resource="lightness"       value="Lightness"></string>
+			<string resource="colorize"        value="Colorize"></string>
+			<string resource="red"             value="Red"></string>
+			<string resource="green"           value="Green"></string>
+			<string resource="blue"            value="Blue"></string>
 			<string resource="greyscale"       value="Greyscale"></string>
 			<string resource="sharpen"         value="Sharpen"></string>
 			<string resource="blur"            value="Blur"></string>

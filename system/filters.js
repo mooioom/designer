@@ -196,8 +196,6 @@ $.extend( true, designer, {
 	            pixels.data[i + 3] = alpha;
 			}
 
-			//debugger;
-
 			var src = this.getSrc( pixels, this.original );
 			this.parent.selecteds[0].src = src;
 
@@ -249,6 +247,41 @@ $.extend( true, designer, {
 		    	s : s,
 		    	l : l
 		    };
+		},
+
+		colorize : function( r, g, b, s ){
+
+			var pixels = this.getPixels( this.original ),
+				data   = pixels.data;
+
+			for (var i = 0; i < data.length; i += 4) 
+			{
+				red   = data[i + 0];
+		        green = data[i + 1];
+		        blue  = data[i + 2];
+		        alpha = data[i + 3];
+		        var v = 0.2126*red + 0.7152*green + 0.0722*blue;
+				data[i] = data[i+1] = data[i+2] = v;
+
+		        data[i + 0] = data[i + 0] * r / 100;
+		        data[i + 1] = data[i + 1] * g / 100;
+		        data[i + 2] = data[i + 2] * b / 100;
+
+		        //debugger;
+
+		        // var hsl = this.rgbToHsl(red, green, blue);
+		        // var hue = hsl.h;
+		        
+	         //    var newRgb = this.hslToRgb(hsl.h * h / 100, hsl.s * s / 100, hsl.l);
+	         //    pixels.data[i + 0] = newRgb.r;
+	         //    pixels.data[i + 1] = newRgb.g;
+	         //    pixels.data[i + 2] = newRgb.b;
+	         //    pixels.data[i + 3] = alpha;
+			}
+
+			var src = this.getSrc( pixels, this.original );
+			this.parent.selecteds[0].src = src;
+
 		}
 
 	}

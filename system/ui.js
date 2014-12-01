@@ -884,6 +884,54 @@ $.extend( true, designer, {
 
 				new this.parent.parent.toolbox({
 
+					name    : 'colorize',
+					title   : getString('colorize'),
+					visible : false,
+
+					render : function(){
+						$('.body',this.el).empty();
+						$('.body',this.el).append('<div class="item">'+getString('red')+'<br/><input type="range" class="red" min="0" max="100" step="1" value="255"></div>');
+						$('.body',this.el).append('<div class="item">'+getString('green')+'<br/><input type="range" class="green" min="0" max="100" step="1" value="255"></div>');
+						$('.body',this.el).append('<div class="item">'+getString('blue')+'<br/><input type="range" class="blue" min="0" max="100" step="1" value="255"></div>');
+						$('.body',this.el).append('<div class="buttons"><div class="right button save">'+getString('save2')+'</div><div class="right button cancel">'+getString('Cancel')+'</div><div class="clear"></div></div>');
+					},
+
+					events : function(){
+
+						$('.toolbox.colorize input[type="range"]').bind('mouseup',$.proxy(function(e){
+							this.parent.filters.colorize( Number( $('.toolbox.colorize .red').val() ), Number( $('.toolbox.colorize .green').val() ), Number( $('.toolbox.colorize .blue').val() ) );
+						},this));
+
+						$('.toolbox.colorize .save').bind('click',$.proxy(function(){ this.save(); },this));
+						$('.toolbox.colorize .cancel, .toolbox.colorize .close').bind('click',$.proxy(function(){ this.cancel(); },this));
+
+					},
+
+					open : function(){
+						if( this.parent.filters.setup() ) 
+						{
+							$('.toolbox.colorize .hue').val(0);
+							$('.toolbox.colorize .saturation').val(100);
+							$('.toolbox.colorize').show();
+						}
+					},
+
+					save : function(){
+						this.parent.filters.original = null;
+						this.parent.history.save();
+						$('.toolbox.colorize').hide();
+					},
+
+					cancel : function(){
+						this.parent.selecteds[0].src = this.parent.filters.getOriginalSrc();
+						this.parent.render();
+						$('.toolbox.colorize').hide();
+					}
+
+				});
+
+				new this.parent.parent.toolbox({
+
 					name    : 'sharpen',
 					title   : getString('sharpen'),
 					visible : false,
