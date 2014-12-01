@@ -952,6 +952,33 @@ input[type='range'] {
 	padding: 10px;
 }
 
+/* Toolbox - Brightness / Contrast */
+
+.toolbox .buttons{
+	margin-top:    10px;
+	margin-bottom: 5px;
+	margin-right:  5px;
+}
+
+.rtl .toolbox .buttons{
+	margin-right: 0px;
+	margin-left: 5px;
+}
+
+.toolbox .button{
+	padding: 3px;
+	margin: 1px;
+	font-size: 10px;
+	background: #222;
+	color: #fff;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+.toolbox .button:hover{
+	background: #FAA219;
+}
+
 .toolbox.text{
 	z-index: 100;
 	right: initial;

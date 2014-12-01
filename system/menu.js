@@ -42,6 +42,16 @@ $.extend( true, designer, {
 					]
 				},
 				{
+					id    : 'image',
+					sub   : [
+						{ id : 'brightCont'   , action : this.parent.ui.toolboxs.open, args : 'brightCont', scope : this.parent.ui.toolboxs, shortcut : 'B' },
+						{ id : 'hueSat'       , action : this.parent.ui.toolboxs.open, args : 'hueSat'    , scope : this.parent.ui.toolboxs, shortcut : 'H' },
+						{ id : 'greyscale'    , action : this.parent.filters.greyscale,                     scope : this.parent.filters,     shortcut : 'Y' },
+						{ id : 'sharpen'      , action : this.parent.ui.toolboxs.open, args : 'sharpen',    scope : this.parent.ui.toolboxs, shortcut : 'S' },
+						{ id : 'blur'         , action : this.parent.ui.toolboxs.open, args : 'blur',       scope : this.parent.ui.toolboxs, shortcut : 'U' },
+					]
+				},
+				{
 					id    : 'view',
 					sub   : [
 						{ id : 'grid',      action : this.parent.ui.toolboxs.toggle, args : 'grid',      scope : this.parent.ui.toolboxs, shortcut : 'Ctrl + G' },

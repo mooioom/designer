@@ -32,7 +32,7 @@
 		<script type="text/javascript" src="system/menu.js"></script>
 		<script type="text/javascript" src="system/toolbar.js"></script>
 		<script type="text/javascript" src="system/toolbox.js"></script>
-		<script type="text/javascript" src="system/sidebar.js"></script>
+		<script type="text/javascript" src="system/filters.js"></script>
 		<script type="text/javascript" src="system/ui.js"></script>
 		<script type="text/javascript" src="system/events.js"></script>
 		<script type="text/javascript" src="system/render.js"></script>
@@ -305,6 +305,17 @@
 			<string resource="group"           value="Group"></string>
 			<string resource="groupTitle"      value="Group"></string>
 			<string resource="ungroup"         value="Ungroup"></string>
+			<string resource="image"           value="Image"></string>
+			<string resource="brightCont"      value="Brightness / Contrast"></string>
+			<string resource="hueSat"          value="Hue / Saturation"></string>
+			<string resource="hue"             value="Hue"></string>
+			<string resource="saturation"      value="Saturation"></string>
+			<string resource="lightness"       value="Lightness"></string>
+			<string resource="greyscale"       value="Greyscale"></string>
+			<string resource="sharpen"         value="Sharpen"></string>
+			<string resource="blur"            value="Blur"></string>
+			<string resource="brightness"      value="Brightness"></string>
+			<string resource="contrast"        value="Contrast"></string>
 
 			<!-- Template Editor -->
 			<string resource="LoadingTemplates" value="<%=Resources.Strings.LoadingTemplates %>"></string>

@@ -81,7 +81,7 @@ $.extend( true, designer, {
 		// create parent context for all child objects
 		for(var i in item) if(item[i] && Object.prototype.toString.call(item[i]).search('Object') != -1) 
 		{
-			if(i == 'clipboard' ) continue;
+			if(i == 'clipboard') continue;
 			if(i != 'parent' && i != 'root') this.context( item[i] );
 			item[i].parent = item;
 			item[i].root   = this;

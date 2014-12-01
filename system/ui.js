@@ -54,7 +54,6 @@ $.extend( true, designer, {
 						$('.menu',this.el).append('<div class="item delete disabled right"></div>');
 						$('.menu',this.el).append('<div class="item shadow disabled left">'+getString('shadow')+'</div>');
 						$('.menu',this.el).append('<div class="item transform disabled left">'+getString('transform')+'</div>');
-						$('.menu',this.el).append('<div class="item fx disabled left">fx</div>');
 						$('.menu',this.el).append('<div class="clear"></div>');
 					},
 					initEvents : function(){
@@ -788,17 +787,187 @@ $.extend( true, designer, {
 
 				new this.parent.parent.toolbox({
 
-					name    : 'fx',
-					title   : getString('fx'),
+					name    : 'brightCont',
+					title   : getString('brightCont'),
 					visible : false,
 
 					render : function(){
 						$('.body',this.el).empty();
-						$('.body',this.el).append('<div class="item"><textarea id="text"></textarea></div>');
+						$('.body',this.el).append('<div class="item">'+getString('brightness')+'<br/><input type="range" class="brightness" min="-255" max="255" step="0.5" value="0"></div>');
+						$('.body',this.el).append('<div class="item">'+getString('contrast')+'<br/><input type="range" class="contrast" min="-255" max="255" step="0.5" value="0"></div>');
+						$('.body',this.el).append('<div class="buttons"><div class="right button save">'+getString('save2')+'</div><div class="right button cancel">'+getString('Cancel')+'</div><div class="clear"></div></div>');
 					},
 
 					events : function(){
-						$('.toolbox.text #text').bind('keyup change keydown',function(){ designer.functions.changeText( $(this).val() ); });
+
+						$('.toolbox.brightCont .brightness').bind('mouseup',$.proxy(function(e){
+							this.parent.filters.brightness( Number($(e.target).val()) )
+						},this));
+						$('.toolbox.brightCont .contrast').bind('mouseup',$.proxy(function(e){
+							this.parent.filters.contrast( Number($(e.target).val()) )
+						},this));
+
+						$('.toolbox.brightCont .save').bind('click',$.proxy(function(){ this.save(); },this));
+						$('.toolbox.brightCont .cancel, .toolbox.brightCont .close').bind('click',$.proxy(function(){ this.cancel(); },this));
+
+					},
+
+					open : function(){
+						if( this.parent.filters.setup() ) 
+						{
+							$('.toolbox.brightCont .brightness, .toolbox.brightCont .contrast').val(0);
+							$('.toolbox.brightCont').show();
+						}
+					},
+
+					save : function(){
+						this.parent.filters.original = null;
+						this.parent.history.save();
+						$('.toolbox.brightCont').hide();
+					},
+
+					cancel : function(){
+						this.parent.selecteds[0].src = this.parent.filters.getOriginalSrc();
+						this.parent.render();
+						$('.toolbox.brightCont').hide();
+					}
+
+				});
+
+				new this.parent.parent.toolbox({
+
+					name    : 'hueSat',
+					title   : getString('hueSat'),
+					visible : false,
+
+					render : function(){
+						$('.body',this.el).empty();
+						$('.body',this.el).append('<div class="item">'+getString('hue')+'<br/><input type="range" class="hue" min="-1" max="1" step="0.001" value="0"></div>');
+						$('.body',this.el).append('<div class="item">'+getString('saturation')+'<br/><input type="range" class="saturation" min="0" max="200" step="1" value="100"></div>');
+						$('.body',this.el).append('<div class="item">'+getString('lightness')+'<br/><input type="range" class="lightness" min="-1" max="1" step="0.001" value="0"></div>');
+						$('.body',this.el).append('<div class="buttons"><div class="right button save">'+getString('save2')+'</div><div class="right button cancel">'+getString('Cancel')+'</div><div class="clear"></div></div>');
+					},
+
+					events : function(){
+
+						$('.toolbox.hueSat .hue,.toolbox.hueSat .saturation,.toolbox.hueSat .lightness').bind('mouseup',$.proxy(function(e){
+							this.parent.filters.hsl( Number( $('.toolbox.hueSat .hue').val() ), Number( $('.toolbox.hueSat .saturation').val() ), Number( $('.toolbox.hueSat .lightness').val() ))
+						},this));
+
+						$('.toolbox.hueSat .save').bind('click',$.proxy(function(){ this.save(); },this));
+						$('.toolbox.hueSat .cancel, .toolbox.hueSat .close').bind('click',$.proxy(function(){ this.cancel(); },this));
+
+					},
+
+					open : function(){
+						if( this.parent.filters.setup() ) 
+						{
+							$('.toolbox.hueSat .hue, .toolbox.hueSat .lightness').val(0);
+							$('.toolbox.hueSat .saturation').val(100);
+							$('.toolbox.hueSat').show();
+						}
+					},
+
+					save : function(){
+						this.parent.filters.original = null;
+						this.parent.history.save();
+						$('.toolbox.hueSat').hide();
+					},
+
+					cancel : function(){
+						this.parent.selecteds[0].src = this.parent.filters.getOriginalSrc();
+						this.parent.render();
+						$('.toolbox.hueSat').hide();
+					}
+
+				});
+
+				new this.parent.parent.toolbox({
+
+					name    : 'sharpen',
+					title   : getString('sharpen'),
+					visible : false,
+
+					render : function(){
+						$('.body',this.el).empty();
+						$('.body',this.el).append('<div class="item">'+getString('sharpen')+'<br/><input type="range" class="sharpen" min="1" max="20" step="0.1" value="1"></div>');
+						$('.body',this.el).append('<div class="buttons"><div class="right button save">'+getString('save2')+'</div><div class="right button cancel">'+getString('Cancel')+'</div><div class="clear"></div></div>');
+					},
+
+					events : function(){
+
+						$('.toolbox.sharpen .sharpen').bind('mouseup',$.proxy(function(e){
+							this.parent.filters.sharpen( Number($(e.target).val()) )
+						},this));
+
+						$('.toolbox.sharpen .save').bind('click',$.proxy(function(){ this.save(); },this));
+						$('.toolbox.sharpen .cancel, .toolbox.sharpen .close').bind('click',$.proxy(function(){ this.cancel(); },this));
+
+					},
+
+					open : function(){
+						if( this.parent.filters.setup() ) 
+						{
+							$('.toolbox.sharpen .sharpen').val(0);
+							$('.toolbox.sharpen').show();
+						}
+					},
+
+					save : function(){
+						this.parent.filters.original = null;
+						this.parent.history.save();
+						$('.toolbox.sharpen').hide();
+					},
+
+					cancel : function(){
+						this.parent.selecteds[0].src = this.parent.filters.getOriginalSrc();
+						this.parent.render();
+						$('.toolbox.sharpen').hide();
+					}
+
+				});
+
+				new this.parent.parent.toolbox({
+
+					name    : 'blur',
+					title   : getString('blur'),
+					visible : false,
+
+					render : function(){
+						$('.body',this.el).empty();
+						$('.body',this.el).append('<div class="item">'+getString('blur')+'<br/><input type="range" class="blur" min="1" max="30" step="1" value="1"></div>');
+						$('.body',this.el).append('<div class="buttons"><div class="right button save">'+getString('save2')+'</div><div class="right button cancel">'+getString('Cancel')+'</div><div class="clear"></div></div>');
+					},
+
+					events : function(){
+
+						$('.toolbox.blur .blur').bind('mouseup',$.proxy(function(e){
+							this.parent.filters.blur( Number($(e.target).val()) )
+						},this));
+
+						$('.toolbox.blur .save').bind('click',$.proxy(function(){ this.save(); },this));
+						$('.toolbox.blur .cancel, .toolbox.blur .close').bind('click',$.proxy(function(){ this.cancel(); },this));
+
+					},
+
+					open : function(){
+						if( this.parent.filters.setup() ) 
+						{
+							$('.toolbox.blur .blur').val(0);
+							$('.toolbox.blur').show();
+						}
+					},
+
+					save : function(){
+						this.parent.filters.original = null;
+						this.parent.history.save();
+						$('.toolbox.blur').hide();
+					},
+
+					cancel : function(){
+						this.parent.selecteds[0].src = this.parent.filters.getOriginalSrc();
+						this.parent.render();
+						$('.toolbox.blur').hide();
 					}
 
 				});
@@ -847,6 +1016,12 @@ $.extend( true, designer, {
 			toggle : function( item ){
 
 				$('.toolbox.'+item).toggle();
+
+			},
+
+			open : function( item ){
+
+				this.parent.parent.getToolbox(item).open();
 
 			}
 
