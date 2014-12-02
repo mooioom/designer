@@ -285,7 +285,7 @@ $.extend( true, designer, {
 			if(sx != "0" || sy != "0" || sb != "0")
 			{
 
-				str+= '<filter id="f'+counter+'" height="150%" width="150%">';
+				str+= '<filter id="f'+this.counter+'" height="150%" width="150%">';
 				str+= '<feGaussianBlur in="SourceAlpha" stdDeviation="'+(sb/3)+'"/>';
 				str+= '<feOffset dx="'+(sx/1.5)+'" dy="'+(sy/1.5)+'" result="offsetblur"/>';
 				str+= '<feFlood flood-opacity="'+opacity+'" flood-color="'+colorString+'"/>';
@@ -326,7 +326,7 @@ $.extend( true, designer, {
 					str+= ' width="'	  + w + '"';
 					str+= ' height="'	  + h + '"';
 					if(o.rotate)  str+= ' transform="rotate('+o.rotate+' '+cx+' '+cy+')"';
-					if(addShadow) str+= ' style="filter:url(#f'+counter+')"';
+					if(addShadow) str+= ' style="filter:url(#f'+this.counter+')"';
 					if(o.opacity) str+= ' opacity = "'+o.opacity+'"';
 					str+= ' xlink:href="' + o.src + '"';
 					str+= ' />';
@@ -350,7 +350,7 @@ $.extend( true, designer, {
 					str+= ' stroke="'	    + o.strokeStyle + '"';
 					str+= ' stroke-width="' + o.lineWidth / 2 + '"';
 					if(o.rotate)  str+= ' transform="rotate('+o.rotate+' '+cx+' '+cy+')"';
-					if(addShadow) str+= ' style="filter:url(#f'+counter+')"';
+					if(addShadow) str+= ' style="filter:url(#f'+this.counter+')"';
 					if(o.opacity) str+= ' opacity = "'+o.opacity+'"';
 					str+= ' fill="' + fill + '"';
 					str+= ' />';
@@ -382,7 +382,7 @@ $.extend( true, designer, {
 					if(o.isBold)   str+= ' font-weight="bold"';
 					if(o.isItalic) str+= ' font-style="italic"';
 					str+= ' style="';
-					if(addShadow) str+= 'filter:url(#f'+counter+'); ';
+					if(addShadow) str+= 'filter:url(#f'+this.counter+'); ';
 					str+= '"';
 					//str+= ' alignment-baseline="before-edge"'; // equiv to Top
 					if(o.rotate) str+= ' transform="rotate('+o.rotate+' '+cx+' '+cy+')"';

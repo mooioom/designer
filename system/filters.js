@@ -266,17 +266,6 @@ $.extend( true, designer, {
 		        data[i + 0] = data[i + 0] * r / 100;
 		        data[i + 1] = data[i + 1] * g / 100;
 		        data[i + 2] = data[i + 2] * b / 100;
-
-		        //debugger;
-
-		        // var hsl = this.rgbToHsl(red, green, blue);
-		        // var hue = hsl.h;
-		        
-	         //    var newRgb = this.hslToRgb(hsl.h * h / 100, hsl.s * s / 100, hsl.l);
-	         //    pixels.data[i + 0] = newRgb.r;
-	         //    pixels.data[i + 1] = newRgb.g;
-	         //    pixels.data[i + 2] = newRgb.b;
-	         //    pixels.data[i + 3] = alpha;
 			}
 
 			var src = this.getSrc( pixels, this.original );

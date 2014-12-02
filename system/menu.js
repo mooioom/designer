@@ -49,7 +49,7 @@ $.extend( true, designer, {
 						{ id : 'colorize'     , action : this.parent.ui.toolboxs.open, args : 'colorize'  , scope : this.parent.ui.toolboxs, shortcut : 'C' },
 						{ id : 'greyscale'    , action : this.parent.filters.greyscale,                     scope : this.parent.filters,     shortcut : 'Y' },
 						{ id : 'sharpen'      , action : this.parent.ui.toolboxs.open, args : 'sharpen',    scope : this.parent.ui.toolboxs, shortcut : 'S' },
-						{ id : 'blur'         , action : this.parent.ui.toolboxs.open, args : 'blur',       scope : this.parent.ui.toolboxs, shortcut : 'U' },
+						{ id : 'blur'         , action : this.parent.ui.toolboxs.open, args : 'blur',       scope : this.parent.ui.toolboxs, shortcut : 'L' },
 					]
 				},
 				{

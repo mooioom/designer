@@ -151,9 +151,10 @@ $.extend( true, designer, {
 
 		keyDown : function( e )
 		{
+
 			if($("input:focus, textarea:focus, select:focus").length) return;
 			var p = false;
-			
+
 			keyCode = e.keyCode;
 
 			if(!this.addToPressed( keyCode )) return;
@@ -271,11 +272,16 @@ $.extend( true, designer, {
 		},
 
 		removeDuplicateKeyboardEvents : function(){
-			for(i in this.keyboardEvents) {
-				flag = 0;
-				for(x in this.keyboardEvents){
+			for(i in this.keyboardEvents)
+			{
+				var flag = 0;
+				for(x in this.keyboardEvents)
+				{
 					if(this.keyboardEvents[i].shortcut == this.keyboardEvents[x].shortcut) flag ++ ;
-					if(flag > 1) this.keyboardEvents.splice(x,1);
+					if(flag > 1) {
+						this.keyboardEvents.splice(x,1);
+						flag = 0;
+					}
 				}
 			}
 		},

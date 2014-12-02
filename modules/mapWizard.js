@@ -794,6 +794,10 @@ mapWizard = {
 
 		},this));
 
+		$('.makeChart').click( $.proxy(function(){
+			
+		},this) )
+
 		designer.onToolChange = this.onToolbarRefresh;
 		designer.onMouseUp    = this.onToolbarRefresh;
 
