@@ -835,6 +835,7 @@ input[type='range'] {
 	height: 20px;
 	text-overflow: ellipsis;
 	white-space: nowrap;
+	max-width: 140px;
 }
 
 .rtl .toolbox .objectName{

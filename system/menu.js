@@ -13,6 +13,7 @@ $.extend( true, designer, {
 						{ id : 'new',       action : this.parent.file.create,  scope : this.parent.file },
 						{ id : 'save',      action : this.parent.file.save,    scope : this.parent.file },
 						{ id : 'load',      action : this.parent.file.load,    scope : this.parent.file },
+						{ id : 'importHtml',action : this.parent.file.load, args : 'html', scope : this.parent.file },
 						{ id : 'exportHtml',action : this.parent.file.html,    scope : this.parent.file },
 						{ id : 'exportSvg', action : this.parent.file.svg,     scope : this.parent.file },
 						{ id : 'exportPng', action : this.parent.file.savePng, scope : this.parent.file },
@@ -98,6 +99,7 @@ $.extend( true, designer, {
 				$('.mainMenu').append( itemEl );
 			}
 			$('.mainMenu').append( "<div class='clear'></div>" );
+			$('.mainMenu').show();
 		},
 
 		events : function(){

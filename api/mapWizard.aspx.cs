@@ -11,6 +11,7 @@ using Satec.eXpertPowerPlus.BL.Maps;
 using Satec.eXpertPowerPlus.Web;
 using Satec.UtilsBL.xpwUtilities;
 using System.Web;
+using Satec.eXpertPowerPlus.DB.Readings;
 
 
 namespace Satec.eXpertPowerPlus.Web
@@ -117,6 +118,111 @@ namespace Satec.eXpertPowerPlus.Web
             var list = mapBl.GetDeviceParameters(deviceId, sessionHandler.LangID);
             return list.ToJson();
         }
+
+        [WebMethod]
+        public static string GetBasicMeasurmentsFields(int deviceId) {
+            SessionHandler sessionHandler = new SessionHandler();
+            BasicDataBL basicBl = new BasicDataBL( sessionHandler.LangID );
+            var fields = basicBl.GetBasicFields(deviceId);
+            return fields.ToJson();
+        }
+
+        [WebMethod]
+        public static string GetBasicMeasurments(int deviceId, string fields, int dateType, string dateFrom, string dateTo)
+        {
+            SessionHandler sessionHandler = new SessionHandler();
+            BasicDataBL basicBl = new BasicDataBL(sessionHandler.LangID);
+            DateTime from = DateTime.Now;
+            DateTime to   = DateTime.Now;
+            if (dateType == 1) { from = from.AddDays(-1);   }
+            if (dateType == 2) { from = from.AddDays(-7);   }
+            if (dateType == 3) { from = from.AddMonths(-1); }
+            if (dateType == 4) { from = from.AddMonths(-6); }
+            if (dateType == 5) { from = from.AddYears(-1);  }
+            if (dateType == 6) { from = Convert.ToDateTime(dateFrom); to = Convert.ToDateTime(dateTo); }
+            DataTable data = basicBl.GetBasicData(deviceId, from, to);
+            List<Dictionary<string, object>> r = formatDataTable(data);
+            return js.Serialize(r);
+        }
+
+        [WebMethod]
+        public static string GetLastReading(int deviceId) {
+            SessionHandler sessionHandler = new SessionHandler();
+            DateTime recordTime = DateTime.Now;
+            BasicDataBL objBL = new BasicDataBL(sessionHandler.LangID);
+            DataTable data = objBL.GetBasicData(deviceId, 1, eDirection.Prev, recordTime, true);
+            List<Dictionary<string, object>> r = formatDataTable(data);
+            return js.Serialize(r);
+        }
+
+        [WebMethod]
+        public static string GetLastReadingMulti(int deviceId, string devicesIds) {
+            SessionHandler sessionHandler = new SessionHandler();
+            DateTime recordTime = DateTime.Now;
+            var devices = devicesIds.Split(',').Select(n => int.Parse(n)).ToList();
+            BasicDataBL objBL = new BasicDataBL(sessionHandler.LangID);
+            DataTable data = objBL.GetDefaultMultiBasicData(deviceId, devices, 30, recordTime);
+            List<Dictionary<string, object>> r = formatDataTable(data);
+            return js.Serialize(r);
+        }
+
+        [WebMethod]
+        public static string getMaxDemands(int deviceId, int dateType, ePeriodType resolution, string dateFrom, string dateTo)
+        {
+            SessionHandler sessionHandler = new SessionHandler();
+            MaxDemandsDB maxdb = new MaxDemandsDB();
+            DateTime from = DateTime.Now;
+            DateTime to = DateTime.Now;
+            if (dateType == 1) { from = from.AddDays(-1); }
+            if (dateType == 2) { from = from.AddDays(-7); }
+            if (dateType == 3) { from = from.AddMonths(-1); }
+            if (dateType == 4) { from = from.AddMonths(-6); }
+            if (dateType == 5) { from = from.AddYears(-1); }
+            if (dateType == 6) { from = Convert.ToDateTime(dateFrom); to = Convert.ToDateTime(dateTo); }
+            DataTable data = maxdb.getMaxDemandsData(deviceId, from, to, resolution);
+            List<Dictionary<string, object>> r = formatDataTable(data);
+            return js.Serialize(r);
+        }
+
+        [WebMethod]
+        public static string getConsumption(string devicesIds, int dateType, ePeriodType resolution, string dateFrom, string dateTo)
+        {
+            SessionHandler sessionHandler = new SessionHandler();
+            EnergyBL consBL = new EnergyBL(sessionHandler.LangID);
+            bool f = false;
+            int tableNum = 1;
+            if (dateType > 4 && resolution.ToNullabeInt() == 4) tableNum = 0;
+            List<int> devices = new List<int>();
+            devices = devicesIds.Split(',').Select(n => int.Parse(n)).ToList();
+            DateTime from = DateTime.Now;
+            DateTime to = DateTime.Now;
+            from = new DateTime(from.Year, from.Month, from.Day, 10, 0, 0);
+            to   = new DateTime(to.Year, to.Month, to.Day, 10, 0, 0);
+
+            if (dateType == 1) { from = from.AddDays(-1); }
+            if (dateType == 2) { from = from.AddDays(-7); }
+            if (dateType == 3) { from = from.AddMonths(-1); }
+            if (dateType == 4) { from = from.AddMonths(-2); }
+            if (dateType == 5) { from = from.AddMonths(-6); }
+            if (dateType == 6) { from = from.AddYears(-1); }
+            if (dateType == 7) { from = Convert.ToDateTime(dateFrom); to = Convert.ToDateTime(dateTo); }
+
+            DataSet ConsDataSet = consBL.GetDataTablesForPeriod(devices, from, to, resolution, out f, out f, out f);
+
+            if (ConsDataSet != null)
+            {
+                List<Dictionary<string, object>> r = formatDataTable(ConsDataSet.Tables[tableNum]);
+                return js.Serialize(r);
+            }
+            else {
+                return js.Serialize(false) ;
+            }
+            
+        }
+
+        
+
+        /* getBasicMeasurmentsFields, getBasicMeasurments, getMaxDemands, getDataLogsNums, getDataLogsFields, getDataLogs */
 
         private static UserBL GetCurrentUserObject()
         {

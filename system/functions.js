@@ -440,6 +440,15 @@ $.extend( true, designer, {
 
 			this.parent.redraw();
 
+		},
+
+		makeAnnular : function( isAnnular, sDegree, eDegree, thickness ){
+			if(!this.parent.selecteds[0] || this.parent.selecteds[0].type != 'ellipse') return;
+			var o = this.parent.selecteds[0];
+			o.annular   = isAnnular;
+			o.sDegree   = isAnnular ? sDegree   : undefined;
+			o.eDegree   = isAnnular ? eDegree   : undefined;
+			o.thickness = isAnnular ? thickness : undefined;
 		}
 
 	},
@@ -541,6 +550,7 @@ $.extend( true, designer, {
 					o.cy          = point.y;
 					o.startX      = null;
 					o.startX      = null;
+					o.annular     = false;
 					break;
 				case 'path' :
 					o.stroke 	  = params.lineWidth || this.parent.defaults.box.lineWidth - 1;

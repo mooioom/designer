@@ -43,9 +43,9 @@
 
 		<input type="file" id="files" name="file" />
 
-		<div class="mainMenu"></div>
+		<div class="mainMenu hidden"></div>
 
-		<div class="toolbar box">
+		<div class="toolbar box hidden">
 			<div class="item">Box</div>
 			<div class="sep"></div>
 			<div class="item">X <input type="text" class="startX" /> &nbsp;Y <input type="text" class="startY" /></div>
@@ -119,6 +119,14 @@
 			<div class="item">Fill <input type="text" class="fillStyle" data="string" /></div>
 			<div class="sep"></div>
 			<div class="item">Stroke <input type="text" class="lineWidth" /> &nbsp;Color <input type="text" class="strokeStyle" data="string" /></div>
+			<!--<div class="sep"></div>
+			<div class="item"><input type="checkbox" id="isAnnular" />Annular</div>
+			<div class="annular hidden">
+				<div class="sep"></div>
+				<div class="item">
+					Start Degree <input type="text" class="startDegree" value="0" /> &nbsp;&nbsp;End Degree <input type="text" class="endDegree" value="360" />&nbsp;&nbsp;Thickness <input type="text" class="thickness" value="10" />
+				</div>
+			</div>-->
 			<div class="sep"></div>
 			<div class="item">
 				<div class="left toolbarBigButton edit">Edit</div>
@@ -192,7 +200,7 @@
 			<canvas id="gridCanvas"></canvas>
 		</div>
 
-		<div class="tools">
+		<div class="tools hidden">
 			<div class="button select active" id="select"></div>
 			<div class="button move" id="move"></div>
 			<div class="button crop" id="crop"></div>
@@ -244,6 +252,7 @@
 			<string resource="save2"           value="Save"></string>
 			<string resource="FileName"        value="File Name"></string>
 			<string resource="load"            value="Load"></string>
+			<string resource="importHtml"      value="Import - Html"></string>
 			<string resource="exportHtml"      value="Export - HTML"></string>
 			<string resource="exportSvg"       value="Export - SVG"></string>
 			<string resource="exportPng"       value="Export - PNG"></string>

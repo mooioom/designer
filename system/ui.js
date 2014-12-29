@@ -5,7 +5,21 @@ $.extend( true, designer, {
 
 		tools : {
 
-			init : function(){}
+			init : function()
+			{
+				this.setHeight();
+				$('.tools').show().draggable({containment : "window"});
+			},
+
+			setHeight : function()
+			{
+				var height = 1;
+				$('.tools>div').each(function(){
+					if($(this).hasClass('button') || $(this).hasClass('colors')) height += 32;
+					if($(this).hasClass('sep')) height += 2;
+				});
+				$('.tools').css('height',height+'px');
+			}
 
 		},
 
@@ -1149,6 +1163,17 @@ $.extend( true, designer, {
 				$('.toolbarButton.align').click(function(){
 					var type = $(this).attr('type');
 					designer.functions['align'+type]();
+				});
+
+				$('#isAnnular').click(function()
+				{
+					var isAnnular = $(this).prop('checked'),
+						sDegree   = Number($('.startDegree').val()),
+						eDegree   = Number($('.endDegree').val()),
+						thickness = Number($('.thickness').val());
+						
+					designer.functions.makeAnnular( isAnnular, sDegree, eDegree, thickness );
+					$('.annular').toggle( $(this).prop('checked') );
 				});
 
 			},

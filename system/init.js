@@ -54,10 +54,11 @@ $.extend( true, designer, {
 		{
 			d = data.data;
 			if(typeof d != 'object') d = JSON.parse(data.data);
-			this.objects   = d.objects;
-			this.groups    = d.groups;
-			this.resources = d.resources;
-			this.current   = this.helpers.getLastId() + 1;
+			this.objects    = d.objects;
+			this.groups     = d.groups;
+			this.resources  = d.resources;
+			this.customTags = d.customTags;
+			this.current    = this.helpers.getLastId() + 1;
 			this.redraw();
 		}
 
@@ -158,6 +159,9 @@ $.extend( true, designer, {
 		});
 
 	},
+	
+	include : function( url ){$.ajax({url:url,dataType:'script',async:false });},
+	getHtml : function( url ){var res;$.ajax({url:url,async:false,success : function(html){res = html;}});return res;},
 
 	getToolbox : function( toolboxName ){
 		for(i in this.toolboxes) {t=this.toolboxes[i];if(t.name==toolboxName) return t}

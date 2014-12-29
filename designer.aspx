@@ -27,6 +27,11 @@
 		<script type="text/javascript" src="libs/mustache.js"></script>
 		<script type="text/javascript" src="libs/velocity.js"></script>
 
+		<script type="text/javascript" src="../app_inc/Js/highcharts.js"></script>
+		<script type="text/javascript" src="../app_inc/Js/highcharts-more.js"></script>
+		<script type="text/javascript" src="../app_inc/Js/dl.js"></script>
+		<script type="text/javascript" src="../app_inc/Js/widgetPlayer.js"></script>
+
 		<script type="text/javascript" src="system/base.js"></script>
 		<script type="text/javascript" src="system/init.js"></script>
 		<script type="text/javascript" src="system/menu.js"></script>
@@ -60,6 +65,8 @@
 				});
 
 			},20);
+
+			<% if(isAdmin) { %>window.isAdmin = true;<% }else{%>window.isAdmin = false;<%} %>
 			
 		});
 
@@ -74,9 +81,9 @@
 
 		<input type="file" id="files" name="file" />
 
-		<div class="mainMenu"></div>
+		<div class="mainMenu hidden"></div>
 
-		<div class="toolbar box">
+		<div class="toolbar box hidden">
 			<div class="item"><%=Resources.Strings.Box %></div>
 			<div class="sep"></div>
 			<div class="item">X <input type="text" class="startX" /> &nbsp;Y <input type="text" class="startY" /></div>
@@ -209,7 +216,7 @@
 			<canvas id="gridCanvas"></canvas>
 		</div>
 
-		<div class="tools">
+		<div class="tools hidden">
 			<div class="button select active" id="select"></div>
 			<div class="button move" id="move"></div>
 			<div class="sep"></div>
@@ -267,6 +274,7 @@
 			<string resource="save2"           value="<%=Resources.Strings.Save %>"></string>
 			<string resource="FileName"        value="<%=Resources.Strings.FileName %>"></string>
 			<string resource="load"            value="<%=Resources.Strings.Load %>"></string>
+			<string resource="importHtml"      value="Import - Html"></string>
 			<string resource="exportHtml"      value="<%=Resources.Strings.ExportHtml %>"></string>
 			<string resource="exportSvg"       value="<%=Resources.Strings.ExportSvg %>"></string>
 			<string resource="exportPng"       value="<%=Resources.Strings.ExportPng %>"></string>
@@ -356,6 +364,7 @@
 			<string resource="ChooseLanguage"   value="<%=Resources.Strings.ChooseLanguage %>"></string>
 
 			<!-- Map Wizard -->
+			<string resource="Create"           value="<%=Resources.Strings.Create %>"></string>
 			<string resource="MapWizard"        value="<%=Resources.Strings.MapWizard %>"></string>
 			<string resource="CreateNewMap"     value="<%=Resources.Strings.CreateNewMap %>"></string>
 			<string resource="LoadMap"          value="<%=Resources.Strings.LoadMap %>"></string>
@@ -383,8 +392,36 @@
 			<string resource="Type"             value="<%=Resources.Strings.Type %>"></string>
 			<string resource="Parameter"        value="<%=Resources.Strings.Parameter %>"></string>
 			<string resource="Exit"             value="<%=Resources.Strings.Exit %>"></string>
-			
-			
+			<string resource="MakeChart"        value="<%=Resources.Strings.MakeChart %>"></string>
+			<string resource="BasicMeasuremnts" value="<%=Resources.Strings.BasicMeasuremnts %>"></string>
+			<string resource="Readings" 		value="<%=Resources.Strings.Readings %>"></string>
+			<string resource="DataLogs" 		value="<%=Resources.Strings.DataLogs %>"></string>
+			<string resource="MaxDemands" 		value="<%=Resources.Strings.MaxDemands %>"></string>
+			<string resource="DataType" 		value="<%=Resources.Strings.DataType %>"></string>
+			<string resource="Past24Hours" 		value="<%=Resources.Strings.Past24Hours %>"></string>
+			<string resource="PastWeek" 		value="<%=Resources.Strings.PastWeek %>"></string>
+			<string resource="PastMonth" 		value="<%=Resources.Strings.PastMonth %>"></string>
+			<string resource="Past6Months" 		value="<%=Resources.Strings.Past6Months %>"></string>
+			<string resource="PastYear" 		value="<%=Resources.Strings.PastYear %>"></string>
+			<string resource="SelectDates" 		value="<%=Resources.Strings.SelectDates %>"></string>
+			<string resource="Days" 			value="<%=Resources.Strings.Days %>"></string>
+			<string resource="Weeks" 			value="<%=Resources.Strings.Weeks %>"></string>
+			<string resource="Months" 			value="<%=Resources.Strings.Months %>"></string>
+			<string resource="Resolution" 		value="<%=Resources.Strings.Resolution %>"></string>
+			<string resource="DateRange" 		value="<%=Resources.Strings.DateRange %>"></string>
+			<string resource="NoDataToDisplay"  value="<%=Resources.Strings.NoDataToDisplay %>"></string>
+			<string resource="Consumption"      value="<%=Resources.Strings.Consumption %>"></string>
+			<string resource="Cost"             value="<%=Resources.Strings.Cost %>"></string>
+			<string resource="kWhImport"        value="<%=Resources.Strings.kWhImport %>"></string>
+			<string resource="Reading"          value="<%=Resources.Strings.Reading %>"></string>
+			<string resource="kvarh"            value="<%=Resources.Strings.kvarh %>"></string>
+			<string resource="kWh"              value="<%=Resources.Strings.kWh %>"></string>
+			<string resource="PowerFactor"      value="<%=Resources.Strings.PowerFactor %>"></string>
+			<string resource="MaxDemand"        value="<%=Resources.Strings.MaxDemand %>"></string>
+			<string resource="kVA"              value="<%=Resources.Strings.kVA %>"></string>
+			<string resource="kW"               value="<%=Resources.Strings.kW %>"></string>
+			<string resource="Minutes"          value="<%=Resources.Strings.Minutes %>"></string>
+			<string resource="Hours"            value="<%=Resources.Strings.Hours %>"></string>
 			
 		</div>
 

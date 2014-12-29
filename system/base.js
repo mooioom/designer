@@ -15,12 +15,14 @@ $.extend( true, designer, {
 	resources : [],
 	images    : [],
 	clipboard : [],
-	temps     : [],
-	temp      : null,
+	
 	toolboxes : [],
 
 	selecteds       : [],
 	selectedsGroups : [],
+
+	temps     : [],
+	temp      : null,
 
 	color1 : 'black',
 	color2 : 'white',
@@ -189,6 +191,8 @@ $.extend( true, designer, {
 		{title : 'Frame',		  data : 'm0,0l300,0l0,300l-300,0zm35,-265l0,230l230,0l0,-230z'},
 		{title : 'Heart',		  data : 'm150,73c61,-175 300,0 0,225c-300,-225 -61,-400 0,-225z'},
 		{title : 'Star',		  data : 'm1,116.58409l113.82668,0l35.17332,-108.13487l35.17334,108.13487l113.82666,0l-92.08755,66.83026l35.17514,108.13487l-92.08759,-66.83208l-92.08757,66.83208l35.17515,-108.13487l-92.08758,-66.83026z'}
-	]
+	],
+
+	customTags : [] // added on export - ex. { name : 'tagName', prop1 : 1 } --> <tagName prop1="1" />
 
 })

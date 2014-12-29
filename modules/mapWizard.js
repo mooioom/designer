@@ -1,87 +1,46 @@
 //@ sourceURL=mapWizard.js
 
-// use mapWizard.setupDesigner to modify designer code
+// Dear Developer,
+// please note - the designer can be extended and modified easily using modules (such as this mapWizard module)
+// any changes to the source code within the 'system' folder should be cosidered.
+// for more information about how the designer works, feel free to contact me (eldad)
 
-console.log('mapWizard');
+console.log('mapWizard module');
 
 mapWizard = {
 
-	maps : null,
+	maps    : null,
+	devices : null,
 
-	meters : [
-		{
-			target   : 'var_11772_4352_1_1_1_2',
-			min      : 229,
-			max      : 237,
-			offColor : 'rgb(0, 0, 0)',
-			onColor  : 'rgb(0, 204, 11)',
-			levels   : 10
-		},
-		{
-			target   : 'var_11772_268_1_6_1_2',
-			min      : 0.79,
-			max      : 5.11,
-			offColor : 'rgb(0, 0, 0)',
-			onColor  : 'rgb(0, 204, 11)',
-			levels   : 10
-		}
-	],
+	widget  : {},
+
+	exportHtml : false,
 
 	init : function(){
 
 		document.title = getString('MapWizard');
 
-		this.setupUi();
-		this.setupDesigner();
+		designer.include('libs/mustache.js');
+		designer.include('modules/mapWizard/widgets.js');
 
-		this.load();
-		this.firstMenu();
+		widgetPlayer.apiUrl = "api/mapWizard.aspx";
+
+		this.getDevices();
+		this.setup();
+		this.menu();
 
 	},
 
-	load : function(){},
+	getDevices : function(){
 
-	parseData : function(){
+		this.api('getDevices',function( d ){
 
-		elements = [];
-		links    = [];
+			if(!d) return;
+			d = JSON.parse(d.d);
+			this.devices = d;
+			console.log('getDevices :: ' + this.devices.length + ' loaded!');
 
-		objects = $.extend(true,{},designer.objects);
-
-	    var elements = [],
-	    	links    = [];
-
-	    for(i in objects)
-	    {
-	    	o = objects[i];
-	    	if(o.dynamicData) str = o.dynamicData;
-	    	else continue;
-	    	if(str.search('var') != -1){
-	    		elements.push({
-	    			mapVariableName : str,
-		            unit            : str.split('_')[0],
-		            deviceid        : str.split('_')[1],
-		            paramId         : str.split('_')[2],
-		            groupId         : str.split('_')[3],
-		            orderno         : str.split('_')[4],
-		            phase           : str.split('_')[5]
-	    		});
-	    	}
-	    	if(str.search('btn') != -1){
-	    		links.push({
-	    			mapVariableName : str,
-		            linkid			: str.split('_')[1],
-		            linktype		: str.split('_')[2],
-		            pageid			: str.split('_')[3]
-	    		});
-	    	}
-	    }
-
-		return {
-			elements : JSON.stringify( elements ),
-			links    : JSON.stringify( links )
-		}
-
+		});
 	},
 
 	save : function(){
@@ -89,16 +48,16 @@ mapWizard = {
 		designer.ui.indicator.show( getString('Saving')+'...' );
 		objects = $.extend(true,{},designer.objects);
 
-		svg = designer.file.getSvg({objects:objects});
+		this.widgets.save();
 
-		// if(this.meters.length){
+		for(i in objects) 
+			if(objects[i].dynamicData && objects[i].dynamicData.search('widget') != -1)
+				this.exportHtml = true;
 
-		// 	for(i in this.meters){
-		// 		m = this.meters[i];
-		// 		svg += '<meter id="'+(Number(i)+1)+'" target="'+m.target+'" offcolor="'+m.offColor+'" oncolor="'+m.onColor+'" levels="'+m.levels+'" min="'+m.min+'" max="'+m.max+'" style="display:none;" />';
-		// 	}
+		if(this.exportHtml) svg = designer.file.getHtml({objects:objects});
+		else                svg = designer.file.getSvg({objects:objects});
 
-		// }
+		// if(this.meters.length){ for(i in this.meters){m = this.meters[i];svg += '<meter id="'+(Number(i)+1)+'" target="'+m.target+'" offcolor="'+m.offColor+'" oncolor="'+m.onColor+'" levels="'+m.levels+'" min="'+m.min+'" max="'+m.max+'" style="display:none;" />';}}
 
 		if(!this.mapId){
 
@@ -148,7 +107,43 @@ mapWizard = {
 
 	},
 
-	firstMenu : function(){
+	initDesigner : function( title, w, h, svg )
+	{
+		$('.resources').css('left','0px').css('top','620px').show();
+		$('.objects').css('left','0px').show();
+
+		$('.closeDesignerWrapper').show();
+
+		$('.saveMap').click($.proxy(this.save,this));
+		$('.closeDesigner').click(function(){ location.reload(); });
+		$('.previewSvg').click($.proxy(this.previewSvg,this));
+
+		$('.bottomMenu').show();
+		$('.tools').show();
+
+		if(!this.devices) this.getDevices();
+
+		mapWizard.title = title;
+
+		designer.reset();
+
+		var options = {
+			name    : title,
+		    width   : Number(w),
+			height  : Number(h)
+		};
+
+		if(svg) options.data = designer.file.parse(svg);
+
+		designer.init( options );
+
+		window.scrollTo(0,0);
+		a = $(window).height();
+		b = a - 47;
+		window.$('html').css('height',b+'px').css('overflow','hidden');
+	},
+
+	menu : function(){
 
 		this.hideOnInit();
 
@@ -236,59 +231,24 @@ mapWizard = {
 				$('.mapWizardDummy').css('height',$('#mapHeight').val()+'px');
 			});
 
-			$('.goBack').click($.proxy(function(){ this.firstMenu(); },this));
+			$('.goBack').click($.proxy(function(){ this.menu(); },this));
 
 			$('.createMapAction').click($.proxy(function()
 			{
 				getSize();
-
 				this.api('checkMapName',$.proxy(function(d){
 
 					d = JSON.parse(d.d);
+					if(!d.invalid)
+					{
 
-					if(!d.invalid){
-
-						var title = $('#title').val(),
-						w         = $('#mapWidth').val(),
-						h         = $('#mapHeight').val();
+						var title     = $('#title').val(),
+							w         = $('#mapWidth').val(),
+							h         = $('#mapHeight').val();
 
 						if($('.validation').hasClass('invalid')) {$('#title').focus();return;}
 
-						$('.resources').css('left','0px').css('top','620px').show();
-						$('.objects').css('left','0px').show();
-						$('.closeDesignerWrapper').show();
-
-						$('.saveMap').click($.proxy(this.save,this));
-						$('.closeDesigner').click(function(){
-							location.reload();
-						});
-						$('.previewSvg').click($.proxy(this.previewSvg,this));
-
-						$('.bottomMenu').show();
-						$('.tools').show();
-
-						this.api('getDevices',function( d ){
-							if(!d) return;
-							d = JSON.parse(d.d);
-							this.devices = d;
-						});
-
-						//todo:uncomment
-						//window.onbeforeunload = function() { return getString('unsavedData'); };
-
-						mapWizard.title = title;
-
-						designer.reset();
-						designer.init({
-							name    : title,
-						    width   : Number(w),
-							height  : Number(h)
-						});
-
-						window.scrollTo(0,0);
-						a = $(window).height();
-						b = a - 47;
-						window.$('html').css('height',b+'px').css('overflow','hidden');
+						this.initDesigner( title, w, h );
 
 					}else $('.validation').show().addClass('invalid').html(getString('MapNameExists'));
 
@@ -316,7 +276,7 @@ mapWizard = {
 
 				$('.mapWizardMenu').append('<div class="mapWizardMenuItem"><div class="mapWizardButton loadMapAction disabled">'+getString('Start')+'</div><div class="mapWizardButton goBack">'+getString('Back')+'</div><div class="clear"></div></div>');
 
-				$('.goBack').click($.proxy(function(){ this.firstMenu(); },this));
+				$('.goBack').click($.proxy(function(){ this.menu(); },this));
 
 				$('#maps').append('<option value="0">'+getString('SelectMapTIt')+'</option>');
 
@@ -327,12 +287,12 @@ mapWizard = {
 					if($('#maps').val() == "0") return;
 					this.api('GetMapCode',$.proxy(function( data ){
 						var map = JSON.parse(data.d);
-						//debugger;
 						if(map.Code){
 							$('.mapPreviewCanvas').html(map.Code);
-							w = Number($('.mapPreviewCanvas svg').width());
+							w = Number($($('.mapPreviewCanvas').children()[0]).width());
+							h = Number($($('.mapPreviewCanvas').children()[0]).height());
 							zoom = 670 / w;
-							$('.mapPreviewCanvas svg').attr('style', 'zoom:'+zoom+' ;-moz-transform:scale('+zoom+')');
+							$($('.mapPreviewCanvas').children()[0]).attr('style', 'zoom:'+zoom+' ;-moz-transform:scale('+zoom+'); position:relative; height:'+h+'px; width :'+w+'px;').attr('width',w+'px').attr('height',h+'px');
 							$('.loadMapAction').removeClass('disabled').unbind('click').bind('click',$.proxy(function(){
 
 								this.mapId = Number($('#maps').val());
@@ -341,52 +301,13 @@ mapWizard = {
 								w          = Number($(svg).attr('width').replace('px',''));
 								h          = Number($(svg).attr('height').replace('px',''));
 
-								$('.resources').css('left','0px').css('top','620px').show();
-								$('.objects').css('left','0px').show();
-								$('.closeDesignerWrapper').show();
-
-								$('.saveMap').click($.proxy(this.save,this));
-								$('.closeDesigner').click(function(){
-									location.reload();
-								});
-								$('.previewSvg').click($.proxy(this.previewSvg,this));
-
-								$('.bottomMenu').show();
-								$('.tools').show();
-
-								this.api('getDevices',function( d ){
-									if(!d) return;
-									d = JSON.parse(d.d);
-									this.devices = d;
-								});
-
-								//todo:uncomment
-								//window.onbeforeunload = function() { return getString('unsavedData'); };
-
-								mapWizard.title = title;
-
-								designer.reset();
-								designer.init({
-									name    : title,
-								    width   : w,
-									height  : h,
-									data    : designer.file.parseSvg(svg)
-								});
-
-								window.scrollTo(0,0);
-								a = $(window).height();
-								b = a - 47;
-								window.$('html').css('height',b+'px').css('overflow','hidden');
+								this.initDesigner( title, w, h, svg );
 
 							},this))
 						}
-					}),{
-						mapId : Number($('#maps').val())
-					})
+					}),{ mapId : Number($('#maps').val()) })
 				},this));
-
 			});
-
 		},this));
 
 		//exit
@@ -415,13 +336,11 @@ mapWizard = {
 
 	hideOnInit : function(){
 
-		$('.tools, .toolbox, #new, #save, #load, .stage canvas, #group, #ungroup').hide();
+		$('.tools, .toolbox, #new, #save, #load, .stage canvas, #group, #ungroup, .toolbar, .mainMenu').hide();
 
 	},
 
-	setupUi : function(){
-
-		$('.tools').css('height','389px');
+	setup : function(){
 
 		if( $('body').hasClass('ltr') )
 		{
@@ -440,6 +359,8 @@ mapWizard = {
 		// setup toolboxes, menus etc.
 
 		designer.onLoad = function(){
+
+			mapWizard.widgets.init();
 
 			// combo
 
@@ -467,12 +388,9 @@ mapWizard = {
 				this.parent.redraw();
 
 			};
-			designer.actions.combo.mouseMove = function(){
 
-			};
-			designer.actions.combo.mouseUp = function(){
-
-			};
+			designer.actions.combo.mouseMove = function(){};
+			designer.actions.combo.mouseUp = function(){};
 
 			designer.events.addToolsEvents();
 
@@ -529,6 +447,8 @@ mapWizard = {
 
 			designer.selectedShape = 25;
 
+			designer.ui.toolbars.init();
+
 
 			// devices
 
@@ -568,14 +488,13 @@ mapWizard = {
 
 		$('.toolbar.text').append('<div class="sep selectParamHolder "></div>');
 		$('.toolbar.text').append('<div class="item selectParamHolder "><div class="toolbarButtonB left selectParam">'+getString('SelectParameter')+'</div><div class="toolbarButtonB left makeButton">'+getString('MakeButton')+'</div><div class="selectedInteraction left"></div><div class="clear"></div></div>');
-
 		$('.toolbar.text').append('<div class="clear"></div>');
-
 
 		$('.toolbar.box .clear, .toolbar.ellipse .clear, .toolbar.path .clear').remove(); // make button
 
 		$('.toolbar.box, .toolbar.ellipse, .toolbar.path').append('<div class="sep makeButtonHolder "></div>');
-		$('.toolbar.box, .toolbar.ellipse, .toolbar.path').append('<div class="item makeButtonHolder "><div class="toolbarButtonB left makeButton">'+getString('MakeButton')+'</div><div class="selectedInteraction left"></div><div class="clear"></div></div>');
+		$('.toolbar.ellipse, .toolbar.path').append('<div class="item makeButtonHolder "><div class="toolbarButtonB left makeButton">'+getString('MakeButton')+'</div><div class="selectedInteraction left"></div><div class="clear"></div></div>');
+		$('.toolbar.box').append('<div class="item makeButtonHolder "><div class="toolbarButtonB left makeButton">'+getString('MakeButton')+'</div><div class="toolbarButtonB left makeChart">'+getString('MakeChart')+'</div><div class="selectedInteraction left"></div><div class="clear"></div></div>');
 
 		$('.toolbar.box, .toolbar.ellipse, .toolbar.path').append('<div class="clear"></div>');
 
@@ -697,11 +616,8 @@ mapWizard = {
 				            	$('.dynamicDataRadio[pagetype='+pageid+']').addClass('selected');
 				            	$('#linkToMap').val(linkid);
 				            }
-
 						}
-
 					}
-
 				},this)
 			});
 
@@ -795,8 +711,205 @@ mapWizard = {
 		},this));
 
 		$('.makeChart').click( $.proxy(function(){
-			
-		},this) )
+
+			content = $('<div class="makeChartContent"><div class="makeChartMenu"><div class="dataType left"><select id="dataType"></select></div><div class="device left hidden"><select id="device"></select></div><div class="dataLogsNums left hidden"><select id="dataLogNums"></select></div><div class="datesType left hidden"><select id="datesType"></select></div><div class="left resolution hidden"><select id="resolution"></select></div><div class="left resolutionC hidden"></div><div class="dates left hidden"><select id="dates"></select></div><div class="clear"></div><div class="fields"></div></div><div class="makeChartPreview"><div id="chart"></div></div></div></div>');
+
+			popup = new Popup({
+
+				header     : getString('MakeChart'),
+				closeText  : getString('Close'),
+				actionText : getString('save2'),
+				action     : $.proxy(function(){
+
+					switch( $('.makeChartPopup #dataType').val() ){
+						case "1" :
+							var deviceId  = $('.makeChartPopup #device').val(),
+								fields    = this.getSelectedFields(),
+								datesType = $('.makeChartPopup #datesType').val();
+
+							if(!deviceId) {designer.selecteds[0].dynamicData = ''; return;}
+							designer.selecteds[0].dynamicData = 'chart_1_'+deviceId+'_'+fields+'_'+datesType;
+							designer.selecteds[0].widget = this.widget;
+							this.widget = {};
+							break;
+
+						case "3" :
+							var deviceId   = $('.makeChartPopup #device').val(),
+								resolution = $('.makeChartPopup #resolution').val(),
+								datesType  = $('.makeChartPopup #datesType').val();
+
+							if(!deviceId) {designer.selecteds[0].dynamicData = ''; return;}
+							designer.selecteds[0].dynamicData = 'chart_3_'+deviceId+'_'+resolution+'_'+datesType;
+							break;
+
+						case "4" :
+							var deviceId   = $('.makeChartPopup #device').val(),
+								fields     = this.getSelectedFields(),
+								datesType  = Number($('.makeChartPopup #datesType').val()),
+								resolution = datesType > 4 ? 4 : 3;
+
+							if(!deviceId) {designer.selecteds[0].dynamicData = ''; return;}
+							designer.selecteds[0].dynamicData = 'chart_4_'+deviceId+'_'+fields+'_'+resolution+'_'+datesType;
+							break;							
+					}
+
+					popup.close();
+
+				},this),
+				content  : content,
+				addClass : 'makeChartPopup',
+				onLoad   : $.proxy(function(){
+
+					$('.makeChartPopup #dataType').append('<option value="0">'+getString('DataType')+'...</option>');
+					$('.makeChartPopup #dataType').append('<option value="1">'+getString('BasicMeasuremnts')+'</option>');
+					$('.makeChartPopup #dataType').append('<option value="3">'+getString('MaxDemands')+'</option>');
+					$('.makeChartPopup #dataType').append('<option value="4">'+getString('Consumption')+'</option>');
+					
+					$('.makeChartPopup #device').append('<option value="0">'+getString('SelectDevice')+'</option>');
+
+					for(i in this.devices){
+						device = this.devices[i];
+						$('.makeChartPopup #device').append('<option value="'+device.DeviceID+'">'+device.Name+'</option>');
+					}
+
+					$('#datesType').append('<option value="1">'+getString('Past24Hours')+'</option>');
+					$('#datesType').append('<option value="2">'+getString('PastWeek')+'</option>');
+					$('#datesType').append('<option value="3">'+getString('PastMonth')+'</option>');
+					$('#datesType').append('<option value="4">2 '+getString('Months')+'</option>');
+					$('#datesType').append('<option value="5">'+getString('Past6Months')+'</option>');
+					$('#datesType').append('<option value="6">'+getString('PastYear')+'</option>');
+					//$('#datesType').append('<option value="6">'+getString('DateRange')+'</option>');
+
+					$('#resolution').append('<option value="3">'+getString('Days')+'</option>');
+					$('#resolution').append('<option value="4">'+getString('Weeks')+'</option>');
+					$('#resolution').append('<option value="8">'+getString('Months')+'</option>');
+
+					$('.makeChartPopup #dataType').bind('change',$.proxy(function(e)
+					{
+						$('.makeChartPopup .device').hide();
+						$('.makeChartPopup #device').val(0);
+						$('.makeChartPopup .dataLogsNums').hide();
+						$('.makeChartPopup .datesType').hide();
+						$('.makeChartPopup .dates').hide();
+						$('.makeChartPopup .datesType').hide();
+						$('.makeChartPopup .resolution').hide();
+						$('.makeChartPopup .resolutionC').hide();
+						$('.makeChartPopup #chart').html('');
+						$('.makeChartPopup .fields').empty();
+						switch( $(e.target).val() )
+						{
+							case "1" : $('.makeChartPopup .device').show(); break;
+							case "2" : $('.makeChartPopup .device').show(); break;
+							case "3" : $('.makeChartPopup .device').show(); break;
+							case "4" : $('.makeChartPopup .device').show(); break;
+						}
+
+					},this));
+
+					$('.makeChartPopup #device').bind('change',$.proxy(function(e){
+
+						$('.makeChartPopup .fields').empty();
+						$('.makeChartPopup .datesType').hide();
+						$('.makeChartPopup #chart').html('');
+
+						var deviceId = $(e.target).val();
+
+						if(!deviceId) return;
+
+						switch( $('.makeChartPopup #dataType').val() )
+						{
+							case "1" : 
+								// get fields
+								this.api('GetBasicMeasurmentsFields',$.proxy(function( d ){
+									$('.makeChartPopup .fields').empty();
+									var fields = JSON.parse(d.d);
+									for(i in fields){
+										var group = fields[i];
+										for(x in group.FieldsList){
+											var field = group.FieldsList[x];
+											$('.makeChartPopup .fields').append('<div class="field left" data-name="'+field.Name+'" data-units="'+field.Units+'">'+field.Description+'</div>');
+										}
+									}
+									$('.makeChartPopup .fields').append('<div class="clear"></div>');
+
+									$('.makeChartPopup .field').unbind('click').bind('click',$.proxy(function(f){
+										$(f.target).toggleClass('selected');
+										if( $('.makeChartPopup .field.selected').length ){
+											$('.makeChartPopup .datesType').show();
+											$('.makeChartPopup #datesType').unbind('change').bind('change',$.proxy(function(dt)
+											{
+												if( $(dt.target).val() != "7" ) this.getBasicMeasurmentsGraph();	
+											},this));
+											this.getBasicMeasurmentsGraph();
+										}else{
+											$('.makeChartPopup .datesType').hide();
+											$('.makeChartPopup #chart').html('');
+										}
+									},this));
+
+								},this),{
+									deviceId : deviceId
+								});
+								//$('.makeChartPopup .datesType').show(); 
+								break;
+							case "2" : 
+								// get datalognums for device update select
+								debugger;
+								$('.makeChartPopup .dataLogsNums').show(); 
+
+								break;
+							case "3" : 
+								$('.makeChartPopup .datesType').show();
+								$('.resolution').show();
+								$('.makeChartPopup #datesType, .makeChartPopup #resolution').unbind('change').bind('change',$.proxy(function(dt)
+								{
+									if( $(dt.target).val() != "7" ) this.getMaxDemandsGraph();	
+								},this));
+								this.getMaxDemandsGraph();
+								break;
+							case "4" :
+								$('.makeChartPopup .datesType, .makeChartPopup .resolutionC').hide();
+								$('.makeChartPopup .resolutionC').html(getString('Days'));
+								$('.makeChartPopup #datesType').val('1');
+								$('.makeChartPopup .fields').empty();
+
+								$('.makeChartPopup .fields').append('<div class="field left" data-name="Cost">'+getString('Cost')+'</div>');
+								$('.makeChartPopup .fields').append('<div class="field left" data-name="kvarhImport">'+getString('Consumption')+' - '+getString('kvarh')+'</div>');
+								$('.makeChartPopup .fields').append('<div class="field left" data-name="kwhImport">'+getString('Consumption')+' - '+getString('kWh')+'</div>');
+								$('.makeChartPopup .fields').append('<div class="field left" data-name="maxKvaDmd">'+getString('MaxDemand')+' - '+getString('kVA')+'</div>');
+								$('.makeChartPopup .fields').append('<div class="field left" data-name="maxKwDmd">'+getString('MaxDemand')+' - '+getString('kW')+'</div>');
+								$('.makeChartPopup .fields').append('<div class="field left" data-name="powerFactor">'+getString('PowerFactor')+'</div>');
+
+								$('.makeChartPopup .fields').append('<div class="clear"></div>');
+
+								$('.makeChartPopup .field').unbind('click').bind('click',$.proxy(function(f){
+									$(f.target).toggleClass('selected');
+									
+									if( $('.makeChartPopup .field.selected').length ){
+										$('.makeChartPopup .datesType, .makeChartPopup .resolutionC').show();
+										$('.makeChartPopup #datesType').unbind('change').bind('change',$.proxy(function(dt)
+										{
+											var v = Number( $(dt.target).val() );
+											if( v != 7 ) {
+												$('.makeChartPopup .resolutionC').html( getString('Days') );
+												if( v > 4 ) $('.makeChartPopup .resolutionC').html( getString('Months') );
+												this.getConsumptionGraph();	
+											}
+										},this));
+										this.getConsumptionGraph();
+									}else{
+										$('.makeChartPopup .datesType').hide();
+										$('.makeChartPopup #chart').html('');
+									}
+								},this));
+								break;
+						}
+					},this))
+				},this)
+			});
+		},this) );
+
+		// create widget popup
 
 		designer.onToolChange = this.onToolbarRefresh;
 		designer.onMouseUp    = this.onToolbarRefresh;
@@ -805,22 +918,184 @@ mapWizard = {
 
 	},
 
+	getBasicMeasurmentsGraph : function()
+	{
+		var deviceId  = Number( $('.makeChartPopup #device').val() ),
+			datesType = $('.makeChartPopup #datesType').val(),
+			dateFrom  = "",
+			dateTo    = "",
+			fields    = this.getSelectedFields(),
+			fieldsArr = fields.split(',');
+
+		if(!deviceId) return;
+
+		this.widget = {
+			oid        : designer.selecteds[0].id,
+			interval   : 60000,
+			api        : {
+				action : 'GetBasicMeasurments',
+				data   : {
+					deviceId : deviceId,
+					fields   : fields,
+					dateType : datesType,
+					dateFrom : '',
+					dateTo   : ''
+				},
+				parser : mapWizard.getParser().toString()
+			},
+			renderer : mapWizard.getRenderer().toString()
+		}
+
+		widgetPlayer.play( this.widget )
+
+	},
+
+	getConsumptionGraph : function()
+	{
+		var deviceId   = Number( $('.makeChartPopup #device').val()    ),
+			datesType  = Number( $('.makeChartPopup #datesType').val() ),
+			dateFrom   = "",
+			dateTo     = "",
+			resolution = $('.makeChartPopup #resolutionC').val(),
+			fields     = this.getSelectedFields(),
+			fieldsArr  = fields.split(',');
+
+		if(!deviceId) return;
+
+		resolution = datesType > 4 ? 4 : 3;
+
+		this.api('getConsumption',$.proxy(function(d){
+
+			d = JSON.parse(d.d);
+
+			var categories = [];
+			var series = [];
+
+			for(x in fieldsArr){
+				series.push({
+					name : fieldsArr[x],
+					data : []
+				})
+			}
+
+			for(i in d){
+				var item = d[i];
+				for(z in fieldsArr){
+					if(typeof item[fieldsArr[z]] != 'undefined')
+					{
+						if(!item.ReadingDate) continue;
+						series[z].data.push(item[fieldsArr[z]]);
+						var unix = Number(item.ReadingDate.replace('/Date(','').replace(')/','')),
+							time = new Date( unix ),
+							timeStr = time.getHours() + ":" + time.getMinutes() + " - " + time.getDate() + '/' + (time.getMonth()+1) + '/' + time.getFullYear();
+		                categories.push( timeStr );
+					}
+				}
+			}
+
+			if(categories.length) this.createGraph( series, categories, {
+				type : 'column',
+				enableCategories : false,
+				isReversed : false
+			} );
+		},this),{
+			deviceId   : deviceId,
+			dateType   : datesType,
+			resolution : resolution,
+			dateFrom   : "",
+			dateTo     : ""
+		})
+	},
+
+	getMaxDemandsGraph : function()
+	{
+		var deviceId   = Number( $('.makeChartPopup #device').val() ),
+			datesType  = $('.makeChartPopup #datesType').val(),
+			dateFrom   = "",
+			dateTo     = "",
+			resolution = $('.makeChartPopup #resolution').val();
+
+		if(!deviceId) return;
+
+		this.api('getMaxDemands',$.proxy(function(d){
+			d = JSON.parse(d.d);
+			var categories = [];
+			var series = [];
+
+			series.push({ name : 'kW',     data : [] });
+			series.push({ name : 'kVa',    data : [] });
+			series.push({ name : 'Amp L1', data : [] });
+			series.push({ name : 'Amp L2', data : [] });
+			series.push({ name : 'Amp L3', data : [] });
+
+			for(i in d)
+			{
+				var item = d[i];
+
+				series[0].data.push(item.kwValue);
+				series[1].data.push(item.kvaValue);
+				series[2].data.push(item.amp1Value);
+				series[3].data.push(item.amp2Value);
+				series[4].data.push(item.amp3Value);
+
+				var unix    = Number(item.Date.replace('/Date(','').replace(')/','')),
+					time    = new Date( unix ),
+					timeStr = time.getDate() + '/' + (time.getMonth()+1) + '/' + time.getFullYear();
+
+				categories.push( timeStr );
+			}
+			if(categories.length) this.createGraph( series, categories, {
+				type : 'column',
+				enableCategories : true,
+				isReversed : false
+			} );
+		},this),{
+			deviceId   : deviceId,
+			dateType   : datesType,
+			resolution : resolution,
+			dateFrom   : "",
+			dateTo     : ""
+		})
+
+	},
+
+	createGraph : function( series, categories, data ){
+		$('#chart').highcharts({      
+            plotOptions : { series : { enableMouseTracking: true }, line   : { marker: { enabled: false } } },
+            chart  : { type : data.type, zoomType : 'x' },
+            title  : { text: '' },
+            xAxis  : { categories: categories, labels : { enabled : data.enableCategories }, reversed : data.isReversed },
+            yAxis  : { title: { text: '' } },
+            series : series
+        });
+	},
+
+	getSelectedFields : function(){
+
+		var fields = "";
+
+		$('.makeChartPopup .field.selected').each(function(){ 
+			fields += $(this).attr('data-name');
+			fields += ','; 
+			//fieldsArr.push($(this).attr('data-name'));
+		});
+
+		if(fields) fields = fields.substring(0,fields.length-1);
+
+		return fields;
+
+	},
+
 	onToolbarRefresh : function(){
 
 		$('.selectedInteraction').empty();
 
-		if(designer.selecteds.length == 1) o = designer.selecteds[0];
-		else return;
+		if(designer.selecteds.length == 1) o = designer.selecteds[0]; else return;
 
-		if(o.dynamicData && o.dynamicData.search('btn') != -1){
-			$('.selectedInteraction').html('assigned button');
-		}
-		else if(o.dynamicData && o.dynamicData.search('var') != -1){
-			$('.selectedInteraction').html('assigned parameter');
-		}
-		else if(o.url){
-			$('.selectedInteraction').html('assigned url');
-		}
+		if(o.dynamicData && o.dynamicData.search('btn') != -1){ $('.selectedInteraction').html('assigned button');}
+		else if(o.dynamicData && o.dynamicData.search('var') != -1){ $('.selectedInteraction').html('assigned parameter');}
+		else if(o.dynamicData && o.dynamicData.search('chart') != -1){ $('.selectedInteraction').html('assigned chart');}
+		else if(o.url){ $('.selectedInteraction').html('assigned url');}
 
 	},
 
@@ -871,7 +1146,57 @@ mapWizard = {
 
 	},
 
-	setupDesigner : function(){
+	// widgets
+
+	getParser : function(){
+
+		return function(data, widget)
+		{
+			var d          = JSON.parse(data.d),
+				fieldsArr  = widget.api.data.fields.split(','),
+				categories = [],
+				series     = [];
+
+			for(x in fieldsArr){
+				if(typeof fieldsArr[x] != 'string') continue;
+				series.push({ name : fieldsArr[x], data : [] })
+			}
+			for(i in d){
+				var item = d[i];
+				for(z in fieldsArr){
+					if(typeof item[fieldsArr[z]] != 'undefined')
+					{
+						series[z].data.push(item[fieldsArr[z]]);
+						var unix = Number(item.RecordTime.replace('/Date(','').replace(')/','')),
+							time = new Date( unix ),
+							timeStr = time.getHours() + ":" + time.getMinutes() + " - " + time.getDate() + '/' + (time.getMonth()+1) + '/' + time.getFullYear();
+		                categories.push( timeStr );
+					}
+				}
+			}
+			return {
+				series           : series,
+				categories       : categories,
+				type             : 'line',
+				enableCategories : false,
+				isReversed       : true
+			}
+		}
+
+	},
+
+	getRenderer : function(){
+
+		return function(data, widget){
+			$('#chart').highcharts({      
+	            plotOptions : { series : { enableMouseTracking: true }, line : { marker: { enabled: false } } },
+	            chart  : { type : data.type, zoomType : 'x' },
+	            title  : { text: '' },
+	            xAxis  : { categories: data.categories, labels : { enabled : data.enableCategories }, reversed : data.isReversed },
+	            yAxis  : { title: { text: '' } },
+	            series : data.series
+	        });
+		}
 
 	},
 
@@ -891,7 +1216,68 @@ mapWizard = {
 
 		$.ajax(a);
 
+	},
+
+	parseData : function(){
+
+		objects = $.extend(true,{},designer.objects);
+
+	    var elements = [],
+	    	links    = [];
+
+	    for(i in objects)
+	    {
+	    	o = objects[i];
+	    	if(o.dynamicData) str = o.dynamicData;
+	    	else continue;
+	    	if(str.search('var') != -1){
+	    		elements.push({
+	    			mapVariableName : str,
+		            unit            : str.split('_')[0],
+		            deviceid        : str.split('_')[1],
+		            paramId         : str.split('_')[2],
+		            groupId         : str.split('_')[3],
+		            orderno         : str.split('_')[4],
+		            phase           : str.split('_')[5]
+	    		});
+	    	}
+	    	if(str.search('btn') != -1){
+	    		links.push({
+	    			mapVariableName : str,
+		            linkid			: str.split('_')[1],
+		            linktype		: str.split('_')[2],
+		            pageid			: str.split('_')[3]
+	    		});
+	    	}
+	    }
+
+		return {
+			elements : JSON.stringify( elements ),
+			links    : JSON.stringify( links )
+		}
+
 	}
+
+	// data
+
+	/*meters : [
+		{
+			target   : 'var_11772_4352_1_1_1_2',
+			min      : 229,
+			max      : 237,
+			offColor : 'rgb(0, 0, 0)',
+			onColor  : 'rgb(0, 204, 11)',
+			levels   : 10
+		},
+		{
+			target   : 'var_11772_268_1_6_1_2',
+			min      : 0.79,
+			max      : 5.11,
+			offColor : 'rgb(0, 0, 0)',
+			onColor  : 'rgb(0, 204, 11)',
+			levels   : 10
+		}
+	]*/
 
 }
 
@@ -909,6 +1295,3 @@ closeDesigner.append(clearDiv);
 $('body').append(closeDesigner);
 
 mapWizard.init();
-
-//$('.saveMap').click(mapWizard.save);
-//$('.closeDesigner').click(mapWizard.firstMenu);

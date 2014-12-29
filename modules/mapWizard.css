@@ -38,7 +38,6 @@
     border-radius: 5px;
     color: #fff;
     z-index: 2;
-    background: #FFFFFF;
     padding-top: 12px;
     padding-bottom: 12px;
     cursor: default;
@@ -46,10 +45,10 @@
 
 .mapWizardMenuTitle{
     font-weight: bold;
-    text-shadow: 0px 1px 1px #AEAEAE;
+    /* text-shadow: 0px 1px 1px #AEAEAE; */
     margin-bottom: 13px;
     color: #FF9B00;
-    border-bottom: 1px solid #D3D3D3;
+    border-bottom: 1px solid #816130;
     padding-bottom: 13px;
     padding: 13px;
     padding-left: 0px;
@@ -61,7 +60,7 @@
 }
 
 .mapWizardMenuItem{
-    color: #646464;
+    color: #FFFFFF;
     padding-bottom: 2px;
     padding-top: 0px;
     padding-left: 0px;
@@ -80,7 +79,6 @@
     padding: 3px;
     border: none;
     text-indent: 5px;
-    background: #DBDBDB;
     color: #2D2D2D;
     margin: 0px;
     box-sizing: border-box;
@@ -108,9 +106,8 @@
 	text-align: center;
 	padding-top: 5px;
 	padding-bottom: 5px;
-	background: #EAEAEA;
 	color: #373737;
-	border: 1px solid #A1A09F;
+	border: 1px solid #FFFFFF;
 	text-align: left;
 	direction: ltr;
 	padding-left: 5px;
@@ -144,7 +141,7 @@
 .mapWizardButton{
 	cursor: pointer;
 	padding: 3px;
-	background: #E5E5E5;
+	background: #C0C0C0;
 	text-align: center;
 	margin-bottom: 3px;
 	width: 200px;
@@ -157,7 +154,7 @@
 }
 
 .mapWizardButton:hover{
-	background: #6D6D6D;
+	background: #085EA6;
 	color: #fff;
 }
 
@@ -420,4 +417,176 @@
 .rtl .selectedInteraction{
 	margin-left: 0px;
 	margin-right: 7px;
+}
+
+/* make chart */
+
+.makeChartPopup .popupInner{
+	width: 1080px;
+}
+
+.makeChartPopup .popupContent{
+	padding: 0px;
+}
+
+.makeChartPopup .makeChartContent{}
+.makeChartPopup .makeChartMenu{
+    background: #E5E5E5;
+    padding: 25px;
+}
+.makeChartPopup .makeChartPreview{
+    height: 365px;
+    padding-top: 39px;
+}
+.makeChartPopup #chart{
+    width: 999px;
+    height: 333px;
+    background: #ececec;
+    margin: 0px auto;
+    position: relative;
+}
+.makeChartPopup .device{
+    margin-left: 10px;
+}
+.makeChartPopup #device{
+	max-width: 250px;
+}
+.makeChartPopup .dataLogsNums{
+    margin-left: 10px;
+}
+.makeChartPopup .datesType{
+    margin-left: 10px;
+}
+.makeChartPopup .dates{
+    margin-left: 10px;
+}
+.makeChartPopup .resolution{
+    margin-left: 10px;
+}
+.makeChartPopup .resolutionC{
+    margin-left: 10px;
+	padding-top: 6px;
+	color: #7C7979;
+}
+.makeChartPopup .fields{
+    padding: 3px;
+	padding-left: 0px;
+	margin-top: 10px;
+	margin-bottom: -10px;
+}
+.makeChartPopup .field{
+	font-size:14px;
+	padding:3px;
+	background:#ccc;
+	margin-right:3px;
+	margin-bottom:3px;
+	cursor:pointer;
+	color: #808080;
+	border-radius: 4px;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+.makeChartPopup .field.selected{
+	background: #059607;
+	color: #fff;
+}
+.makeChartPopup .field:hover{
+
+}
+.makeChartPopup select{
+    font-size: 25px;
+    padding-left: 3px;
+    padding-right: 3px;
+    border: 1px solid #ccc;
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+
+/* Widgets Wizard */
+
+.widgetsWizard{}
+
+.widgetsWizard .popupInner{ width: 1080px; }
+.widgetsWizard .popupContent{ padding: 0px; }
+
+.widgetsWizard .main .menu{
+    box-shadow: 0px 0px 26px rgba(0,0,0,0.7);
+}
+.widgetsWizard .main .type{
+    padding: 10px;
+    background: #E0DEDE;
+}
+.widgetsWizard select{
+	font-size: 25px;
+    padding-left: 3px;
+    padding-right: 3px;
+    border: 1px solid #ccc;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    max-width: 300px;
+}
+.widgetsWizard input{
+	font-size: 25px;
+	padding-left: 5px;
+	padding-right: 3px;
+	border: 1px solid #ccc;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	max-width: 300px;
+	width: 135px;
+}
+.widgetsWizard .data select{
+	margin-right:6px
+}
+.rtl .widgetsWizard .data select{
+	margin-right: 0px;
+	margin-left:6px;
+}
+.widgetsWizard .main .data{
+    padding: 10px;
+    background: #F0F0F0;
+}
+.widgetsWizard .main .preview{
+    min-height: 400px;
+    background: #FCFCFC;
+    width: 100%;
+}
+/*.widgetsWizard .main .options{
+    min-height: 400px;  
+    background: #E8E8E8;  
+    width: 20%;
+}*/
+.widgetsWizard .fields{
+    padding: 3px;
+	padding-left: 0px;
+	margin-top: 6px;
+	margin-bottom: -6px;
+}
+.widgetsWizard .undefined{
+	display: none !important;
+}
+.widgetsWizard .field{
+	font-size:14px;
+	padding:3px;
+	background:#ccc;
+	margin-right:3px;
+	margin-bottom:3px;
+	cursor:pointer;
+	color: #808080;
+	border-radius: 4px;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+.widgetsWizard .field.selected{
+	background: #059607;
+	color: #fff;
+}
+.widgetsWizard .field:hover{
+
+}
+.widgetsWizard .widget{
+	width: 1040px;
+	height: 360px;
+	margin: 0px auto;
+	margin-top: 20px;
 }
