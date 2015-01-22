@@ -516,6 +516,10 @@ input[type='range'] {
 	background-image: url(../images/eyedrop.png);
 	background-size: 50%;
 }
+.button.fill{
+	background-image: url(../images/fill.png);
+	background-size: 60%;
+}
 .button.brush{
 	background-image: url(../images/brush.png);
 	background-size: 50%;

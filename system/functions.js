@@ -239,7 +239,7 @@ $.extend( true, designer, {
 
 			var o = this.parent.selecteds[0];
 
-			this.parent.ui.toolboxs.update( o );
+			this.parent.ui.toolboxes.update( o );
 			this.parent.ui.toolbars.update( o );
 
 		},

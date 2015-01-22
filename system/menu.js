@@ -45,20 +45,20 @@ $.extend( true, designer, {
 				{
 					id    : 'image',
 					sub   : [
-						{ id : 'brightCont'   , action : this.parent.ui.toolboxs.open, args : 'brightCont', scope : this.parent.ui.toolboxs, shortcut : 'B' },
-						{ id : 'hueSat'       , action : this.parent.ui.toolboxs.open, args : 'hueSat'    , scope : this.parent.ui.toolboxs, shortcut : 'H' },
-						{ id : 'colorize'     , action : this.parent.ui.toolboxs.open, args : 'colorize'  , scope : this.parent.ui.toolboxs, shortcut : 'C' },
+						{ id : 'brightCont'   , action : this.parent.ui.toolboxes.open, args : 'brightCont', scope : this.parent.ui.toolboxes, shortcut : 'B' },
+						{ id : 'hueSat'       , action : this.parent.ui.toolboxes.open, args : 'hueSat'    , scope : this.parent.ui.toolboxes, shortcut : 'H' },
+						{ id : 'colorize'     , action : this.parent.ui.toolboxes.open, args : 'colorize'  , scope : this.parent.ui.toolboxes, shortcut : 'C' },
 						{ id : 'greyscale'    , action : this.parent.filters.greyscale,                     scope : this.parent.filters,     shortcut : 'Y' },
-						{ id : 'sharpen'      , action : this.parent.ui.toolboxs.open, args : 'sharpen',    scope : this.parent.ui.toolboxs, shortcut : 'S' },
-						{ id : 'blur'         , action : this.parent.ui.toolboxs.open, args : 'blur',       scope : this.parent.ui.toolboxs, shortcut : 'L' },
+						{ id : 'sharpen'      , action : this.parent.ui.toolboxes.open, args : 'sharpen',    scope : this.parent.ui.toolboxes, shortcut : 'S' },
+						{ id : 'blur'         , action : this.parent.ui.toolboxes.open, args : 'blur',       scope : this.parent.ui.toolboxes, shortcut : 'L' },
 					]
 				},
 				{
 					id    : 'view',
 					sub   : [
-						{ id : 'grid',      action : this.parent.ui.toolboxs.toggle, args : 'grid',      scope : this.parent.ui.toolboxs, shortcut : 'Ctrl + G' },
-						{ id : 'objects',   action : this.parent.ui.toolboxs.toggle, args : 'objects',   scope : this.parent.ui.toolboxs, shortcut : 'Ctrl + O' },
-						{ id : 'resources', action : this.parent.ui.toolboxs.toggle, args : 'resources', scope : this.parent.ui.toolboxs, shortcut : 'Ctrl + R' }
+						{ id : 'grid',      action : this.parent.ui.toolboxes.toggle, args : 'grid',      scope : this.parent.ui.toolboxes, shortcut : 'Ctrl + G' },
+						{ id : 'objects',   action : this.parent.ui.toolboxes.toggle, args : 'objects',   scope : this.parent.ui.toolboxes, shortcut : 'Ctrl + O' },
+						{ id : 'resources', action : this.parent.ui.toolboxes.toggle, args : 'resources', scope : this.parent.ui.toolboxes, shortcut : 'Ctrl + R' }
 					]
 				}
 

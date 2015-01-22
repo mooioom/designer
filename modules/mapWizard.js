@@ -21,7 +21,7 @@ mapWizard = {
 		document.title = getString('MapWizard');
 
 		designer.include('libs/mustache.js');
-		designer.include('modules/mapWizard/widgets.js');
+		//designer.include('modules/mapWizard/widgets.js');
 
 		widgetPlayer.apiUrl = "api/mapWizard.aspx";
 
@@ -33,14 +33,11 @@ mapWizard = {
 
 	getDevices : function(){
 
-		this.api('getDevices',function( d ){
+		DL.get('devices async',$.proxy(function(devices){
+			this.devices = devices;
+			console.log('getDevices :: ' + this.devices.length + ' loaded!');	
+		},this));
 
-			if(!d) return;
-			d = JSON.parse(d.d);
-			this.devices = d;
-			console.log('getDevices :: ' + this.devices.length + ' loaded!');
-
-		});
 	},
 
 	save : function(){
@@ -48,7 +45,7 @@ mapWizard = {
 		designer.ui.indicator.show( getString('Saving')+'...' );
 		objects = $.extend(true,{},designer.objects);
 
-		this.widgets.save();
+		// this.widgets.save();
 
 		for(i in objects) 
 			if(objects[i].dynamicData && objects[i].dynamicData.search('widget') != -1)
@@ -360,12 +357,12 @@ mapWizard = {
 
 		designer.onLoad = function(){
 
-			mapWizard.widgets.init();
+			// mapWizard.widgets.init();
 
 			// combo
 
 			$('.tools .combo').remove();
-			$('.tools .text').after('<div class="button combo" id="combo"></div>');
+			$('.tools .text').after('<div class="button combo" id="combo" title="'+getString('ParamBox')+'"></div>');
 
 			if(!$('.toolbar.combo').length) $('.toolbar:last').after('<div class="toolbar combo hidden"><div class="item">Params Box</div><div class="sep"></div><div class="item">Click to add new parameters box</div><div class="clear"></div></div>');
 
@@ -398,7 +395,7 @@ mapWizard = {
 
 			$('.tools .shape').remove();
 
-			$('.tools .text').after('<div class="button shape" id="shape"><svg class="shapeButton" xmlns="http://www.w3.org/2000/svg" width="24" height="24"><svg viewBox="-15 -15 330 330"><path fill="none" stroke="#000000" stroke-width="20" d="m7.454795,178.082489l67.605378,0m-67.605378,-54.850876l67.605393,0.000015m-0.155602,-30.065033l0,113.750015c194.70015,10.208389 199.234482,-124.687454 0,-113.750015zm217.618942,56.662766l-70.312149,0m-221.397258,-29.817062l6.68369,0l0,6.683685l-6.68369,0l0,-6.683685zm-0.314375,54.532364l6.68369,0l0,6.683685l-6.68369,0l0,-6.683685zm291.95109,-27.976547l6.683685,0l0,6.683685l-6.683685,0l0,-6.683685z"></path></svg></svg></div>');
+			$('.tools .text').after('<div class="button shape" id="shape" title="'+getString('Symbols')+'"><svg class="shapeButton" xmlns="http://www.w3.org/2000/svg" width="24" height="24"><svg viewBox="-15 -15 330 330"><path fill="none" stroke="#000000" stroke-width="20" d="m7.454795,178.082489l67.605378,0m-67.605378,-54.850876l67.605393,0.000015m-0.155602,-30.065033l0,113.750015c194.70015,10.208389 199.234482,-124.687454 0,-113.750015zm217.618942,56.662766l-70.312149,0m-221.397258,-29.817062l6.68369,0l0,6.683685l-6.68369,0l0,-6.683685zm-0.314375,54.532364l6.68369,0l0,6.683685l-6.68369,0l0,-6.683685zm291.95109,-27.976547l6.683685,0l0,6.683685l-6.683685,0l0,-6.683685z"></path></svg></svg></div>');
 			$('.tools #shape').unbind('click').bind('click', function( e ){
 				$('.tools .button').removeClass('active');
 				$('.listOfShapes').toggle();
@@ -453,7 +450,7 @@ mapWizard = {
 			// devices
 
 			$('.tools .device').remove();
-			$('.tools .text').after('<div class="button device" id="device"></div>');
+			$('.tools .text').after('<div class="button device" id="device" title="'+getString('ResourcesDevices')+'"></div>');
 
 			devices = [
 				{"name":"AX8","src":"modules/devices/AX-8_Reflect.png"},
@@ -494,7 +491,7 @@ mapWizard = {
 
 		$('.toolbar.box, .toolbar.ellipse, .toolbar.path').append('<div class="sep makeButtonHolder "></div>');
 		$('.toolbar.ellipse, .toolbar.path').append('<div class="item makeButtonHolder "><div class="toolbarButtonB left makeButton">'+getString('MakeButton')+'</div><div class="selectedInteraction left"></div><div class="clear"></div></div>');
-		$('.toolbar.box').append('<div class="item makeButtonHolder "><div class="toolbarButtonB left makeButton">'+getString('MakeButton')+'</div><div class="toolbarButtonB left makeChart">'+getString('MakeChart')+'</div><div class="selectedInteraction left"></div><div class="clear"></div></div>');
+		$('.toolbar.box').append('<div class="item makeButtonHolder "><div class="toolbarButtonB left makeButton">'+getString('MakeButton')+'</div><!--<div class="toolbarButtonB left makeChart">'+getString('MakeChart')+'</div>--><div class="selectedInteraction left"></div><div class="clear"></div></div>');
 
 		$('.toolbar.box, .toolbar.ellipse, .toolbar.path').append('<div class="clear"></div>');
 
@@ -556,6 +553,7 @@ mapWizard = {
 							designer.selecteds[0].url = $('#linkToUrl').val();
 							break;
 					}
+					designer.onMouseUp();
 					popup.close();
 				},this),
 				content  : content,
@@ -653,6 +651,8 @@ mapWizard = {
 
 					if(parameterId == '0') designer.selecteds[0].dynamicData = '';
 
+					designer.onMouseUp();
+
 					popup.close();
 
 				},this),
@@ -710,6 +710,7 @@ mapWizard = {
 
 		},this));
 
+		/*
 		$('.makeChart').click( $.proxy(function(){
 
 			content = $('<div class="makeChartContent"><div class="makeChartMenu"><div class="dataType left"><select id="dataType"></select></div><div class="device left hidden"><select id="device"></select></div><div class="dataLogsNums left hidden"><select id="dataLogNums"></select></div><div class="datesType left hidden"><select id="datesType"></select></div><div class="left resolution hidden"><select id="resolution"></select></div><div class="left resolutionC hidden"></div><div class="dates left hidden"><select id="dates"></select></div><div class="clear"></div><div class="fields"></div></div><div class="makeChartPreview"><div id="chart"></div></div></div></div>');
@@ -909,15 +910,18 @@ mapWizard = {
 			});
 		},this) );
 
+		*/
+
 		// create widget popup
 
-		designer.onToolChange = this.onToolbarRefresh;
-		designer.onMouseUp    = this.onToolbarRefresh;
+		designer.onToolChange = $.proxy(this.onToolbarRefresh,this);
+		designer.onMouseUp    = $.proxy(this.onToolbarRefresh,this);
 
 		// premade templates toolbox
 
 	},
 
+	/*
 	getBasicMeasurmentsGraph : function()
 	{
 		var deviceId  = Number( $('.makeChartPopup #device').val() ),
@@ -1086,29 +1090,57 @@ mapWizard = {
 
 	},
 
+	*/
+
 	onToolbarRefresh : function(){
 
 		$('.selectedInteraction').empty();
 
 		if(designer.selecteds.length == 1) o = designer.selecteds[0]; else return;
 
-		if(o.dynamicData && o.dynamicData.search('btn') != -1){ $('.selectedInteraction').html('assigned button');}
-		else if(o.dynamicData && o.dynamicData.search('var') != -1){ $('.selectedInteraction').html('assigned parameter');}
-		else if(o.dynamicData && o.dynamicData.search('chart') != -1){ $('.selectedInteraction').html('assigned chart');}
-		else if(o.url){ $('.selectedInteraction').html('assigned url');}
+		if(o.dynamicData && o.dynamicData.search('btn') != -1)
+		{ 
+			var d    = this.parseData(true),
+				oid  = designer.selecteds[0].id,
+				link = d.links.filter(function(l){return l.oid == oid})[0],
+				text = '';
+
+			if(link.linktype == "1") text = getString('LinkToPage') + ' "' + this.getDevice( link.linkid ).Name+'"'; 
+			if(link.linktype == "2") text = getString('LinkToMap') + ' "' + this.getMap( link.linkid ).Title+'"';
+			
+            $('.selectedInteraction').html(text);
+
+		}
+		else if(o.dynamicData && o.dynamicData.search('var') != -1)
+		{ 
+			var d       = this.parseData(true),
+				oid     = designer.selecteds[0].id,
+				element = d.elements.filter(function(l){return l.oid == oid})[0],
+				text    = '',
+				param   = this.getParameter( element.deviceid, element.paramId );
+
+			if(!param) return;
+
+			text = this.getDevice( element.deviceid ).Name + ' ('+param.ParamName+')';			
+
+			$('.selectedInteraction').html(text);
+
+		}
+		/*else if(o.dynamicData && o.dynamicData.search('chart') != -1){ $('.selectedInteraction').html('assigned chart'); }*/
+		else if(o.url){ $('.selectedInteraction').html(getString('LinkToUrl') + ' - '+o.url);}
 
 	},
 
 	getParameters : function( deviceId, selectedParameter ){
 
-		this.api('GetParametersForDevice',$.proxy(function( d ){
-			if(!d) return; 
-			d = JSON.parse(d.d);
-			this.parameters = d;
-			this.refreshParametersInput( selectedParameter );
-		},this),{deviceId:deviceId})
+		this.parameters = DL.get('parameters '+deviceId);
+		this.refreshParametersInput( selectedParameter );
 
 	},
+
+	getMap : function( mapId ){ return this.maps.filter(function(a){return a.MapID == Number(mapId)})[0]; },
+	getDevice : function( deviceId ) { return this.devices.filter(function(a){return a.DeviceID == Number(deviceId)})[0]; },
+	getParameter : function( deviceId, parameterId ){ return DL.get('parameters '+deviceId).filter(function(a){return a.ParamID == Number(parameterId)})[0]; },
 
 	refreshParametersInput : function( selectedParameter ){
 
@@ -1147,7 +1179,7 @@ mapWizard = {
 	},
 
 	// widgets
-
+	/*
 	getParser : function(){
 
 		return function(data, widget)
@@ -1199,6 +1231,7 @@ mapWizard = {
 		}
 
 	},
+	*/
 
 	// helpers
 
@@ -1218,7 +1251,7 @@ mapWizard = {
 
 	},
 
-	parseData : function(){
+	parseData : function( parsed ){
 
 		objects = $.extend(true,{},designer.objects);
 
@@ -1231,7 +1264,7 @@ mapWizard = {
 	    	if(o.dynamicData) str = o.dynamicData;
 	    	else continue;
 	    	if(str.search('var') != -1){
-	    		elements.push({
+	    		var element = {
 	    			mapVariableName : str,
 		            unit            : str.split('_')[0],
 		            deviceid        : str.split('_')[1],
@@ -1239,21 +1272,25 @@ mapWizard = {
 		            groupId         : str.split('_')[3],
 		            orderno         : str.split('_')[4],
 		            phase           : str.split('_')[5]
-	    		});
+	    		};
+	    		if(parsed) element.oid = o.id;
+	    		elements.push(element);
 	    	}
 	    	if(str.search('btn') != -1){
-	    		links.push({
+	    		var link = {
 	    			mapVariableName : str,
 		            linkid			: str.split('_')[1],
 		            linktype		: str.split('_')[2],
 		            pageid			: str.split('_')[3]
-	    		});
+	    		}
+	    		if(parsed) link.oid = o.id;
+	    		links.push(link);
 	    	}
 	    }
 
 		return {
-			elements : JSON.stringify( elements ),
-			links    : JSON.stringify( links )
+			elements : parsed ? elements : JSON.stringify( elements ),
+			links    : parsed ? links : JSON.stringify( links )
 		}
 
 	}

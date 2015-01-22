@@ -29,7 +29,7 @@ $.extend( true, designer, {
 		this.draw.toolbar();
 		this.ui.tools.init();
 		this.ui.toolbars.init();
-		this.ui.toolboxs.init();
+		this.ui.toolboxes.init();
 		this.ui.sidebars.init();
 	},
 

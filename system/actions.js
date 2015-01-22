@@ -695,6 +695,23 @@ $.extend( true, designer, {
 			}
 		},
 
+		fill :
+		{
+			mouseDown : function(){
+				if( this.parent.selectGroup ) { var turnOnSelectGroup = true; this.parent.selectGroup = false }
+				var o = this.parent.helpers.clickSelect();
+				if(o){
+					this.parent.history.save();
+					var color = this.parent.color1;
+					this.parent.helpers.fill( o, color );
+				}
+				if( turnOnSelectGroup ) this.parent.selectGroup = true;
+
+			},
+			mouseMove : function(){},
+			mouseUp : function(){}
+		},
+
 		eyedrop :
 		{
 			mouseDown : function(){ 

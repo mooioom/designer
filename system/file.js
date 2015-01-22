@@ -274,7 +274,7 @@ $.extend( true, designer, {
 					if(!o.fillStyle) fill = "none"; else fill = o.fillStyle;
 
 					var str = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" ';
-						str+= ' dynamic-data="' + o.dynamicData + '"';
+						if( o.dynamicData ) str+= ' dynamic-data="' + o.dynamicData + '"';
 						str+= ' viewbox="'+(o.topLeftX-(o.lineWidth/2))+' '+(o.topLeftY)+' '+(o.width+(o.lineWidth*2))+' '+(o.height-(o.lineWidth))+'" ';
 						str+= ' style="position:absolute; ';
 						str+= ' '+left+':'		+ (o.topLeftX - o.lineWidth/2) + 'px;';
@@ -306,7 +306,7 @@ $.extend( true, designer, {
 					if(!o.fillStyle) fill = "none"; else fill = o.fillStyle;
 
 					var str = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" ';
-						str+= ' dynamic-data="' + o.dynamicData + '"';
+						if( o.dynamicData ) str+= ' dynamic-data="' + o.dynamicData + '"';
 						str+= ' viewbox="'+(o.startX-(o.lineWidth/2))+' '+(o.startY)+' '+(o.width+(o.lineWidth*2))+' '+(o.height-(o.lineWidth))+'" ';
 						str+= ' style="position:absolute; ';
 						str+= ' '+left+':'		+ (o.startX - o.lineWidth/2) + 'px;';
@@ -341,7 +341,7 @@ $.extend( true, designer, {
 					if(!o.fillStyle) fill = "none"; else fill = o.fillStyle;
 
 					var str = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" ';
-						str+= ' dynamic-data="'+ o.dynamicData + '"';
+						if( o.dynamicData ) str+= ' dynamic-data="' + o.dynamicData + '"';
 						str+= ' viewbox="'+(o.startX-(o.lineWidth/2))+' '+(o.startY)+' '+(o.width+(o.lineWidth*2))+' '+(o.height-(o.lineWidth))+'" ';
 						str+= ' style="position:absolute; ';
 						str+= ' '+left+':'		+ (o.startX - o.lineWidth/2) + 'px;';
@@ -624,8 +624,8 @@ $.extend( true, designer, {
 		},
 
 		drawCustomTags : function(){
+			if(!this.parent.customTags || !this.parent.customTags.length) return '';
 			var str = '';
-			if( !this.parent.customTags.length ) return '';
 			str += '<customTags>';
 			for(i in this.parent.customTags)
 			{

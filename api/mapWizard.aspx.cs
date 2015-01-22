@@ -220,7 +220,74 @@ namespace Satec.eXpertPowerPlus.Web
             
         }
 
-        
+        [WebMethod]
+        public static string getCustomers()
+        {
+            string query = @"PERMISSION.GetNavTreeObject_SP " + new SessionHandler().UserID;
+            DataTable dt;
+            dt = dbUtils.FillDataSetTable(query, "customers").Tables[0];
+            List<Dictionary<string, object>> customers = formatDataTable(dt);
+            return js.Serialize(customers);
+        }
+
+        [WebMethod]
+        public static string getSites(int CustomerId)
+        {
+            string query = @"select * from CustomerSites cs 
+	                        join ListOfSites los on los.SiteID = cs.SiteID 
+	                        where CustomerID = "+CustomerId;
+            DataTable dt;
+            dt = dbUtils.FillDataSetTable(query, "sites").Tables[0];
+            List<Dictionary<string, object>> sites = formatDataTable(dt);
+            return js.Serialize(sites);
+        }
+
+        [WebMethod]
+        public static string getSiteDevices(int SiteId)
+        {
+            string query = @"select * from DevicesInSites dis 
+	                        join ListOfSites los on los.SiteID = dis.SiteID 
+	                        join ListOfDevices lod on dis.DeviceID = lod.DeviceID 
+	                        where dis.SiteID = " + SiteId;
+            DataTable dt;
+            dt = dbUtils.FillDataSetTable(query, "siteDevices").Tables[0];
+            List<Dictionary<string, object>> siteDevices = formatDataTable(dt);
+            return js.Serialize(siteDevices);
+        }
+
+        [WebMethod]
+        public static string GetStrings(string Strings, int LangId)
+        {
+            string[] words;
+            if (LangId == 0) LangId = new SessionHandler().CultureID;
+            words = Strings.Split(new Char[] { ',' });
+            List<Dictionary<string, string>> r = new List<Dictionary<string, string>>();
+            Dictionary<string, string> b = null;
+            DataTable dt = new DataTable();
+            var type = typeof(Resources.Strings);
+            foreach (string s in words)
+            {
+                string str = GetString(s, LangId);
+                b = new Dictionary<string, string>();
+                b.Add(s, str);
+                r.Add(b);
+            }
+            return js.Serialize(r);
+        }
+
+        [WebMethod]
+        public static object getMaps()
+        {
+            int intLangID = sessionHandler.LangID;
+            MapBL mapBl = new MapBL();
+            List<Map> maps = mapBl.GetSvgMapsForUser(sessionHandler.UserID);
+            string mapList = maps.Select(m => new
+            {
+                MapID = m.MapID,
+                Title = m.Title
+            }).ToJson(true);
+            return js.Serialize(mapList);
+        }
 
         /* getBasicMeasurmentsFields, getBasicMeasurments, getMaxDemands, getDataLogsNums, getDataLogsFields, getDataLogs */
 

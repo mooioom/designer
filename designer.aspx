@@ -205,9 +205,16 @@
 		</div>
 
 		<div class="toolbar eyedrop hidden">
-			<div class="item">Eyedropper</div>
+			<div class="item"><%=Resources.Strings.Eyedropper %></div>
 			<div class="sep"></div>
 			<div class="item">Click on canvas to select color</div>
+			<div class="clear"></div>
+		</div>
+
+		<div class="toolbar fill hidden">
+			<div class="item"><%=Resources.Strings.Fill %></div>
+			<div class="sep"></div>
+			<div class="item">Click on an object to apply fill</div>
 			<div class="clear"></div>
 		</div>
 
@@ -217,17 +224,18 @@
 		</div>
 
 		<div class="tools hidden">
-			<div class="button select active" id="select"></div>
-			<div class="button move" id="move"></div>
+			<div class="button select active" id="select" title="<%=Resources.Strings.Select %>"></div>
+			<div class="button move" id="move" title="<%=Resources.Strings.Move %>"></div>
 			<div class="sep"></div>
-			<div class="button box" id="box"></div>
-			<div class="button ellipse" id="ellipse"></div>
-			<div class="button line" id="line"></div>
-			<div class="button path" id="path"></div>
-			<div class="button text" id="text"></div>
+			<div class="button box" id="box" title="<%=Resources.Strings.Box %>"></div>
+			<div class="button ellipse" id="ellipse" title="<%=Resources.Strings.CircleEllipse %>"></div>
+			<div class="button line" id="line" title="<%=Resources.Strings.Line %>"></div>
+			<div class="button path" id="path" title="<%=Resources.Strings.Path %>"></div>
+			<div class="button text" id="text" title="<%=Resources.Strings.Text %>"></div>
 			<div class="sep"></div>
 			<!-- <div class="button transform"  id="transform"></div> -->
-			<div class="button eyedrop" id="eyedrop"></div>
+			<div class="button fill" id="fill" title="<%=Resources.Strings.Fill %>"></div>
+			<div class="button eyedrop" id="eyedrop" title="<%=Resources.Strings.Eyedropper %>"></div>
 			<div class="colors">
 				<div class="color1Holder"><input class="color1 colorTool hidden" value="black" /></div>
 				<div class="color2Holder"><input class="color2 colorTool hidden" value="white" /></div>
@@ -422,6 +430,10 @@
 			<string resource="kW"               value="<%=Resources.Strings.kW %>"></string>
 			<string resource="Minutes"          value="<%=Resources.Strings.Minutes %>"></string>
 			<string resource="Hours"            value="<%=Resources.Strings.Hours %>"></string>
+			<string resource="Button"           value="<%=Resources.Strings.Button %>"></string>
+			<string resource="ResourcesDevices" value="<%=Resources.Strings.ResourcesDevices %>"></string>
+			<string resource="Symbols"          value="<%=Resources.Strings.Symbols %>"></string>
+			<string resource="ParamBox"         value="<%=Resources.Strings.ParamBox %>"></string>
 			
 		</div>
 

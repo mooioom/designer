@@ -30,6 +30,8 @@ $.extend( true, designer, {
 		this.canvas = document.getElementById("canvas");
 		this.ctx    = this.canvas.getContext("2d");
 
+		this.ctx.imageSmoothingEnabled = false
+
 		this.gridCanvas = document.getElementById("gridCanvas");
 		this.gridCtx    = this.gridCanvas.getContext("2d");
 
@@ -39,7 +41,7 @@ $.extend( true, designer, {
 		this.menu.init();
 		this.ui.tools.init();
 		this.ui.toolbars.init();
-		this.ui.toolboxs.init();
+		this.ui.toolboxes.init();
 		this.ui.sidebars.init();
 
 		this.file.init();
@@ -64,9 +66,9 @@ $.extend( true, designer, {
 
 		this.spectrum('color1');
 		this.spectrum('color2');
-		this.spectrum('fill');
-		this.spectrum('strokeStyle');
-		this.spectrum('fillStyle');
+		this.spectrum('toolbar .fill');
+		this.spectrum('toolbar .strokeStyle');
+		this.spectrum('toolbar .fillStyle');
 		this.spectrum('shadowColor');
 
 		if(data.modules) for(i in data.modules) this.load( data.modules[i] );

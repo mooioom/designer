@@ -111,6 +111,7 @@ $.extend( true, designer, {
 				selectedsIndex = this.isObjectSelected( o.id );
 				if(selectedsIndex) this.parent.selecteds.splice(selectedsIndex,1);
 				else this.parent.functions.select(o);
+				return o;
 			}
 		},
 
@@ -469,6 +470,13 @@ $.extend( true, designer, {
 			if( this.parent.selecteds.length != 1 )     return false;
 			if( this.parent.selecteds[0].type == what ) return true;
 			else return false;
+		},
+
+		fill : function( o, color ){
+			switch(o.type){
+				case 'box' : o.fill = color; break;
+				case 'text' : case 'path' : case 'ellipse' : o.fillStyle = color; break;
+			}
 		},
 
 		getMousePosition : function( e )

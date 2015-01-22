@@ -23,7 +23,7 @@ $.extend( true, designer, {
 
 		},
 
-		toolboxs : {
+		toolboxes : {
 
 			init : function(){
 
@@ -533,9 +533,11 @@ $.extend( true, designer, {
 
 						this.parent.events.canvasDropEvents.push($.proxy(function( event, ui){
 
-							if(!$(event.toElement).hasClass('dropItem')) return;
+							if( !$(ui.draggable).hasClass('dropItem') ) return;
 
-							var src      = event.toElement.src,
+							var e = $(ui.draggable).hasClass('resourceDisplay') ? $('img',ui.draggable)[0] : $(ui.draggable)[0];
+
+							var src      = e.src,
 								point    = { x:event.clientX, y:event.clientY },
 							    position = this.parent.helpers.getPositionOnCanvas( point );
 
@@ -551,6 +553,8 @@ $.extend( true, designer, {
 
 							this.parent.create.box( position.x, position.y, w, h );
 							this.parent.selecteds[0].src = src;
+
+							$(ui.draggable).css('top','0px').css('left','0px');
 
 							$('.tools .move').click();
 
