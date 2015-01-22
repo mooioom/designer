@@ -96,6 +96,7 @@ $.extend( true, designer, {
 		var s = $.proxy(function( color ){
 			if(!this.selecteds.length) return;
 	    	str = color ? color.toRgbString() : ""; 
+	    	el = el.split('.')[el.split('.').length-1];
 	    	this.selecteds[0][el] = str;
 	    	$("."+el).val( str );
 	    	this.render();
@@ -103,6 +104,7 @@ $.extend( true, designer, {
 
 		var c = $.proxy(function( color ){
 			str = color ? color.toRgbString() : "";
+			el = el.split('.')[el.split('.').length-1];
 			this[el] = str; 
 			$("."+el).val( str );
 			this.render();
