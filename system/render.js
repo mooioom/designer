@@ -106,7 +106,8 @@ $.extend( true, designer, {
 					shadowOffsetX = o.shadowOffsetX,
 					shadowOffsetY = o.shadowOffsetY,
 					shadowColor   = o.shadowColor,
-					opacity       = o.opacity;
+					opacity       = o.opacity,
+					gradient      = o.gradient;
 
 				o.endX = x + width;
 				o.endY = y + height;
@@ -129,7 +130,7 @@ $.extend( true, designer, {
 					image.src = o.src;
 					ctx.drawImage(image, x, y, width, height);
 				}
-				else this.rect( ctx, x, y, width, height, radius, lineWidth, strokeStyle, fill, true, opacity );
+				else this.rect( ctx, x, y, width, height, radius, lineWidth, strokeStyle, fill, true, opacity, gradient );
 
 				ctx.restore();
 
@@ -242,7 +243,19 @@ $.extend( true, designer, {
 				
 				this.path(ctx,path);
 
-				if (o.fillStyle) { ctx.fillStyle = fill; ctx.fill(); }
+				if (o.gradient){
+					if(!o.gradient.coordinates) coordinates = [o.topLeftX+(o.width/2),o.topLeftY,o.topLeftX+(o.width/2),o.topLeftY+o.height];
+					var gx1 = coordinates[0], gy1 = coordinates[1], gx2 = coordinates[2], gy2 = coordinates[3];
+					var grd = ctx.createLinearGradient(gx1,gy1,gx2,gy2);
+					for(i=0;i<o.gradient.stops.length;i++) {
+						var stop = o.gradient.stops[i];
+						grd.addColorStop(stop.position,stop.color);
+					}
+					ctx.fillStyle = grd;
+					ctx.fill();
+					var noFill = true;
+				}
+				if (o.fillStyle && !noFill) { ctx.fillStyle = fill; ctx.fill(); }
 				if (o.strokeStyle && o.lineWidth) ctx.stroke();
 
 				ctx.restore();
@@ -263,7 +276,7 @@ $.extend( true, designer, {
 				ctx.rotate(o.rotate*Math.PI/180);
 				ctx.translate( -o.cx,-o.cy );
 
-				this.drawEllipseByCenter(ctx, o.cx, o.cy, o.rx, o.ry, o.lineWidth, o.strokeStyle, o.fillStyle, o.stroke);	
+				this.drawEllipseByCenter(ctx, o.cx, o.cy, o.rx, o.ry, o.lineWidth, o.strokeStyle, o.fillStyle, o.stroke, o.gradient);	
 
 				ctx.restore();
 			}
@@ -309,7 +322,7 @@ $.extend( true, designer, {
 			}
 		},
 
-		rect : function( ctx, x, y, w, h, radius, lineWidth, strokeStyle, fill, stroke, opacity ) {
+		rect : function( ctx, x, y, w, h, radius, lineWidth, strokeStyle, fill, stroke, opacity, gradient ) {
 
 			if (typeof stroke == "undefined" ) stroke = true;
 			if (typeof radius === "undefined") radius = 5;
@@ -330,11 +343,23 @@ $.extend( true, designer, {
 			ctx.strokeStyle = strokeStyle;
 
 			if (strokeStyle && lineWidth) ctx.stroke();
+			if (gradient){
+				if(!gradient.coordinates) coordinates = [x+(w/2),y,x+(w/2),y+h];
+				var gx1 = coordinates[0], gy1 = coordinates[1], gx2 = coordinates[2], gy2 = coordinates[3];
+				var grd = ctx.createLinearGradient(gx1,gy1,gx2,gy2);
+				for(i=0;i<gradient.stops.length;i++) {
+					var stop = gradient.stops[i];
+					grd.addColorStop(stop.position,stop.color);
+				}
+				ctx.fillStyle = grd;
+				ctx.fill();
+				return;
+			}
 			if (fill) { ctx.fillStyle = fill; ctx.fill(); }
 
 		},
 
-		ellipse : function(ctx, x, y, w, h, lineWidth, strokeStyle, fill, stroke) {
+		ellipse : function(ctx, x, y, w, h, lineWidth, strokeStyle, fill, stroke, gradient) {
 			var kappa = .5522848,
 				ox = (w / 2) * kappa, // control point offset horizontal
 				oy = (h / 2) * kappa, // control point offset vertical
@@ -353,12 +378,24 @@ $.extend( true, designer, {
 			ctx.strokeStyle = strokeStyle;
 			ctx.closePath(); // not used correctly, see comments (use to close off open path)
 			if (strokeStyle && lineWidth) ctx.stroke();
+			if (gradient){
+				if(!gradient.coordinates) coordinates = [x+(w/2),y,x+(w/2),y+h];
+				var gx1 = coordinates[0], gy1 = coordinates[1], gx2 = coordinates[2], gy2 = coordinates[3];
+				var grd = ctx.createLinearGradient(gx1,gy1,gx2,gy2);
+				for(i=0;i<gradient.stops.length;i++) {
+					var stop = gradient.stops[i];
+					grd.addColorStop(stop.position,stop.color);
+				}
+				ctx.fillStyle = grd;
+				ctx.fill();
+				return;
+			}
 			if (fill) { ctx.fillStyle = fill; ctx.fill(); }
 
 		},
 
-		drawEllipseByCenter : function(ctx, cx, cy, w, h, lineWidth, strokeStyle, fill, stroke) {
-			this.ellipse(ctx, cx - w/2.0, cy - h/2.0, w, h, lineWidth, strokeStyle, fill, stroke);
+		drawEllipseByCenter : function(ctx, cx, cy, w, h, lineWidth, strokeStyle, fill, stroke, gradient) {
+			this.ellipse(ctx, cx - w/2.0, cy - h/2.0, w, h, lineWidth, strokeStyle, fill, stroke, gradient);
 		},
 
 		arc : function(ctx, x1, y1, x2, y2, radius, clockwise) {

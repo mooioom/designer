@@ -100,9 +100,10 @@ $.extend( true, designer, {
 
 		},
 
-		clickSelect : function()
+		clickSelect : function( noGroup )
 		{
 			if(!this.parent.events.ctrl) this.parent.selecteds = [];
+			if( noGroup && this.parent.selectGroup ) { var turnOnSelectGroup = true; this.parent.selectGroup = false }
 			o = this.getObjectInPoint( { x : this.parent.events.mouseX, y : this.parent.events.mouseY } );
 			if(o) 
 			{
@@ -113,6 +114,7 @@ $.extend( true, designer, {
 				else this.parent.functions.select(o);
 				return o;
 			}
+			if( turnOnSelectGroup ) this.parent.selectGroup = true;
 		},
 
 		getUnrotatedPoint : function(x, y, xm, ym, a){

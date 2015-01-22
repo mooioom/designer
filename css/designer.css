@@ -520,6 +520,10 @@ input[type='range'] {
 	background-image: url(../images/fill.png);
 	background-size: 60%;
 }
+.button.gradient{
+	background-image: url(../images/gradient.png);
+	background-size: 54%;
+}
 .button.brush{
 	background-image: url(../images/brush.png);
 	background-size: 50%;
@@ -989,7 +993,57 @@ input[type='range'] {
 	right: initial;
 }
 
-
 .sideBar{
 
 }
+
+/* Gradient Editor */
+
+.jqGradient{}
+.jqGradient .gradientMenu{
+	margin-left: 10px;
+	margin-right: 10px;
+}
+.jqGradient .gradientCurrent{
+	margin-left: 10px;
+	margin-right: 10px;
+}
+.jqGradient .gradientPreview{
+	width: 150px;
+	border: 1px solid #ccc;
+	height: 21px;
+	position: relative;
+	top: 2px;
+	box-sizing: border-box;
+	position: relative;
+}
+.jqGradient .gradientPreview .gradientStop{
+	height: 100%;
+	position: absolute;
+	width: 3px;
+	cursor: pointer;
+	top: -1px;
+}
+.jqGradient .gradientPreview .gradientStop:hover{
+	border:1px solid orange !important;
+}
+.jqGradient .gradientPreview .gradientCursor{
+	position: absolute;
+	left: 0%;
+	height: 100%;
+	background: #8D8D8D;
+	pointer-events:none;
+	/* width: 3px; */
+}
+.jqGradient .gradientPreview .gradientCursor::after{
+    content: 'O';
+	
+    display: block;
+    position: absolute;
+    top: -12px;
+    left: -4px;
+}
+
+.jqGradient .hidden{display: none;}
+.jqGradient .float{float: left;}
+.rtl .jqGradient .float{float: right;}

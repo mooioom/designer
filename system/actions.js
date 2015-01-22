@@ -698,18 +698,33 @@ $.extend( true, designer, {
 		fill :
 		{
 			mouseDown : function(){
-				if( this.parent.selectGroup ) { var turnOnSelectGroup = true; this.parent.selectGroup = false }
-				var o = this.parent.helpers.clickSelect();
-				if(o){
-					this.parent.history.save();
-					var color = this.parent.color1;
-					this.parent.helpers.fill( o, color );
-				}
-				if( turnOnSelectGroup ) this.parent.selectGroup = true;
-
+				var o = this.parent.helpers.clickSelect( 'noGroup' );
+				if(!o) return;
+				this.parent.history.save();
+				var color = this.parent.color1;
+				delete o.gradient;
+				this.parent.helpers.fill( o, color );
 			},
 			mouseMove : function(){},
 			mouseUp : function(){}
+		},
+
+		gradient :
+		{
+			mouseDown : function(){},
+			mouseMove : function(){},
+			mouseUp : function()
+			{
+				var o, coordinates;
+				if(!this.parent.events.drag) o = this.parent.helpers.clickSelect( 'noGroup' );
+				else {
+					o = this.parent.selecteds[0];
+					// set coordinates
+				}
+				if(!o) return;
+				o.gradient = $.extend(true, {},this.parent.gradient);
+				o.gradient.coordinates = coordinates;
+			}
 		},
 
 		eyedrop :

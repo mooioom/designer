@@ -1180,6 +1180,164 @@ $.extend( true, designer, {
 					$('.annular').toggle( $(this).prop('checked') );
 				});
 
+				// gradient editor
+				$.fn.gradientEditor = function( settings )
+				{
+
+					$.getGradient = $.getGradient || function( gradient, angle ){
+
+						function rgbToArr( rgb ) {return rgb.match(/[rgba|rgb]\((.*?)\)/)[1].split(','); }
+						function rgbToHex(r, g, b) { return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1); }
+
+						if(!gradient) return;
+						if(typeof angle == 'undefined') angle = 90;
+
+						var styleString = '',stops = '',wgStops = '',defaultC1 = '',defaultC2 = '';
+
+						for(var i=0;i<gradient.stops.length;i++)
+						{
+							var stop = gradient.stops[i], perc = stop.position * 100;
+							if(i==0) defaultC1 = stop.color; if(i==gradient.stops.length-1) defaultC2 = stop.color;
+							stops   += stop.color+' '+perc+'%,';
+							wgStops += 'color-stop('+perc+'%,'+stop.color+'),';
+						}
+
+						stops   = stops.substring(0,stops.length-1);
+						wgStops = wgStops.substring(0,wgStops.length-1);
+
+						var C1 = rgbToArr(defaultC1); defaultC1Hex = rgbToHex(C1[0],C1[1],C1[2]);
+						var C2 = rgbToArr(defaultC2); defaultC2Hex = rgbToHex(C2[0],C2[1],C2[2]);
+
+						if(gradient.type == 'linear'){
+							// todo :: background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+CiAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjMWU1Nzk5IiBzdG9wLW9wYWNpdHk9IjEiLz4KICAgIDxzdG9wIG9mZnNldD0iNTAlIiBzdG9wLWNvbG9yPSIjMjk4OWQ4IiBzdG9wLW9wYWNpdHk9IjEiLz4KICAgIDxzdG9wIG9mZnNldD0iNTElIiBzdG9wLWNvbG9yPSIjMjA3Y2NhIiBzdG9wLW9wYWNpdHk9IjEiLz4KICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzdkYjllOCIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgPC9saW5lYXJHcmFkaWVudD4KICA8cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMSIgaGVpZ2h0PSIxIiBmaWxsPSJ1cmwoI2dyYWQtdWNnZy1nZW5lcmF0ZWQpIiAvPgo8L3N2Zz4=);
+							styleString += 'background: -moz-linear-gradient('+angle+'deg, '+stops+'); /* FF3.6+ */';
+							styleString += 'background: -webkit-gradient(linear, left top, right bottom, '+wgStops+'); /* Chrome,Safari4+ */';
+							styleString += 'background: -webkit-linear-gradient('+angle+'deg, '+stops+'); /* Chrome10+,Safari5.1+ */';
+							styleString += 'background: -o-linear-gradient('+angle+'deg, '+stops+'); /* Opera 11.10+ */';
+							styleString += 'background: -ms-linear-gradient('+angle+'deg, '+stops+'); /* IE10+ */'
+							styleString += 'background: linear-gradient('+angle+'deg, '+stops+'); /* W3C */'
+							styleString += 'filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='+defaultC1Hex+', endColorstr='+defaultC2Hex+',GradientType=0 ); /* IE6-8 fallback on horizontal gradient */'
+						}
+
+						if(gradient.type == 'radial'){
+							styleString += 'background: -moz-radial-gradient(center, ellipse cover,  '+stops+'); /* FF3.6+ */';
+							styleString += 'background: -webkit-gradient(radial, center center, 0px, center center, 100%, '+wgStops+'); /* Chrome,Safari4+ */';
+							styleString += 'background: -webkit-radial-gradient(center, ellipse cover, '+stops+'); /* Chrome10+,Safari5.1+ */';
+							styleString += 'background: -o-radial-gradient(center, ellipse cover, '+stops+'); /* Opera 12+ */';
+							styleString += 'background: -ms-radial-gradient(center, ellipse cover, '+stops+'); /* IE10+ */';
+							styleString += 'background: radial-gradient(ellipse at center, '+stops+'); /* W3C */';
+							styleString += 'filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='+defaultC1Hex+', endColorstr='+defaultC2Hex+',GradientType=0 ); /* IE6-8 fallback on horizontal gradient */';
+						}
+
+						return styleString;
+					}
+
+					if(!settings.gradient){ settings.gradient = { type  : 'linear', stops : [ { position : 0, color : 'rgba(0,0,0,1)' }, { position : 1, color : 'rgba(255,255,255,1)' }, ]}};
+					this.gradientSettings = settings;
+
+					this.empty();
+					var c = this.attr('class');
+					this.attr('class',c+' jqGradient');
+					this.append('<div class="gradientPreview float"></div>');
+					this.append('<div class="gradientCurrent float"></div>');
+					this.append('<div class="gradientMenu hidden float"><span>Color : <input type="text" class="gradientColor" /></span></div>');
+
+					this.gradientRender = function( type ){
+
+						if(!type || type != 'onlyPreview') {
+							$('.gradientStop',this).remove();
+							for(var i=0;i<this.gradientSettings.gradient.stops.length;i++){
+								var stop = this.gradientSettings.gradient.stops[i];
+								var p = (stop.position * 100) + '%';
+								var stopEl = $('<div class="gradientStop" stopidx="'+i+'"></div>');
+								var isBase = false;
+								if(i==0 || i==this.gradientSettings.gradient.stops.length-1) isBase = true;
+								if(isBase) stopEl.attr('basestop','1');
+								stopEl.attr('style','left:'+p+'; background : '+stop.color+'; border:1px solid '+stop.color);
+								$('.gradientPreview',this).append(stopEl);
+								if( this.gradientSettings.onChange ) this.gradientSettings.onChange( this.gradientSettings.gradient );
+								if(!isBase) stopEl.draggable({
+									containment : $('.gradientPreview',this),
+									drag : $.proxy(function(e){
+										var idx = Number($(e.target).attr('stopidx'));
+										var lpx = Number($(e.target).css('left').replace('px',''));
+										var pw = $(e.target).parent().width();
+										var p = lpx/pw;
+										this.gradientSettings.gradient.stops[idx].position = p;
+										this.gradientRender( 'onlyPreview');
+										if( this.gradientSettings.onChange ) this.gradientSettings.onChange( this.gradientSettings.gradient );
+									},this)
+								});
+							};
+						}
+
+						var style = $.getGradient(this.gradientSettings.gradient);
+						$('.gradientPreview',this).attr('style',style);
+					}
+
+					this.gradientEditStop = function( stop, idx ){
+						$('.gradientMenu',this).show();
+						onColorChange = function(e,color){
+							var stop = this.gradientSettings.gradient.stops[Number($(e.target).attr('idx'))];
+							stop.color = color ? color.toRgbString() : 'rgba(0,0,0,0)';
+							this.gradientRender();
+							if( this.gradientSettings.onChange ) this.gradientSettings.onChange( this.gradientSettings.gradient );
+						}
+						$('.gradientMenu input',this).attr('idx',idx).spectrum("set", stop.color)
+							.on("dragstart.spectrum", $.proxy(onColorChange,this))
+							.on("move.spectrum", $.proxy(onColorChange,this))
+							.on("change.spectrum", $.proxy(onColorChange,this));
+					}
+
+					this.gradientRender.call(this);
+
+					$('.gradientPreview',this).bind('mouseover',function(e){
+						var w = $(e.target).width(), cx = e.offsetX, p = cx/w*100;
+						if(!$('.gradientCursor',this).length) $(this).append('<div class="gradientCursor"></div>');
+						$('.gradientCursor',this).css('left',p+'%');
+					}).bind('mousemove',function(e){
+						var w = $(e.target).width(), cx = e.offsetX, p = cx/w*100;
+						$('.gradientCursor',this).css('left',p+'%');
+					}).bind('mouseout',function(){$('.gradientCursor',this).remove();
+					}).bind('click',$.proxy(function(e){
+						if($(e.target).hasClass('gradientStop')) return;
+						var w = $(e.target).width(), cx = e.offsetX, p = cx/w;
+						var stop = { position : p, color : 'rgba(0,0,0,1)' };
+						this.gradientSettings.gradient.stops.push(stop);
+						this.gradientSettings.gradient.stops.sort(function(a,b){return a.position - b.position});
+						this.gradientRender.call(this);
+						if( this.gradientSettings.onChange ) this.gradientSettings.onChange( this.gradientSettings.gradient );
+					},this));
+
+					$(document).on('mouseover mouseout mousemove click dblclick','.gradientStop',$.proxy(function(e){
+						$(e.target).parent().trigger('mouseout');
+						e.stopPropagation();
+						var idx = Number(e.target.attributes.stopidx.value);
+						if(e.type=='click'){
+							var stop = this.gradientSettings.gradient.stops[idx];
+							this.gradientEditStop(stop,idx);
+						}
+						if(e.type=='dblclick'){
+							if($(e.target).attr('basestop')) return;
+							this.gradientSettings.gradient.stops.splice(idx,1);
+							$(e.target).remove();
+							this.gradientRender();
+							$('.gradientMenu',this).hide();
+						}
+					},this));
+				}
+
+				$('.gradientEditor').gradientEditor({
+					gradient   : designer.gradient,
+					onChange : $.proxy(function( gradient ){
+						if(!gradient) return;
+						var newGrad = $.extend(true,{},gradient);
+						if(designer.selecteds.length && designer.selecteds[0].gradient) designer.selecteds[0].gradient = newGrad;
+						this.parent.gradient = gradient;
+						designer.render();
+					},this)
+				});
+
 			},
 
 			update : function( o ){

@@ -8,6 +8,8 @@ $.extend( true, designer, {
 	canvas : null,
 	ctx    : null,
 
+	action : "select", // select, move, rotate, scale, box, line, colorpick etc...
+
 	current   : 0,
 
 	groups    : [],
@@ -27,7 +29,13 @@ $.extend( true, designer, {
 	color1 : 'black',
 	color2 : 'white',
 
-	action : "select", // select, move, rotate, scale, box, line, colorpick etc...
+	gradient : {
+		type  : 'linear',
+		stops : [
+			{ position : 0, color : 'rgba(0,0,0,1)' },
+			{ position : 1, color : 'rgba(255,255,255,1)' },
+		]
+	},
 
 	selectAndMove : false,
 	selectGroup   : false,

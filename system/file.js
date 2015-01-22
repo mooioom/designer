@@ -239,6 +239,7 @@ $.extend( true, designer, {
 							if(o.strokeStyle) str+= ' border-color:'	+ o.strokeStyle + ';';
 							if(o.lineWidth)   str+= ' border-width:'  + Math.round(o.lineWidth/2) + 'px;';
 							str+= ' background-color:' + fill + ';';
+							if(o.gradient) str+= $.getGradient(o.gradient, 180); // todo angle
 							str+= '"></div>';
 					}
 					html+=str;
