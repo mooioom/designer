@@ -85,8 +85,8 @@ $.extend( true, designer, {
 							this.parent.draw.toolbar();
 						},this));
 
-						$(document).off('mousedown', '.toolbox.objects .objectVisible, .toolbox.objects .objectLock');
-						$(document).on('mousedown', '.toolbox.objects .objectVisible, .toolbox.objects .objectLock', $.proxy(function( e ){
+						visibleLockHandler = function( e ){
+
 							e.preventDefault(); e.stopPropagation();
 							var isVisible = $(e.target).hasClass('objectVisible'),
 								className = isVisible ? 'invisible'       : 'unlocked',
@@ -101,12 +101,13 @@ $.extend( true, designer, {
 								id = Number( item.attr('oid') );
 								this.parent.functions.getObject(id)[propName] = !$(e.target).hasClass(className);
 							}
-							//this.parent.render();
 							this.refresh();
-						},this));
 
-						$(document).off('dblclick','.toolbox.objects .objectName');
-						$(document).on('dblclick','.toolbox.objects .objectName',$.proxy(function(e){
+						}
+
+						this.parent.on('mousedown','.toolbox.objects .objectVisible, .toolbox.objects .objectLock',$.proxy(visibleLockHandler,this));
+
+						this.parent.on('dblclick','.toolbox.objects .objectName',$.proxy(function(e){
 							var v  = $(e.target).html();
 							$(e.target).html('<input type="text" class="oInput" value="'+v+'" oldValue="'+v+'"/>');
 							$('input',e.target).focus();
@@ -126,10 +127,29 @@ $.extend( true, designer, {
 									$(e.target).html( $('input',e.target).attr('oldValue') );
 								}
 							},this));
-						},this))
+						},this));
 
-						$(document).off('mousedown','.toolbox.objects .groupOpenClose');
-						$(document).on('mousedown','.toolbox.objects .groupOpenClose',$.proxy(function( e ){
+						onInputLeave = function( e ){
+							if($(e.target).hasClass('oInput') && $(e.target).is(':focus')) return;
+							else{
+								$('.oInput').each($.proxy(function(i,e){
+									if( $(e).parent().parent().parent().hasClass('object') ){
+										var id = Number($(e).closest('.object').attr('oid')),
+											o  = this.parent.functions.getObject( id );
+									}else{
+										var id = Number( $(e).parent().closest('.group').attr('gid') ),
+											o  = this.parent.functions.getGroup( id );
+									}
+									o.title = $(e).val();
+									$(e).parent().html( o.title );
+									this.render();
+								},this))
+							}
+						}
+
+						this.parent.events.thread.push( $.proxy(onInputLeave,this) )
+
+						this.parent.on('mousedown','.toolbox.objects .groupOpenClose',$.proxy(function( e ){
 							$(e.target).parent().parent().toggleClass('collapsed'); 
 							if(!$(e.target).parent().parent().hasClass('collapsed')) $(e.target).addClass('open');
 							else $(e.target).removeClass('open');
@@ -270,6 +290,12 @@ $.extend( true, designer, {
 
 						if( this.autoScrollOnSelect && $('.objectsItem.selected:eq(0)').length ) $('.body',this.el).scrollTop($('.objectsItem.selected:eq(0)').index() * 27 - (27*4));
 						
+					},
+
+
+					changeText : function( object, text ){
+						object.title = o.type + ' ' + o.id + ' - ' + text;
+						$('.object.item[oid="'+o.id+'"]').find('.objectName').html(object.title);
 					},
 
 					g : 0,
@@ -567,7 +593,7 @@ $.extend( true, designer, {
 					},
 					onLoad  : function()
 					{
-						$(document).on('click','.toolbox.resources .delete',$.proxy(function(){
+						this.parent.on('click','.toolbox.resources .delete',$.proxy(function(){
 							$('.resourceItem.selected').each($.proxy(function(a,b){
 								idx = $(b).index();
 								this.parent.resources.splice(((this.parent.resources.length - 1) - idx),1);
@@ -1045,9 +1071,9 @@ $.extend( true, designer, {
 					start       : function(){ $(this).css('right','initial'); },
 					containment : "window"
 				});
-				$(document).on('click', '.toolbox .close', function () {
-					$(this).parent().hide();
-				});
+
+				this.root.on('click', '.toolbox .close', function ( e ) { $(e.target).parent().hide(); });
+
 				// -----------------------------------------
 
 				$('.toolbox input[type="range"]').change(function(){
@@ -1085,11 +1111,7 @@ $.extend( true, designer, {
 
 			},
 
-			open : function( item ){
-
-				this.parent.parent.getToolbox(item).open();
-
-			}
+			open : function( item ){ this.root.getToolbox(item).open(); }
 
 		},
 
@@ -1209,7 +1231,7 @@ $.extend( true, designer, {
 						var C2 = rgbToArr(defaultC2); defaultC2Hex = rgbToHex(C2[0],C2[1],C2[2]);
 
 						if(gradient.type == 'linear'){
-							// todo :: background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+CiAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjMWU1Nzk5IiBzdG9wLW9wYWNpdHk9IjEiLz4KICAgIDxzdG9wIG9mZnNldD0iNTAlIiBzdG9wLWNvbG9yPSIjMjk4OWQ4IiBzdG9wLW9wYWNpdHk9IjEiLz4KICAgIDxzdG9wIG9mZnNldD0iNTElIiBzdG9wLWNvbG9yPSIjMjA3Y2NhIiBzdG9wLW9wYWNpdHk9IjEiLz4KICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzdkYjllOCIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgPC9saW5lYXJHcmFkaWVudD4KICA8cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMSIgaGVpZ2h0PSIxIiBmaWxsPSJ1cmwoI2dyYWQtdWNnZy1nZW5lcmF0ZWQpIiAvPgo8L3N2Zz4=);
+							// todo - support ie9 :: background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+CiAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjMWU1Nzk5IiBzdG9wLW9wYWNpdHk9IjEiLz4KICAgIDxzdG9wIG9mZnNldD0iNTAlIiBzdG9wLWNvbG9yPSIjMjk4OWQ4IiBzdG9wLW9wYWNpdHk9IjEiLz4KICAgIDxzdG9wIG9mZnNldD0iNTElIiBzdG9wLWNvbG9yPSIjMjA3Y2NhIiBzdG9wLW9wYWNpdHk9IjEiLz4KICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzdkYjllOCIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgPC9saW5lYXJHcmFkaWVudD4KICA8cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMSIgaGVpZ2h0PSIxIiBmaWxsPSJ1cmwoI2dyYWQtdWNnZy1nZW5lcmF0ZWQpIiAvPgo8L3N2Zz4=);
 							styleString += 'background: -moz-linear-gradient('+angle+'deg, '+stops+'); /* FF3.6+ */';
 							styleString += 'background: -webkit-gradient(linear, left top, right bottom, '+wgStops+'); /* Chrome,Safari4+ */';
 							styleString += 'background: -webkit-linear-gradient('+angle+'deg, '+stops+'); /* Chrome10+,Safari5.1+ */';

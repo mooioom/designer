@@ -11,7 +11,7 @@ $.extend( true, designer, {
 
 		events : function(){
 
-			$('#files').change($.proxy(function(){
+			$('#files').unbind('change').bind('change',$.proxy(function(){
 				var file = document.getElementById("files").files[0];
 				if (file) {
 				    var reader = new FileReader();
@@ -36,6 +36,35 @@ $.extend( true, designer, {
 				        this.parent.draw.ui();
 						this.parent.draw.toolbar();
 						this.parent.getToolbox('resources').redraw();
+
+				    },this)
+				}
+			},this));
+
+			$('#images').unbind('change').bind('change',$.proxy(function(){
+				var file = document.getElementById("images").files[0];
+				if (file) {
+				    var reader = new FileReader();
+				    reader.readAsDataURL(file);
+				    reader.onloadend = $.proxy(function (evt)
+				    {
+				    	var src 	= evt.target.result,
+				    		img     = new Image();
+			    		
+			    		img.src = src;
+
+			    		var w = img.width, h = img.height;
+
+				    	this.parent.history.save();
+
+						this.parent.selecteds = [];
+
+						this.parent.create.box( 0, 0, w, h );
+						this.parent.selecteds[0].src = src;
+
+						this.parent.render();
+						this.parent.draw.ui();
+						this.parent.draw.toolbar();
 
 				    },this)
 				}

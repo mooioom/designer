@@ -345,7 +345,13 @@ $.extend( true, designer, {
 
 		},
 
-		changeText : function( newText ) { if(!this.parent.helpers.selectedIs('text')) return; this.parent.selecteds[0].text = newText; this.parent.render(); },
+		changeText : function( newText ) { 
+			if(!this.parent.helpers.selectedIs('text')) return; 
+			var o = this.parent.selecteds[0];
+			o.text = newText;
+			this.parent.getToolbox('objects').changeText( o, newText );
+			this.parent.render(); 
+		},
 
 		align : function( to ){
 

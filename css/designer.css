@@ -91,7 +91,7 @@ input[type='range'] {
 	}
 
 
-#files{
+.uploadHandler{
 	position: absolute; top:-100px;
 }
 
@@ -528,6 +528,10 @@ input[type='range'] {
 	background-image: url(../images/brush.png);
 	background-size: 50%;
 }
+.button.image{
+	background-image: url(../images/image.png);
+	background-size: 50%;
+}
 
 .colorTool .sp-replacer{
 	width: 20px;
@@ -852,7 +856,7 @@ input[type='range'] {
 }
 
 .toolbox .objectName input{
-    width: 140px;
+    width: 136px;
 	height: 14px;
 	direction: ltr;
 	text-align: left;

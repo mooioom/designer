@@ -141,7 +141,9 @@ namespace Satec.eXpertPowerPlus.Web
             if (dateType == 5) { from = from.AddYears(-1);  }
             if (dateType == 6) { from = Convert.ToDateTime(dateFrom); to = Convert.ToDateTime(dateTo); }
             DataTable data = basicBl.GetBasicData(deviceId, from, to);
-            List<Dictionary<string, object>> r = formatDataTable(data);
+            DataTable outputTable = data.Clone();
+            for (int i = data.Rows.Count - 1; i >= 0; i--){outputTable.ImportRow(data.Rows[i]);}
+            List<Dictionary<string, object>> r = formatDataTable(outputTable);
             return js.Serialize(r);
         }
 
@@ -287,6 +289,286 @@ namespace Satec.eXpertPowerPlus.Web
                 Title = m.Title
             }).ToJson(true);
             return js.Serialize(mapList);
+        }
+
+        /* ENERGY MANAGER */
+
+        [WebMethod]
+        public static string getDashboards()
+        {
+            string query = @"select ems.ID,st.Text as Title,Type='system' from EnergyManagerSystemDashboards ems
+                            join ListOfStrings los on(los.Name = ems.StringName)
+                            join StringsText st on(st.StringId = los.ID)
+                            where Language = @langID
+                            union 
+                            select emd.ID,emd.Name,Type='user' 
+                            from EnergyManagerDashboards emd where emd.UserID = @userID
+                            order by Type, ems.ID asc";
+            DataTable dt;
+            dt = dbUtils.FillDataSetTable(query, "systemDashboards", new List<SqlParameter>
+            {
+                new SqlParameter("langID", new SessionHandler().CultureID),
+                new SqlParameter("userID", new SessionHandler().UserID),
+            }).Tables[0];
+            List<Dictionary<string, object>> systemDashboards = formatDataTable(dt);
+            return js.Serialize(systemDashboards);
+        }
+
+        [WebMethod]
+        public static string getWidgets(string type, int id)
+        {
+            string query;
+            DataTable dt = new DataTable();
+            if (type == "system") 
+            {
+                query = @"select ems.ID, st.Text as Title, Type = 'system', ems.WidgetPlayerCode, '' as SystemWidgetsID from EnergyManagerSystemWidgets ems
+                        join ListOfStrings los on(los.Name = ems.StringName)
+                        join StringsText st on(st.StringId = los.ID)
+                        where Language = @langID and SystemDashboardsID = @SystemDashboardsID
+                        union 
+                        select em.ID, em.Title, Type = 'user', em.WidgetPlayerCode, em.SystemWidgetsID from EnergyManagerWidgets em
+                        where em.UserID = @userID and em.SystemDashboardsID = @SystemDashboardsID
+                        order by Type";
+                dt = dbUtils.FillDataSetTable(query, "widgets", new List<SqlParameter>
+                {
+                    new SqlParameter("langID", new SessionHandler().CultureID),
+                    new SqlParameter("userID", new SessionHandler().UserID),
+                    new SqlParameter("SystemDashboardsID", id),
+                }).Tables[0];
+            }
+            if (type == "user") 
+            {
+                query = @"select em.ID, em.Title, Type = 'user', em.WidgetPlayerCode, em.SystemWidgetsID from EnergyManagerWidgets em
+                        where em.UserID = @userID and em.DashboardsID = @DashboardsID
+                        order by Type";
+                dt = dbUtils.FillDataSetTable(query, "widgets", new List<SqlParameter>
+                {
+                    new SqlParameter("userID", new SessionHandler().UserID),
+                    new SqlParameter("DashboardsID", id),
+                }).Tables[0];
+            }
+
+            List<Dictionary<string, object>> widgets = formatDataTable(dt);
+            return js.Serialize(widgets);
+        }
+
+        [WebMethod]
+        public static string getDashboardState(string type, int id)
+        {
+            string col = "";
+            if (type == "system") col = "SystemDashboardsID";
+            if (type == "user") col = "DashboardsID";
+            var query = "SELECT TOP 1 State FROM EnergyManagerStates where " + col + " = @id AND UserID = @userID";
+            DataTable dt = new DataTable();
+            dt = dbUtils.FillDataSetTable(query, "states", new List<SqlParameter>{
+                new SqlParameter("userID", new SessionHandler().UserID),
+                new SqlParameter("id", id)
+            }).Tables[0];
+            List<Dictionary<string, object>> state = formatDataTable(dt);
+            return js.Serialize(state);
+        }
+
+        [WebMethod]
+        public static string setDashboardState(string type, int id, string state)
+        {
+            string col = "";
+            if (type == "system") col = "SystemDashboardsID";
+            if (type == "user")   col = "DashboardsID";
+            var query = "SELECT TOP 1 ID FROM EnergyManagerStates where " + col + " = @id AND UserID = @userID";
+            DataTable dt = new DataTable();
+            dt = dbUtils.FillDataSetTable(query, "states", new List<SqlParameter>{
+                new SqlParameter("userID", new SessionHandler().UserID),
+                new SqlParameter("id", id)
+            }).Tables[0];
+            if (dt.Rows.Count < 1)
+            {
+                // create
+                query = "INSERT INTO EnergyManagerStates (UserID," + col + ",State) values (@userID,@id,@state)";
+                var a = dbUtils.ExecNonQuery(query, new List<SqlParameter>{
+                    new SqlParameter("userID", new SessionHandler().UserID),
+                    new SqlParameter("state", state.ToString()),
+                    new SqlParameter("id", id)
+                });
+                return a.ToString();
+            }
+            else { 
+                // update
+                query = "UPDATE EnergyManagerStates set State = @state where UserID = @userID and " + col + " = @id";
+                var a = dbUtils.ExecNonQuery(query, new List<SqlParameter>{
+                    new SqlParameter("userID", new SessionHandler().UserID),
+                    new SqlParameter("state", state.ToString()),
+                    new SqlParameter("id", id)
+                });
+                return a.ToString();
+            }
+
+        }
+
+        [WebMethod]
+        public static string saveWidget(string dashboardType, int dashboardId, string type, int id, string code, string title)
+        {
+            var query = "";
+            var col   = "";
+            DataTable dt = new DataTable();
+            if (dashboardType == "user") { col = "DashboardsID"; };
+            if (dashboardType == "system") { col = "SystemDashboardsID"; };
+            if (type == "system") {
+                // create new user widget with SystemWidgetsID like id
+                query = "INSERT INTO EnergyManagerWidgets (UserID," + col + ",WidgetPlayerCode,SystemWidgetsID,Title) values (@userID,@dashboardId,@code,@id,@title)";
+                var a = dbUtils.ExecNonQuery(query, new List<SqlParameter>{
+                    new SqlParameter("userID", new SessionHandler().UserID),
+                    new SqlParameter("code", code.ToString()),
+                    new SqlParameter("dashboardId", dashboardId),
+                    new SqlParameter("title", title),
+                    new SqlParameter("id", id)
+                });
+                query = "SELECT TOP 1 ID from EnergyManagerWidgets where UserID = @userID order by ID desc";
+                dt = dbUtils.FillDataSetTable(query, "widgets", new List<SqlParameter>{
+                    new SqlParameter("userID", new SessionHandler().UserID)
+                }).Tables[0];
+
+                return js.Serialize(new {
+                    id = dt.Rows[0][0],
+                    mode = "EditSystemWidget"
+                });
+            }
+            if (type == "user") { 
+                // if exists update else create new
+                query = "SELECT TOP 1 ID FROM EnergyManagerWidgets where ID = @id AND UserID = @userID AND " + col + "=@dashboardId";
+                dt = dbUtils.FillDataSetTable(query, "states", new List<SqlParameter>{
+                    new SqlParameter("userID", new SessionHandler().UserID),
+                    new SqlParameter("dashboardId", dashboardId),
+                    new SqlParameter("id", id)
+                }).Tables[0];
+                if (dt.Rows.Count < 1)
+                {
+                    // create
+                    query = "INSERT INTO EnergyManagerWidgets (UserID," + col + ",WidgetPlayerCode,Title) values (@userID,@dashboardId,@code,@title)";
+                    var a = dbUtils.ExecNonQuery(query, new List<SqlParameter>{
+                        new SqlParameter("userID", new SessionHandler().UserID),
+                        new SqlParameter("dashboardId", dashboardId),
+                        new SqlParameter("title", title),
+                        new SqlParameter("code", code.ToString())
+                    });
+                    query = "SELECT TOP 1 ID from EnergyManagerWidgets where UserID = @userID order by ID desc";
+                    dt = dbUtils.FillDataSetTable(query, "widgets", new List<SqlParameter>{
+                        new SqlParameter("userID", new SessionHandler().UserID)
+                    }).Tables[0];
+                    return js.Serialize(new
+                    {
+                        id = dt.Rows[0][0],
+                        mode = "Create"
+                    });
+                }
+                else { 
+                    // update
+                    query = "UPDATE EnergyManagerWidgets set WidgetPlayerCode = @code, Title = @title where UserID = @userID and " + col + " = @dashboardId and ID = @id";
+                    var a = dbUtils.ExecNonQuery(query, new List<SqlParameter>{
+                        new SqlParameter("userID", new SessionHandler().UserID),
+                        new SqlParameter("dashboardId", dashboardId),
+                        new SqlParameter("id", id),
+                        new SqlParameter("title", title),
+                        new SqlParameter("code", code.ToString())
+                    });
+                    return js.Serialize(new
+                    {
+                        id = 1,
+                        mode = "Update"
+                    });
+                }
+            }
+            return "";
+
+        }
+
+        [WebMethod]
+        public static string resetDashboard(int id) {
+            var query = "DELETE FROM EnergyManagerWidgets WHERE UserID = @userID and SystemDashboardsID = @id";
+            var a = dbUtils.ExecNonQuery(query, new List<SqlParameter>{
+                new SqlParameter("userID", new SessionHandler().UserID),
+                new SqlParameter("id", id)
+            });
+            query = "DELETE FROM EnergyManagerStates WHERE UserID = @userID and SystemDashboardsID = @id";
+            a = dbUtils.ExecNonQuery(query, new List<SqlParameter>{
+                new SqlParameter("userID", new SessionHandler().UserID),
+                new SqlParameter("id", id)
+            });
+            return "1";
+        }
+
+        [WebMethod]
+        public static string createDashboard(string title)
+        {
+            var query = "INSERT INTO EnergyManagerDashboards (UserID,Name) values (@userID,@title)";
+            DataTable dt = new DataTable();
+            var a = dbUtils.ExecNonQuery(query, new List<SqlParameter>{
+                new SqlParameter("userID", new SessionHandler().UserID),
+                new SqlParameter("title", title)
+            });
+            query = "SELECT TOP 1 ID from EnergyManagerDashboards where UserID = @userID order by ID desc";
+            dt = dbUtils.FillDataSetTable(query, "widgets", new List<SqlParameter>{
+                new SqlParameter("userID", new SessionHandler().UserID)
+            }).Tables[0];
+            return dt.Rows[0][0].ToString();
+        }
+
+        [WebMethod]
+        public static string removeDashboard(int id)
+        {
+            var query = "DELETE FROM EnergyManagerDashboards WHERE UserID = @userID and ID = @id";
+            var a = dbUtils.ExecNonQuery(query, new List<SqlParameter>{
+                new SqlParameter("userID", new SessionHandler().UserID),
+                new SqlParameter("id", id)
+            });
+            query = "DELETE FROM EnergyManagerWidgets WHERE UserID = @userID and DashboardsID = @id";
+            a = dbUtils.ExecNonQuery(query, new List<SqlParameter>{
+                new SqlParameter("userID", new SessionHandler().UserID),
+                new SqlParameter("id", id)
+            });
+            return "1";
+        }
+
+        [WebMethod]
+        public static string updateDashboard(int id, string title)
+        {
+            var query = "UPDATE EnergyManagerDashboards SET Name = @title WHERE UserID = @userID and ID = @id";
+            var a = dbUtils.ExecNonQuery(query, new List<SqlParameter>{
+                new SqlParameter("userID", new SessionHandler().UserID),
+                new SqlParameter("id", id),
+                new SqlParameter("title", title)
+            });
+            return "1";
+        }
+
+        [WebMethod]
+        public static string addWidget(string dashboardType, int dashboardId, string title)
+        {
+            var col = "";
+            DataTable dt = new DataTable();
+            if (dashboardType == "user") { col = "DashboardsID"; };
+            if (dashboardType == "system") { col = "SystemDashboardsID"; };
+            var query = "INSERT INTO EnergyManagerWidgets (UserID," + col + ",Title,WidgetPlayerCode) values (@userID,@dashboardId,@title,'')";
+            var a = dbUtils.ExecNonQuery(query, new List<SqlParameter>{
+                new SqlParameter("userID", new SessionHandler().UserID),
+                new SqlParameter("dashboardId", dashboardId),
+                new SqlParameter("title", title)
+            });
+            query = "SELECT TOP 1 ID from EnergyManagerWidgets where UserID = @userID order by ID desc";
+            dt = dbUtils.FillDataSetTable(query, "widgets", new List<SqlParameter>{
+                new SqlParameter("userID", new SessionHandler().UserID)
+            }).Tables[0];
+            return dt.Rows[0][0].ToString();
+        }
+
+        [WebMethod]
+        public static string deleteWidget(int id)
+        {
+            var query = "DELETE FROM EnergyManagerWidgets WHERE UserID = @userID and ID = @id";
+            var a = dbUtils.ExecNonQuery(query, new List<SqlParameter>{
+                new SqlParameter("userID", new SessionHandler().UserID),
+                new SqlParameter("id", id)
+            });
+            return "1";
         }
 
         /* getBasicMeasurmentsFields, getBasicMeasurments, getMaxDemands, getDataLogsNums, getDataLogsFields, getDataLogs */

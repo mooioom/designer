@@ -882,6 +882,20 @@ $.extend( true, designer, {
 			}
 			path.setAttribute('d', path.getAttribute('d').replace(/Z/g, 'z'));
 			return path;
+		},
+
+		jqEvents : function(){
+			/* (c) 2013 by DBJ.ORG, GPL/MIT applies */
+			// usage jQuery.events( selector ) - to see registered events
+			jQuery.events = function (expr ) {
+			  var rez = [], evo ;
+			   jQuery(expr).each(
+			      function () {
+			         if ( evo = jQuery._data( this, "events"))
+			           rez.push({ element: this, events: evo }) ;
+			     });
+			 return rez.length > 0 ? rez : null ;
+			}
 		}
 
 	}

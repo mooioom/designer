@@ -116,12 +116,7 @@ $.extend( true, designer, {
 
 		addEvent : function( m ){
 			if(!m.action) return;
-			this.parent.events.clickEvents.push({
-				selector : '.mainMenu #'+m.id,
-				action   : m.action,
-				args     : m.args,
-				scope    : m.scope
-			})
+			this.parent.on('click','.mainMenu #'+m.id,$.proxy(m.action,m.scope,m.args));
 			if(m.shortcut)
 			{
 				this.parent.events.keyboardEvents.push({

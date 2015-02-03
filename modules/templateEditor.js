@@ -19,7 +19,6 @@ templateEditor = {
 		this.events();
 		this.load();
 
-		$('#new,#save,#load').hide();
 		$('.tools').css('height','294px');
 
 	},
@@ -320,6 +319,8 @@ templateEditor = {
 				height  : Number(template.Height),
 				data    : template.Data
 			});
+
+			$('#file').hide();
 
 			this.reposition();
 			this.events();

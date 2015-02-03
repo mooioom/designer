@@ -666,6 +666,8 @@ $.extend( true, designer, {
 			}
 		},
 
+		image : function(){ $('#images').click(); },
+
 		text : 
 		{
 			mouseDown : function(){

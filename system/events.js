@@ -5,9 +5,11 @@ $.extend( true, designer, {
 
 		canvasEvents : false,
 
+		thread : [],
+
+		events            : [],
 		pressed           : [],
 		keyboardEvents    : [],
-		clickEvents       : [],
 		browserDropEvents : [],
 		canvasDropEvents  : [],
 
@@ -52,6 +54,8 @@ $.extend( true, designer, {
 
 		eyeDropperGuide : false,
 
+		simpleTools : ['image'],
+
 		init : function()
 		{
 
@@ -85,11 +89,28 @@ $.extend( true, designer, {
 			$('.tools .button').unbind('click').bind('click', $.proxy(this.toolButton,this) );
 			$('.toolbar .edit').unbind('click').bind('click', $.proxy(this.edit,this) );
 
-			for(i in this.clickEvents){
-				var clickEvent = this.clickEvents[i];
-				$(clickEvent.selector).unbind('click').bind('click', $.proxy( clickEvent.action, clickEvent.scope, clickEvent.args ) );
-			}
+			$(document).on('mousedown',$.proxy(this.globalThread,this));
 
+		},
+
+		on : function( events, selector, callback ){
+			this.events.push({
+				events   : events,
+				selector : selector,
+				callback : callback
+			});
+			this.bind();
+		},
+
+		bind : function(){
+			for(var i=0;i<this.events.length;i++){
+				var e = this.events[i];
+				$(document).off(e.events, e.selector).on(e.events, e.selector, $.proxy(e.callback,this));
+			}
+		},
+
+		globalThread : function( e ){
+			for(var i=0;i<this.thread.length;i++) this.thread[i](e);
 		},
 
 		ignoreDrag : function( e ){
@@ -151,6 +172,8 @@ $.extend( true, designer, {
 
 		keyDown : function( e )
 		{
+
+			this.globalThread( e );
 
 			if($("input:focus, textarea:focus, select:focus").length) return;
 			var p = false;
@@ -255,7 +278,12 @@ $.extend( true, designer, {
 			$('.toolbar .edit').removeClass('active');
 		},
 
-		toolButton : function( e ){
+		toolButton : function( e )
+		{
+			if( this.simpleTools.indexOf($(e.target).attr('id')) != -1 ){
+				this.parent.actions[ $(e.target).attr('id') ]();
+				return;
+			}
 			$('.tools .button').removeClass('active');
 			$(e.target).addClass('active');
 			this.exitEditMode();

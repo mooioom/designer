@@ -181,5 +181,7 @@ $.extend( true, designer, {
 
 	log : function(){
 		console.log( this.selecteds[0] );
-	}
+	},
+
+	on : function( events, selector, callback ){ this.events.on( events, selector, callback ); }
 })

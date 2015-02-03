@@ -79,7 +79,8 @@
 	</head>
 	<body class="<%=SessionHandler.Direction %>">
 
-		<input type="file" id="files" name="file" />
+		<input type="file" id="files"  name="file"  class="uploadHandler" />
+		<input type="file" id="images" name="image" class="uploadHandler" />
 
 		<div class="mainMenu hidden"></div>
 
@@ -231,6 +232,7 @@
 			<div class="button ellipse" id="ellipse" title="<%=Resources.Strings.CircleEllipse %>"></div>
 			<div class="button line" id="line" title="<%=Resources.Strings.Line %>"></div>
 			<div class="button path" id="path" title="<%=Resources.Strings.Path %>"></div>
+			<div class="button image" id="image" title="<%=Resources.Strings.Image %>"></div>
 			<div class="button text" id="text" title="<%=Resources.Strings.Text %>"></div>
 			<div class="sep"></div>
 			<!-- <div class="button transform"  id="transform"></div> -->
@@ -282,7 +284,7 @@
 			<string resource="save2"           value="<%=Resources.Strings.Save %>"></string>
 			<string resource="FileName"        value="<%=Resources.Strings.FileName %>"></string>
 			<string resource="load"            value="<%=Resources.Strings.Load %>"></string>
-			<string resource="importHtml"      value="Import - Html"></string>
+			<string resource="importHtml"      value="<%=Resources.Strings.ImportHtml %>"></string>
 			<string resource="exportHtml"      value="<%=Resources.Strings.ExportHtml %>"></string>
 			<string resource="exportSvg"       value="<%=Resources.Strings.ExportSvg %>"></string>
 			<string resource="exportPng"       value="<%=Resources.Strings.ExportPng %>"></string>
@@ -316,26 +318,26 @@
 			<string resource="offsetY"         value="<%=Resources.Strings.Offset %> Y"></string>
 			<string resource="Scale"           value="<%=Resources.Strings.Scale %>"></string>
 			<string resource="Eyedropper"      value="<%=Resources.Strings.Eyedropper %>"></string>
-			<string resource="flattenImg"      value="Flatten Image"></string>
-			<string resource="flattenSel"      value="Flatten Selecteds"></string>
-			<string resource="group"           value="Group"></string>
-			<string resource="groupTitle"      value="Group"></string>
-			<string resource="ungroup"         value="Ungroup"></string>
-			<string resource="image"           value="Image"></string>
-			<string resource="brightCont"      value="Brightness / Contrast"></string>
-			<string resource="hueSat"          value="Hue / Saturation"></string>
-			<string resource="hue"             value="Hue"></string>
-			<string resource="saturation"      value="Saturation"></string>
-			<string resource="lightness"       value="Lightness"></string>
-			<string resource="colorize"        value="Colorize"></string>
-			<string resource="red"             value="Red"></string>
-			<string resource="green"           value="Green"></string>
-			<string resource="blue"            value="Blue"></string>
-			<string resource="greyscale"       value="Greyscale"></string>
-			<string resource="sharpen"         value="Sharpen"></string>
-			<string resource="blur"            value="Blur"></string>
-			<string resource="brightness"      value="Brightness"></string>
-			<string resource="contrast"        value="Contrast"></string>
+			<string resource="flattenImg"      value="<%=Resources.Strings.FlattenImage %>"></string>
+			<string resource="flattenSel"      value="<%=Resources.Strings.FlattenSelecteds %>"></string>
+			<string resource="group"           value="<%=Resources.Strings.GroupNoun %>"></string> 
+			<string resource="groupTitle"      value="<%=Resources.Strings.Group %>"></string>
+			<string resource="ungroup"         value="<%=Resources.Strings.Ungroup %>"></string>
+			<string resource="image"           value="<%=Resources.Strings.Image %>"></string>
+			<string resource="brightCont"      value="<%=Resources.Strings.BrightnessContrast %>"></string>
+			<string resource="hueSat"          value="<%=Resources.Strings.HueSaturation %>"></string>
+			<string resource="hue"             value="<%=Resources.Strings.Hue %>"></string>
+			<string resource="saturation"      value="<%=Resources.Strings.Saturation %>"></string>
+			<string resource="lightness"       value="<%=Resources.Strings.Lightness %>"></string>
+			<string resource="colorize"        value="<%=Resources.Strings.Colorize %>"></string>
+			<string resource="red"             value="<%=Resources.Strings.Red %>"></string>
+			<string resource="green"           value="<%=Resources.Strings.Green %>"></string>
+			<string resource="blue"            value="<%=Resources.Strings.Blue %>"></string>
+			<string resource="greyscale"       value="<%=Resources.Strings.Greyscale %>"></string>
+			<string resource="sharpen"         value="<%=Resources.Strings.Sharpen %>"></string>
+			<string resource="blur"            value="<%=Resources.Strings.Blur %>"></string>
+			<string resource="brightness"      value="<%=Resources.Strings.Brightness %>"></string>
+			<string resource="contrast"        value="<%=Resources.Strings.Contrast %>"></string>
 
 			<!-- Template Editor -->
 			<string resource="LoadingTemplates" value="<%=Resources.Strings.LoadingTemplates %>"></string>
