@@ -1,9 +1,17 @@
 
-$.extend( true, designer, {
+$.extend( true, Designer, {
 
 	file : {
 
 		init : function(){
+
+			$('#files').remove();
+			$('#images').remove();
+
+			var files  = $('<input type="file" id="files"  name="file"  class="uploadHandler" />');
+			var images = $('<input type="file" id="images" name="image" class="uploadHandler" />');
+
+			$('body').prepend(files).prepend(images);
 
 			this.events();
 
@@ -22,7 +30,7 @@ $.extend( true, designer, {
 				    		this.parseHtml( $(evt.target.result)[1] ) : 
 				    		JSON.parse(evt.target.result);
 
-				        this.parent.reset();
+				        this.parent.functions.reset();
 				        this.parent.objects   = data.objects   || [];
 				        this.parent.groups    = data.groups    || [];
 				        this.parent.resources = data.resources || [];
@@ -35,7 +43,7 @@ $.extend( true, designer, {
 				        this.parent.render();
 				        this.parent.draw.ui();
 						this.parent.draw.toolbar();
-						this.parent.getToolbox('resources').redraw();
+						this.parent.helpers.getToolbox('resources').redraw();
 
 				    },this)
 				}
@@ -82,7 +90,7 @@ $.extend( true, designer, {
 						label      : getString("ProjectName"),
 						varName    : "projectName",
 						type       : "text",
-						value      : designer.name,
+						value      : Designer.name,
 						longText   : true,
 					},
 					{
@@ -103,11 +111,11 @@ $.extend( true, designer, {
 				action : $.proxy(function( ret ){
 					var w,h;
 					a = ret['canvasSize'];
-					designer.name = ret['projectName'];
-					this.parent.reset();
+					Designer.name = ret['projectName'];
+					this.parent.functions.reset();
 					if(a == 'full') { w = $('.stage').width(); h = $('.stage').height(); }
 					else{ b=a.split('h');c=b[0];d=c.split('w');h=Number(b[1]);w=Number(d[1]); }
-					designer.init({
+					Designer.init({
 						width  : w,
 						height : h,
 						name   : ret['projectName']
@@ -266,7 +274,7 @@ $.extend( true, designer, {
 							if(o.lineWidth)   str+= ' border-style:solid; box-sizing:border-box;';
 							if(o.radius)      str+= ' border-radius:'	+ o.radius + 'px;';
 							if(o.strokeStyle) str+= ' border-color:'	+ o.strokeStyle + ';';
-							if(o.lineWidth)   str+= ' border-width:'  + Math.round(o.lineWidth/2) + 'px;';
+							if(o.lineWidth)   str+= ' border-width:'    + o.lineWidth + 'px;';
 							str+= ' background-color:' + fill + ';';
 							if(o.gradient) str+= $.getGradient(o.gradient, 180); // todo angle
 							str+= '"></div>';
@@ -311,8 +319,11 @@ $.extend( true, designer, {
 						str+= ' top:'		    + (o.topLeftY - o.lineWidth/2) + 'px;';
 						str+= ' width:'		    + o.width    + 'px;';
 						str+= ' height:'		+ o.height   + 'px;';
+						str+= ' overflow:visible;';
 						if(o.rotate)   str+= ' -ms-transform: rotate('+o.rotate+'deg); -webkit-transform: rotate('+o.rotate+'deg); transform: rotate('+o.rotate+'deg);'; 
 						str+= ' ">';
+						var shadow = this.getSvgFilterObject(o);
+						if(shadow) str+= shadow;
 						str+= '<path ';
 						if(data.excludeDesignerData != true){
 							str+= ' oid="'+o.id+'"';
@@ -325,6 +336,7 @@ $.extend( true, designer, {
 						str+= ' stroke-width="'+o.lineWidth+'"';
 						str+= ' stroke="'+o.strokeStyle+'"';
 						str+= ' fill="'+fill+'"';
+						if(shadow) str+= ' style="filter:url(#f'+o.id+')"';
 						str+= '></path></svg>';
 						html+=str;
 				}
@@ -343,8 +355,11 @@ $.extend( true, designer, {
 						str+= ' top:'		    + (o.startY - o.lineWidth/2) + 'px;';
 						str+= ' width:'		    + o.width    + 'px;';
 						str+= ' height:'		+ o.height   + 'px;';
+						str+= ' overflow:visible;';
 						if(o.rotate)   str+= ' -ms-transform: rotate('+o.rotate+'deg); -webkit-transform: rotate('+o.rotate+'deg); transform: rotate('+o.rotate+'deg);'; 
 						str+= ' ">';
+						var shadow = this.getSvgFilterObject(o);
+						if(shadow) str+= shadow;
 						str+= '<ellipse ';
 						if(data.excludeDesignerData != true){
 							str+= ' oid="'+o.id+'"';
@@ -360,6 +375,7 @@ $.extend( true, designer, {
 						str+= ' stroke-width="'+(o.lineWidth/2)+'"';
 						str+= ' stroke="'+o.strokeStyle+'"';
 						str+= ' fill="'+fill+'"';
+						if(shadow) str+= ' style="filter:url(#f'+o.id+')"';
 						str+= '></ellipse></svg>';
 						html+=str;
 				}
@@ -378,8 +394,11 @@ $.extend( true, designer, {
 						str+= ' top:'		    + (o.startY - o.lineWidth/2) + 'px;';
 						str+= ' width:'		    + o.width    + 'px;';
 						str+= ' height:'		+ o.height   + 'px;';
+						str+= ' overflow:visible;';
 						if(o.rotate)   str+= ' -ms-transform: rotate('+o.rotate+'deg); -webkit-transform: rotate('+o.rotate+'deg); transform: rotate('+o.rotate+'deg);'; 
 						str+= ' ">';
+						var shadow = this.getSvgFilterObject(o);
+						if(shadow) str+= shadow;
 						str+= '<line ';
 						if(data.excludeDesignerData != true){
 							str+= ' oid="'+o.id+'"';
@@ -395,6 +414,7 @@ $.extend( true, designer, {
 						str+= ' stroke-width="'+o.lineWidth+'"';
 						str+= ' stroke="'+o.strokeStyle+'"';
 						str+= ' fill="'+fill+'"';
+						if(shadow) str+= ' style="filter:url(#f'+o.id+')"';
 						str+= '></line></svg>';
 						html+=str;
 				}
@@ -406,6 +426,31 @@ $.extend( true, designer, {
 			html += '</body>';
 
 			return html;
+		},
+
+		getSvgFilterObject : function( o ){
+			var sx = o.shadowOffsetX, sy = o.shadowOffsetY, sb = o.shadowBlur, sc = o.shadowColor;
+			var r  = false;
+			if(!sc) sc = 'rgba(0,0,0,0)';
+			var color       = $.parseColor(sc),
+				colorString = "rgb("+color[0]+","+color[1]+","+color[2]+")",
+				opacity     = color[3];
+			if(!sx) sx = '0'; if(!sy) sy = '0'; if(!sb) sb = '0';
+			if(sx != "0" || sy != "0" || sb != "0")
+			{
+				r = '';
+				r+= '<filter id="f'+o.id+'" height="150%" width="150%">';
+				r+= '<feGaussianBlur in="SourceAlpha" stdDeviation="'+(sb/3)+'"/>';
+				r+= '<feOffset dx="'+(sx/1.5)+'" dy="'+(sy/1.5)+'" result="offsetblur"/>';
+				r+= '<feFlood flood-opacity="'+opacity+'" flood-color="'+colorString+'"/>';
+				r+= '<feComposite in2="offsetblur" operator="in"/>';
+				r+= '<feMerge>';
+				r+= '<feMergeNode/>';
+				r+= '<feMergeNode in="SourceGraphic"/>';
+				r+= '</feMerge>';
+				r+= '</filter>';
+			}
+			return r;
 		},
 
 		counter : 0,
@@ -1245,6 +1290,23 @@ $.extend( true, designer, {
 				}
 			);
 			saveAs(blob, "untitled.svg");
+		}
+
+	},
+
+	developer : {
+
+		modules : [],
+
+		init : function( modules ){
+			if(!modules) return;
+			this.modules = modules;
+			for(i in modules) this.load( modules[i] );
+		},
+
+		load : function( module ){
+			$("<link/>", {rel: "stylesheet",type: "text/css",href: "modules/"+module+".css"}).appendTo("head");
+			$.ajax({url : "modules/"+module+".js",dataType : 'script',async : false});
 		}
 
 	}

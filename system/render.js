@@ -1,5 +1,5 @@
 
-$.extend( true, designer, {
+$.extend( true, Designer, {
 
 	render : function()
 	{
@@ -18,6 +18,8 @@ $.extend( true, designer, {
 		if(this.events.transformMode) this.draw.transformationBox();
 		if(this.events.eyeDropperGuide) this.draw.eyeDropperGuide();
 		if(this.events.cropMode) this.draw.cropArea();
+
+		this.events.onRender();
 
 		//this.helpers.timer('stop','render');
 
@@ -240,6 +242,11 @@ $.extend( true, designer, {
 				ctx.lineWidth   = o.lineWidth;
 				ctx.strokeStyle = o.strokeStyle;
 				ctx.fillStyle   = o.fillStyle;
+
+				ctx.shadowBlur    = o.shadowBlur;
+				ctx.shadowOffsetX = o.shadowOffsetX;
+				ctx.shadowOffsetY = o.shadowOffsetY;
+				ctx.shadowColor   = o.shadowColor;
 				
 				this.path(ctx,path);
 
@@ -276,6 +283,11 @@ $.extend( true, designer, {
 				ctx.rotate(o.rotate*Math.PI/180);
 				ctx.translate( -o.cx,-o.cy );
 
+				ctx.shadowBlur    = o.shadowBlur;
+				ctx.shadowOffsetX = o.shadowOffsetX;
+				ctx.shadowOffsetY = o.shadowOffsetY;
+				ctx.shadowColor   = o.shadowColor;
+
 				this.drawEllipseByCenter(ctx, o.cx, o.cy, o.rx, o.ry, o.lineWidth, o.strokeStyle, o.fillStyle, o.stroke, o.gradient);	
 
 				ctx.restore();
@@ -285,6 +297,12 @@ $.extend( true, designer, {
 				o = o;
 				o.cx = o.startX + o.r;
 				o.cy = o.startY + o.r;
+
+				ctx.shadowBlur    = o.shadowBlur;
+				ctx.shadowOffsetX = o.shadowOffsetX;
+				ctx.shadowOffsetY = o.shadowOffsetY;
+				ctx.shadowColor   = o.shadowColor;
+
 				ctx.beginPath();
 				ctx.arc(o.cx, o.cy, o.r, 0, 2 * Math.PI, false);
 				ctx.fillStyle = o.fill;
@@ -310,6 +328,11 @@ $.extend( true, designer, {
 				ctx.translate( c.x,c.y );
 				ctx.rotate(o.rotate*Math.PI/180);
 				ctx.translate( -c.x,-c.y );
+
+				ctx.shadowBlur    = o.shadowBlur;
+				ctx.shadowOffsetX = o.shadowOffsetX;
+				ctx.shadowOffsetY = o.shadowOffsetY;
+				ctx.shadowColor   = o.shadowColor;
 
 				ctx.beginPath();
 				ctx.moveTo(o.startX + 0.5, o.startY + 0.5);
@@ -657,8 +680,8 @@ $.extend( true, designer, {
 
 			//this.parent.helpers.timer('start','ui');
 
-			this.parent.getToolbox('objects').redraw();
-			this.parent.getToolbox('resources').redraw();
+			this.parent.helpers.getToolbox('objects').redraw();
+			this.parent.helpers.getToolbox('resources').redraw();
 
 			//this.parent.helpers.timer('stop','ui');
 

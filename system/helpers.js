@@ -1,7 +1,29 @@
 
-$.extend( true, designer, {
+$.extend( true, Designer, {
 
 	helpers : {
+
+		init : function(){
+
+			String.prototype.capitalize = function() {return this.charAt(0).toUpperCase() + this.slice(1);}
+			String.prototype.format = function() { var args = arguments; return this.replace(/{(\d+)}/g, function(match, number) { return typeof args[number] != 'undefined' ? args[number] : match ; });};
+			jQuery.fn.outerHTML = function(s) {return s ? this.before(s).remove() : jQuery("<p>").append(this.eq(0).clone()).html();};
+			window.getString = function( name ){return $('string[resource="'+name+'"]').attr('value');}
+			window.getParams = function(){var a,b,c = /\+/g,d = /([^&=]+)=?([^&]*)/g,e = function (s) { return decodeURIComponent(s.replace(c, " ")); },f = window.location.d.substring(1);a = {};while (b = d.exec(f)) a[e(b[1])] = e(b[2]);return a;}
+
+		},
+
+		context : function( item, root )
+		{
+			// create parent context for all child objects
+			for(var i in item) if(item[i] && Object.prototype.toString.call(item[i]).search('Object') != -1) 
+			{
+				if(i == 'clipboard' || i == 'gradient') continue;
+				if(i != 'parent' && i != 'root') this.context( item[i], root );
+				item[i].parent = item;
+				item[i].root   = root;
+			}
+		},
 
 		positionCanvas : function(w,h){
 
@@ -20,6 +42,20 @@ $.extend( true, designer, {
 			$('#canvas, #gridCanvas').css('left',marginW + 'px');
 			$('#canvas, #gridCanvas').css('top', marginH + 'px');
 
+		},
+
+		where : function( q ){
+			var q = q.split('='), r = [], os = this.parent.objects;
+			for(i in os) if(os[i][q[0]] && os[i][q[0]] == q[1]) r.push(os[i]); return r;
+		},
+
+		log : function(){console.log( this.parent.selecteds[0] );},
+
+		include : function( url ){$.ajax({url:url,dataType:'script',async:false });},
+		getHtml : function( url ){var res;$.ajax({url:url,async:false,success : function(html){res = html;}});return res;},
+
+		getToolbox : function( name ){
+			for(i in this.parent.toolboxes) {t=this.parent.toolboxes[i];if(t.name==name) return t}
 		},
 
 		getPointInPath : function( path, pointIndex ){
@@ -61,7 +97,18 @@ $.extend( true, designer, {
 				}
 				createAtGid( gid, data ) 
 			}
-			function getGroup( id ){ for(i in groups) if(groups[i].id == id) return groups[i]; }
+			function getGroup( id ){ for(i in groups) if(groups[i].id == id) return groups[i];
+				var newGroup = {
+					collapsed : false,
+					groupId   : undefined,
+					id        : id,
+					locked    : false,
+					title     : "Group "+id,
+					visible   : true
+				};
+				groups.push(newGroup);
+				return newGroup;
+			}
 			function createAtGid( gid, data ){
 				if(!gid) a.push(data);
 				else for(i in a) if( a[i].oType == 'group') createAtGidPath( a[i], gid, data );
@@ -92,7 +139,7 @@ $.extend( true, designer, {
 			for(i in objects)
 			{
 				var o = objects[i];
-				if(o.groupId) { processGroup( getGroup( o.groupId ), o.groupId ); processObject( o, o.groupId );
+				if(typeof o.groupId == 'number') { processGroup( getGroup( o.groupId ), o.groupId ); processObject( o, o.groupId );
 				}else processObject( o );
 			}
 
@@ -628,6 +675,11 @@ $.extend( true, designer, {
 			var flag = false;
 			for(i in this.parent.selecteds) if( this.parent.selecteds[i].id == objectId ) flag = i;
 			return flag;
+		},
+
+		isTypeSelected : function( type ){
+			for(i in this.parent.selecteds) if( this.parent.selecteds[i].type == type ) return true;
+			return false;
 		},
 
 		getClosestSnapCoords : function( point ){

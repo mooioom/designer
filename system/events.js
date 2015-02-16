@@ -1,11 +1,15 @@
 
-$.extend( true, designer, {
+$.extend( true, Designer, {
 
 	events : {
 
 		canvasEvents : false,
 
-		thread : [],
+		threads : {
+			onMouseDown     : [],
+			onRender        : [],
+			onCanvasMouseUp : []
+		},
 
 		events            : [],
 		pressed           : [],
@@ -89,29 +93,23 @@ $.extend( true, designer, {
 			$('.tools .button').unbind('click').bind('click', $.proxy(this.toolButton,this) );
 			$('.toolbar .edit').unbind('click').bind('click', $.proxy(this.edit,this) );
 
-			$(document).on('mousedown',$.proxy(this.globalThread,this));
+			$(document).on('mousedown',$.proxy(this.onMouseDown,this));
 
 		},
 
 		on : function( events, selector, callback ){
-			this.events.push({
-				events   : events,
-				selector : selector,
-				callback : callback
-			});
-			this.bind();
+			this.events.push({ events : events, selector : selector, callback : callback }); this.bind();
 		},
 
 		bind : function(){
 			for(var i=0;i<this.events.length;i++){
-				var e = this.events[i];
-				$(document).off(e.events, e.selector).on(e.events, e.selector, $.proxy(e.callback,this));
+				var e = this.events[i]; $(document).off(e.events, e.selector).on(e.events, e.selector, $.proxy(e.callback,this));
 			}
 		},
 
-		globalThread : function( e ){
-			for(var i=0;i<this.thread.length;i++) this.thread[i](e);
-		},
+		onMouseDown     : function( e ){ for(var i=0;i<this.threads.onMouseDown.length;i++)     this.threads.onMouseDown[i](e); },
+		onRender        : function(){    for(var i=0;i<this.threads.onRender.length;i++)        this.threads.onRender[i](); },
+		onCanvasMouseUp : function(){    for(var i=0;i<this.threads.onCanvasMouseUp.length;i++) this.threads.onCanvasMouseUp[i](); },
 
 		ignoreDrag : function( e ){
 			e.originalEvent.stopPropagation();
@@ -147,6 +145,7 @@ $.extend( true, designer, {
 			this.parent.render();
 			this.parent.draw.ui();
 			this.parent.draw.toolbar();
+			this.onCanvasMouseUp();
 			this.parent.onMouseUp();
 		},
 
@@ -173,7 +172,7 @@ $.extend( true, designer, {
 		keyDown : function( e )
 		{
 
-			this.globalThread( e );
+			this.onMouseDown( e );
 
 			if($("input:focus, textarea:focus, select:focus").length) return;
 			var p = false;
@@ -323,6 +322,8 @@ $.extend( true, designer, {
 			this.parent.helpers.positionCanvas( this.parent.width, this.parent.height );
 		}
 
-	}
+	},
+
+	on : function( events, selector, callback ){ this.events.on( events, selector, callback ); }
 
 });

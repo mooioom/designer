@@ -1,10 +1,5 @@
-String.prototype.capitalize = function() {
-    return this.charAt(0).toUpperCase() + this.slice(1);
-}
-
-window.getString = function( name ){
-	return $('string[resource="'+name+'"]').attr('value');
-}
+String.prototype.capitalize = function() {return this.charAt(0).toUpperCase() + this.slice(1);}
+window.getString = function( name ){return $('string[resource="'+name+'"]').attr('value');}
 
 if (!String.prototype.format) {
   String.prototype.format = function() {
@@ -18,14 +13,7 @@ if (!String.prototype.format) {
   };
 }
 
-// get outerHtml of an objects
-jQuery.fn.outerHTML = function(s) {
-    return s
-        ? this.before(s).remove()
-        : jQuery("<p>").append(this.eq(0).clone()).html();
-};
-
-//get params from query string
+jQuery.fn.outerHTML = function(s) {return s ? this.before(s).remove() : jQuery("<p>").append(this.eq(0).clone()).html();};
 window.getParams = function(){
 
   var urlParams,
@@ -42,11 +30,3 @@ window.getParams = function(){
   return urlParams;
 
 }
-
-// function encode_utf8(s) {
-//   return unescape(encodeURIComponent(s));
-// }
-
-// function decode_utf8(s) {
-//   return decodeURIComponent(escape(s));
-// }

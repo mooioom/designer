@@ -1,5 +1,5 @@
 
-$.extend( true, designer, {
+$.extend( true, Designer, {
 
 	actions : {
 

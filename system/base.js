@@ -1,12 +1,16 @@
 
-var designer = designer || {};
+var Designer = Designer || {};
 
-$.extend( true, designer, {
+$.extend( true, Designer, {
 
 	debug : false,
 
 	canvas : null,
 	ctx    : null,
+
+	options : {
+		// disableShadows : boolean,string,array of types
+	},
 
 	action : "select", // select, move, rotate, scale, box, line, colorpick etc...
 

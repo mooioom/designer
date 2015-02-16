@@ -6,20 +6,16 @@ jQuery.fn.outerHTML = function(s) {
         : jQuery("<p>").append(this.eq(0).clone()).html();
 };
 
-designer.toolbox = function( data ){ return this.init( data) }
-designer.toolbox.prototype = {
+Designer.toolbox = function( data ){ return this.init( data) }
+Designer.toolbox.prototype = {
 
 	name      : "",
 	title     : "",
 
-	el 		     : "",
-	template     : "",
-	templateUrl  : "",
+	el 		 : "",
+	template : "",
 
-	visible   : false,
-	dockable  : true,
-
-	isDocking : false,
+	visible  : false,
 
 	left : 20,
 	top  : 65,
@@ -29,9 +25,11 @@ designer.toolbox.prototype = {
 		for(var i in data) this[i] = data[i];
 		if(!this.name) return;
 
-		this.parent = designer; // static name
+		this.parent = Designer; // static name
 
-		if(this.parent.getToolbox(this.name)) return;
+		var oldToolbox = this.parent.helpers.getToolbox(this.name);
+
+		if(oldToolbox) return;
 
 		this.parent.toolboxes.push(this);
 
@@ -39,13 +37,11 @@ designer.toolbox.prototype = {
 
 		this.preLoad();
 		this.system.render();
-		if(this.templateUrl) this.system.loadTemplate();
 		this.render();
 		this.system.events();
 		this.events();
 		this.onLoad();
 
-		this.el = $('.toolbox.'+this.name);
 		this.el.css('right','initial');
 		this.el.css('left','initial');
 		this.el.css('left',this.left+'px');
@@ -60,35 +56,33 @@ designer.toolbox.prototype = {
 		render : function(){
 			var hidden;
 			if(this.parent.visible == true) hidden = ''; else hidden = 'hidden';
-			$('body').append('<div class="toolbox '+this.parent.name+' '+hidden+'"><div class="header">'+this.parent.title+'</div><div class="close">X</div><div class="body"></div></div>');
-			if(this.parent.width) $('.toolbox.'+this.parent.name).css('width',this.parent.width + 'px');
-			this.parent.el = $('.toolbox.'+this.parent.name);
+			var toolbox = $('<div class="toolbox '+this.parent.name+' '+hidden+'"><div class="header">'+this.parent.title+'</div><div class="close">X</div><div class="body"></div></div>');
+			$('body').append(toolbox);
+			if(this.parent.width) toolbox.css('width',this.parent.width + 'px');
+			this.parent.el = toolbox;
 		},
 		events : function(){
-			$('.toolbox.'+this.parent.name).draggable({ 
-				start : function(){ $(this).css('right','initial'); },
-				drag  : function( e ){
-					// detect sidebar
-					// console.log(e);
-				},
-				handle : '.header',
+			$(this.parent.el).draggable({ 
+				start       : function(){ $(this).css('right','initial'); },
+				drag        : function( e ){},
+				handle      : '.header',
 				containment : "window"
 			});
-			$('.toolbox.'+this.parent.name+' .close').click($.proxy(function(){
-				$('.toolbox.'+this.parent.name).hide();
-			},this))
+			$('.close',this.parent.el).click(function(){$(this).parent().hide();})
 		},
-		loadTemplate : function(){
-			$.ajax({
-				async    : false,
-				dataType : 'html',
-				url      : this.parent.templateUrl,
-				success  : $.proxy(function( html ){
-					html = '<div template>'+html+'</div>';
-					this.parent.template = $(html);
-				},this)
-			})
+		destroy : function(){
+			var flag = null;
+			for(var i=0;i<this.parent.parent.toolboxes.length;i++){
+				var tb = this.parent.parent.toolboxes[i];
+				if(tb.name == this.parent.name) flag = i;
+			}
+			$(this.parent.el).remove();
+			if(typeof flag == 'number') this.parent.parent.toolboxes.splice(flag,1);
 		}
+	},
+
+	bind : function( a, b, c ){
+		$(a).unbind(b).bind(b,$.proxy(c,this));
 	},
 
 	// toolbox user events & functions

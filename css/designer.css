@@ -58,38 +58,24 @@ body.rtl{
 
 input[type='range'] {
 		-webkit-appearance: none;
-		border-radius: 5px;
+		border-radius: 0px;
 		/* box-shadow: inset 0 0 4px #333; */
-		background-color: #A5A5A5;
-		height: 1px;
+		background-color: #aaa;
+		height: 2px;
 		vertical-align: middle;
+		margin-bottom: 13px;
+		margin-top:10px;
 	}
 	input[type='range']::-moz-range-track {
 		-moz-appearance: none;
-		border-radius: 5px;
-		box-shadow: inset 0 0 5px #333;
-		background-color: #999;
-		height: 10px;
+		border-radius: 0px;
+		/* box-shadow: inset 0 0 4px #333; */
+		background-color: #ccc;
+		height: 2px;
+		vertical-align: middle;
+		margin-bottom:10px;
+		margin-top:10px;
 	}
-	input[type='range']::-webkit-slider-thumb {
-		-webkit-appearance: none !important;
-		border-radius: 2px;
-		background-color: #000;
-		box-shadow:inset 0 0 10px rgba(000,000,000,0.3);
-		/*border: 1px solid #999;*/
-		height: 14px;
-		width: 7px;
-	}
-	input[type='range']::-moz-range-thumb {
-		-moz-appearance: none;
-		border-radius: 2px;
-		background-color: #000;
-		box-shadow:inset 0 0 10px rgba(000,000,000,0.3);
-		/*border: 1px solid #999;*/
-		height: 14px;
-		width: 7px;
-	}
-
 
 .uploadHandler{
 	position: absolute; top:-100px;
@@ -155,7 +141,7 @@ input[type='range'] {
 }
 .rtl .debugger{
 	left: 30px;
-	right: initial;
+	right: inherit;
 }
 .mainMenu{
 	background: #000000;
@@ -193,14 +179,14 @@ input[type='range'] {
 }
 .rtl .mainMenuSub{
 	right: 0px;
-	left:initial;
+	left:inherit;
 }
 .mainMenuSub .subItem{
 	padding: 3px;
 	padding-left: 7px;
 }
 .rtl .mainMenuSub .subItem{
-	padding-left: initial;
+	padding-left: inherit;
 	padding-right: 7px;
 }
 .mainMenuSub .subItemSep{
@@ -225,7 +211,7 @@ input[type='range'] {
 }
 .rtl .mainMenuSub .subItem .shortcut{
 	float: left;
-	padding-right: initial;
+	padding-right: inherit;
 	padding-left: 4px;
 }
 .mainMenuSub .subItem:hover .shortcut{
@@ -267,7 +253,7 @@ input[type='range'] {
 	opacity: 0.9;
 }
 .rtl .toolbar .link{
-	margin-left: initial;
+	margin-left: inherit;
 	margin-right: 1px;
 }
 .toolbar .link.unlinked{
@@ -294,7 +280,7 @@ input[type='range'] {
 .rtl .toolbar .sep{
 	float: right;
 	border-left: 1px solid #fff;
-	border-right: initial;
+	border-right: inherit;
 }
 .toolbar input{
 	width: 36px;
@@ -352,7 +338,7 @@ input[type='range'] {
 }
 .rtl .toolbarButton{
 	float: right;
-	margin-left: initial;
+	margin-left: inherit;
 	margin-right: 3px;
 }
 .toolbarButton:hover{
@@ -381,7 +367,7 @@ input[type='range'] {
 
 .rtl .toolbar .listOfShapes{
 	right: -2px;
-	left: initial;
+	left: inherit;
 }
 
 .toolbar .listOfShapes .shapeItem{
@@ -541,6 +527,10 @@ input[type='range'] {
 .colors .sp-preview{
 	width: 16px;
 }
+
+.rtl .color1Holder{position: relative;right: 12px;}
+.rtl .color2Holder{position: relative;right: 11px;}
+
 .color1Holder .sp-replacer{
     width: 18px;
     height: 18px;
@@ -575,7 +565,7 @@ input[type='range'] {
 }
 .rtl .toolbox{
 	left: 20px;
-	right: initial;
+	right: inherit;
 }
 .toolbox .close{
 	position: absolute;
@@ -588,10 +578,11 @@ input[type='range'] {
 	padding-top: 1px;
 	padding-bottom: 1px;
 	text-align: center;
+	width: 7px;
 }
 .rtl .toolbox .close{
 	left: 0px;
-	right: initial;
+	right: inherit;
 }
 .toolbox>.header{
 	padding: 3px;
@@ -629,13 +620,13 @@ input[type='range'] {
 }
 .toolbox input[type="range"]{
 	width: 100%;
-	margin-top: 7px;
+	margin-top: 12px;
 	position: relative;
-	left: -3px;
+	left: -2px;
 }
 .rtl .toolbox input[type="range"]{
 	right: -3px;
-	left: initial;
+	left: inherit;
 }
 .toolbox .delete{
 	background-image: url(../images/trash.png);
@@ -685,7 +676,7 @@ input[type='range'] {
 }
 
 .rtl .toolbox.objects{
-	right: initial;
+	right: inherit;
 	left : 263px;
 }
 .toolbox.objects .body{
@@ -832,7 +823,7 @@ input[type='range'] {
 	border: 1px solid #D1D1D1;
 }
 .rtl .toolbox .objectDisplay{
-	margin-right: initial;
+	margin-right: inherit;
 	margin-left: 5px;
 }
 .objectCanvas{
@@ -880,7 +871,7 @@ input[type='range'] {
 	left: 13px;
 }
 .rtl .toolbox .objectLock{
-	margin-right: initial;
+	margin-right: inherit;
 	margin-left: 2px;
 }
 .toolbox .objectLock.unlocked{
@@ -897,7 +888,7 @@ input[type='range'] {
 	background-repeat: no-repeat;
 }
 .rtl .toolbox .objectVisible{
-	margin-right: initial;
+	margin-right: inherit;
 	margin-left: 4px;
 }
 .toolbox .objectVisible.invisible{
@@ -908,11 +899,11 @@ input[type='range'] {
 
 .toolbox.resources{
 	right: 20px;
-	min-width: initial;
+	min-width: inherit;
 	width: 119px;
 }
 .rtl .toolbox.resources{
-	right: initial;
+	right: inherit;
 	left: 20px;
 }
 
@@ -939,7 +930,7 @@ input[type='range'] {
 	text-align: center;
 }
 .rtl .resourceDisplay{
-	margin-right: initial;
+	margin-right: inherit;
 	margin-left: 5px;
 }
 .resourceDisplay img{
@@ -994,7 +985,7 @@ input[type='range'] {
 
 .toolbox.text{
 	z-index: 100;
-	right: initial;
+	right: inherit;
 }
 
 .sideBar{

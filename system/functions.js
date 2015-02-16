@@ -1,7 +1,34 @@
 
-$.extend( true, designer, {
+$.extend( true, Designer, {
 
 	functions : {
+
+		reset : function(){
+
+			this.parent.objects   = [];
+			this.parent.selecteds = [];
+			this.parent.resources = [];
+			this.parent.current   = 0;
+			this.parent.render();
+			this.parent.draw.ui();
+			this.parent.draw.toolbar();
+
+		},
+
+		parse : function( d ){
+			
+			if(!d) return;
+			if(typeof d != 'object') d = JSON.parse(d);
+			this.parent.objects    = d.objects;
+			this.parent.groups     = d.groups;
+			this.parent.resources  = d.resources;
+			this.parent.customTags = d.customTags;
+			this.parent.current    = this.parent.helpers.getLastId() + 1;
+			for(i in this.parent.objects) 
+				if(this.parent.objects[i].type=='path') this.parent.create.attachPathFunctions( this.parent.objects[i] );
+			this.parent.redraw();
+
+		},
 
 		select : function( o )
 		{
@@ -27,25 +54,12 @@ $.extend( true, designer, {
 			this.parent.draw.toolbar();
 		},
 
-		group   : function(){
-
-			this.parent.getToolbox('objects').group();
-
-		},
-
-		ungroup : function(){
-
-			this.parent.getToolbox('objects').ungroup();
-			
-		},
+		group   : function(){ this.parent.helpers.getToolbox('objects').group(); },
+		ungroup : function(){ this.parent.helpers.getToolbox('objects').ungroup(); },
 
 		unselect : function( t )
 		{
-			for(i in this.parent.selecteds)
-			{
-				o = this.parent.selecteds[i];
-				if(o == t) this.parent.selecteds.splice(i,1);
-			}
+			for(i in this.parent.selecteds) { o = this.parent.selecteds[i]; if(o == t) this.parent.selecteds.splice(i,1); }
 		},
 
 		delete : function(){
@@ -104,7 +118,7 @@ $.extend( true, designer, {
 		},
 
 		getParentGroups : function( groupId ){
-			return this.parent.getToolbox('objects').getParentGroups( groupId );
+			return this.parent.helpers.getToolbox('objects').getParentGroups( groupId );
 		},
 
 		getAllChildren : function( rootGroupId ){
@@ -136,9 +150,7 @@ $.extend( true, designer, {
 			},this))
 		},
 
-		copy : function(){
-			this.parent.clipboard = jQuery.extend(true, {}, this.parent.selecteds);
-		},
+		copy : function(){ this.parent.clipboard = jQuery.extend(true, {}, this.parent.selecteds); },
 
 		paste : function(){
 			var cloned = [], clonedGroups = [], clonedGroupsData = [];
@@ -349,7 +361,7 @@ $.extend( true, designer, {
 			if(!this.parent.helpers.selectedIs('text')) return; 
 			var o = this.parent.selecteds[0];
 			o.text = newText;
-			this.parent.getToolbox('objects').changeText( o, newText );
+			this.parent.helpers.getToolbox('objects').changeText( o, newText );
 			this.parent.render(); 
 		},
 

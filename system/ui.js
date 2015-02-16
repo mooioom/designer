@@ -1,7 +1,18 @@
 
-$.extend( true, designer, {
+$.extend( true, Designer, {
 
 	ui : {
+
+		init : function(){
+
+			this.parent.menu.init();
+			this.tools.init();
+			this.toolbars.init();
+			this.toolboxes.init();
+			this.sidebars.init();
+			this.colorpickers.init();
+
+		},
 
 		tools : {
 
@@ -63,7 +74,7 @@ $.extend( true, designer, {
 
 					initRender : function(){
 						$('.menu',this.el).remove();
-						$('.toolbox.objects').append('<div class="menu"></div>');
+						$(this.el).append('<div class="menu"></div>');
 						$('.menu',this.el).append('<div class="item add right">'+getString('new')+'</div>');
 						$('.menu',this.el).append('<div class="item delete disabled right"></div>');
 						$('.menu',this.el).append('<div class="item shadow disabled left">'+getString('shadow')+'</div>');
@@ -72,17 +83,14 @@ $.extend( true, designer, {
 					},
 					initEvents : function(){
 
-						$('.delete',this.el).unbind('click').bind('click',$.proxy(function(){ this.parent.functions.delete(); },this));
+						this.bind('.add'      ,'click', this.add);
+						this.bind('.delete'   ,'click', this.parent.functions.delete );
+						this.bind('.shadow'   ,'click', function(){ $('.toolbox.shadow').show(); });
+						this.bind('.transform','click', this.parent.functions.transform );
 
-						$('.shadow',this.el).unbind('click').bind('click',$.proxy(function(){ $('.toolbox.shadow').show(); },this));
-
-						$('.transform',this.el).unbind('click').bind('click',$.proxy(function(){ $('.toolbox.transform').show(); },this));
-
-						$('.add',this.el).unbind('click').bind('click',$.proxy(function(){
-							this.parent.create.box(0,0,this.parent.width,this.parent.height);
-							this.parent.render(); 
-							this.parent.draw.ui();
-							this.parent.draw.toolbar();
+						this.parent.events.threads.onCanvasMouseUp.push($.proxy(function(){
+							var d = this.isShadowDisabled();
+							if(d) $('.toolbox.shadow').hide();
 						},this));
 
 						visibleLockHandler = function( e ){
@@ -133,21 +141,18 @@ $.extend( true, designer, {
 							if($(e.target).hasClass('oInput') && $(e.target).is(':focus')) return;
 							else{
 								$('.oInput').each($.proxy(function(i,e){
-									if( $(e).parent().parent().parent().hasClass('object') ){
-										var id = Number($(e).closest('.object').attr('oid')),
-											o  = this.parent.functions.getObject( id );
-									}else{
-										var id = Number( $(e).parent().closest('.group').attr('gid') ),
-											o  = this.parent.functions.getGroup( id );
-									}
-									o.title = $(e).val();
-									$(e).parent().html( o.title );
+									var e     = $(e),
+										isObj = e.parent().parent().parent().hasClass('object'),
+										id    = Number(e.closest('.object').attr(isObj ? 'oid' : 'gid')),
+										o     = this.parent.functions[isObj ? 'getObject' : 'getGroup' ]( id );
+									o.title = e.val();
+									e.parent().html( o.title );
 									this.render();
 								},this))
 							}
 						}
 
-						this.parent.events.thread.push( $.proxy(onInputLeave,this) )
+						this.parent.events.threads.onMouseDown.push( $.proxy(onInputLeave,this) )
 
 						this.parent.on('mousedown','.toolbox.objects .groupOpenClose',$.proxy(function( e ){
 							$(e.target).parent().parent().toggleClass('collapsed'); 
@@ -288,10 +293,12 @@ $.extend( true, designer, {
 						this.currentObjects   = $.extend(true,[],this.parent.objects);
 						this.currentSelecteds = $.extend(true,[],this.parent.selecteds);
 
-						if( this.autoScrollOnSelect && $('.objectsItem.selected:eq(0)').length ) $('.body',this.el).scrollTop($('.objectsItem.selected:eq(0)').index() * 27 - (27*4));
+						if( this.autoScrollOnSelect ) {
+							var top = $('.object.selected').index() * 27;
+							$('.objects .body').scrollTop(top);
+						}
 						
 					},
-
 
 					changeText : function( object, text ){
 						object.title = o.type + ' ' + o.id + ' - ' + text;
@@ -347,12 +354,31 @@ $.extend( true, designer, {
 
 					events  : function(){},
 
+					isShadowDisabled : function(){
+						var flag = false;
+						if(this.parent.options.disableShadows) 
+						{
+							var d = this.parent.options.disableShadows;
+							if(typeof d == 'boolean') flag = true;
+							if(typeof d == 'string' && 
+							   this.parent.helpers.isTypeSelected(d)) flag = true;
+							else if(d.length){
+								for(var i=0;i<d.length;i++)
+									if(this.parent.helpers.isTypeSelected(d[i])) flag = true;
+							}
+						}
+						return flag;
+					},
+
 					toggleOptions : function(){
 						
-						if(this.parent.selecteds && this.parent.selecteds.length) {
+						if(this.parent.selecteds && this.parent.selecteds.length) 
+						{
 							$('.shadow',   this.el).removeClass('disabled');
 							$('.transform',this.el).removeClass('disabled');
 							$('.delete',   this.el).removeClass('disabled');
+							var disableShadow = this.isShadowDisabled();
+							if(disableShadow) $('.shadow', this.el).addClass('disabled');
 						}
 						else {
 							$('.shadow',   this.el).addClass('disabled');
@@ -455,6 +481,13 @@ $.extend( true, designer, {
 						this.parent.render();
 						this.parent.draw.toolbar();
 
+					},
+
+					add : function(){
+						this.parent.create.box(0,0,this.parent.width,this.parent.height);
+						this.parent.render(); 
+						this.parent.draw.ui();
+						this.parent.draw.toolbar();
 					},
 
 					group : function(){
@@ -572,6 +605,16 @@ $.extend( true, designer, {
 							w       = img.width;
 							h       = img.height;
 
+							var c = document.createElement("CANVAS");
+							var ctx = c.getContext("2d");
+
+							c.width  = w;
+							c.height = h;
+
+							ctx.drawImage(img,0,0);
+
+							src = c.toDataURL();
+
 							this.redraw();
 							this.parent.history.save();
 
@@ -603,7 +646,7 @@ $.extend( true, designer, {
 					},
 					render  : function( refresh ){
 
-						$('.dropItem.ui-draggable').css('position','relative').css('left','initial').css('top','initial');
+						$('.dropItem.ui-draggable').css('position','relative').css('left','inherit').css('top','inherit');
 
 						if(!refresh){
 							flags = [];
@@ -700,7 +743,7 @@ $.extend( true, designer, {
 					},
 
 					events : function(){
-						$('.toolbox.text #text').bind('keyup change keydown',function(){ designer.functions.changeText( $(this).val() ); });
+						$('.toolbox.text #text').bind('keyup change keydown',function(){ Designer.functions.changeText( $(this).val() ); });
 					}
 
 				});
@@ -719,53 +762,64 @@ $.extend( true, designer, {
 
 					events : function()
 					{
+
+						this.parent.events.threads.onCanvasMouseUp.push($.proxy(function(){
+							if(this.parent.selecteds.length && this.parent.events.transformMode) this.el.show();
+							else this.el.hide();
+						},this));
+
+						$('.toolbox.transform .close').bind('click',$.proxy(function(){
+							$('.toolbox.transform').hide();
+							this.parent.events.transformMode = false;
+						},this));
+
 						//rotate
 						$('.toolbox.transform .rotate').bind('mousedown',function(){
-							designer.history.save();
-							designer.rotateStartAmount = $(this).val();
-							designer.rotateStartCenter = designer.events.transformDimensions.c;
-							for(i in designer.selecteds)
+							Designer.history.save();
+							Designer.rotateStartAmount = $(this).val();
+							Designer.rotateStartCenter = Designer.events.transformDimensions.c;
+							for(i in Designer.selecteds)
 							{
-								o = designer.selecteds[i];
+								o = Designer.selecteds[i];
 								if( !o || o.locked || !o.visible ) continue;
 								o.rotationData = {};
 								o.rotationData.rotate = Number(o.rotate) || 0;
-								o.rotationData.center = designer.helpers.getCenter( o );
+								o.rotationData.center = Designer.helpers.getCenter( o );
 							}
 						});
 						$('.toolbox.transform .rotate').bind('mouseup',function(){
-							for(i in designer.selecteds)
+							for(i in Designer.selecteds)
 							{
-								o = designer.selecteds[i];
+								o = Designer.selecteds[i];
 								if( !o || o.locked || !o.visible ) continue;
 								delete o.rotationData;
 							}
-							delete designer.rotateStartAmount;
-							delete designer.rotateAmount;
-							designer.events.doNotRotate = true;
+							delete Designer.rotateStartAmount;
+							delete Designer.rotateAmount;
+							Designer.events.doNotRotate = true;
 							$('input.rotate').val(180);
 							//$('.stage').focus();
 						});
 						$('.toolbox.transform .rotate').bind('change input',function(){
-							if(designer.events.doNotRotate){ delete designer.events.doNotRotate; return; }
-							designer.rotateAmount = Number($(this).val()) - Number(designer.rotateStartAmount);
-							designer.functions.rotate( designer.rotateAmount );
+							if(Designer.events.doNotRotate){ delete Designer.events.doNotRotate; return; }
+							Designer.rotateAmount = Number($(this).val()) - Number(Designer.rotateStartAmount);
+							Designer.functions.rotate( Designer.rotateAmount );
 							
 						});
 
 						//scale
 						$('.toolbox.transform .scale').bind('mousedown',function(){
 
-							designer.history.save();
-							designer.scaleStartAmount = $(this).val();
-							designer.scaleStartCenter = designer.events.transformDimensions.c;
-							for(i in designer.selecteds)
+							Designer.history.save();
+							Designer.scaleStartAmount = $(this).val();
+							Designer.scaleStartCenter = Designer.events.transformDimensions.c;
+							for(i in Designer.selecteds)
 							{
-								o = designer.selecteds[i];
+								o = Designer.selecteds[i];
 								if( !o || o.locked || !o.visible ) continue;
 								o.scaleData = {};
 								o.scaleData.rotate   = Number(o.rotate) || 0;
-								o.scaleData.center   = designer.helpers.getCenter( o );
+								o.scaleData.center   = Designer.helpers.getCenter( o );
 								o.scaleData.startX   = o.startX;
 								o.scaleData.startY   = o.startY;
 								o.scaleData.endX     = o.endX;
@@ -781,22 +835,22 @@ $.extend( true, designer, {
 							}
 						});
 						$('.toolbox.transform .scale').bind('mouseup',function(){
-							for(i in designer.selecteds)
+							for(i in Designer.selecteds)
 							{
-								o = designer.selecteds[i];
+								o = Designer.selecteds[i];
 								if( !o || o.locked || !o.visible ) continue;
 								delete o.scaleData;
 							}
-							delete designer.scaleStartAmount;
-							delete designer.scaleAmount;
-							designer.events.doNotScale = true;
+							delete Designer.scaleStartAmount;
+							delete Designer.scaleAmount;
+							Designer.events.doNotScale = true;
 							$('input.scale').val(0);
 							//$('.stage').focus();
 						});
 						$('.toolbox.transform .scale').bind('change input',function(){
-							if(designer.events.doNotScale){ delete designer.events.doNotScale; return; }
-							designer.scaleAmount = Number($(this).val()) - Number(designer.scaleStartAmount);
-							designer.functions.scale( designer.scaleAmount );
+							if(Designer.events.doNotScale){ delete Designer.events.doNotScale; return; }
+							Designer.scaleAmount = Number($(this).val()) - Number(Designer.scaleStartAmount);
+							Designer.functions.scale( Designer.scaleAmount );
 						});
 					}
 
@@ -819,11 +873,11 @@ $.extend( true, designer, {
 					events : function(){
 						$('.toolbox input[type="range"]',this.el).change(function(){
 							var prop = $(this).attr('class');
-							o = designer.selecteds[0];
+							o = Designer.selecteds[0];
 							if( !o ) return;
 							if( o.locked || !o.visible ) return;
 							o[prop] = $(this).val();
-							designer.render();
+							Designer.render();
 						});
 					}
 
@@ -1063,35 +1117,19 @@ $.extend( true, designer, {
 					}
 
 				});
-				
-
-				// can be removed once all toolboxes upgrade
-				// -----------------------------------------
-				$('.toolbox').draggable({ 
-					start       : function(){ $(this).css('right','initial'); },
-					containment : "window"
-				});
-
-				this.root.on('click', '.toolbox .close', function ( e ) { $(e.target).parent().hide(); });
-
-				// -----------------------------------------
 
 				$('.toolbox input[type="range"]').change(function(){
 					var prop = $(this).attr('class');
-					o = designer.selecteds[0];
+					o = Designer.selecteds[0];
 					if( !o ) return;
 					if( o.locked || !o.visible ) return;
 					o[prop] = $(this).val();
-					designer.render();
+					Designer.render();
 				});
 
 				$('.toolbox input[type="range"]').mousedown(function(){
-					designer.history.save();
+					Designer.history.save();
 				});
-
-				//text
-				//$('.toolbox.text').hide();
-				//$('.toolbox.text #text').bind('keyup change keydown',function(){ designer.functions.changeText( $(this).val() ); });
 
 			},
 
@@ -1111,7 +1149,7 @@ $.extend( true, designer, {
 
 			},
 
-			open : function( item ){ this.root.getToolbox(item).open(); }
+			open : function( item ){ this.root.helpers.getToolbox(item).open(); }
 
 		},
 
@@ -1120,17 +1158,17 @@ $.extend( true, designer, {
 			init : function(){
 
 				// fonts
-				if(designer.fonts && designer.fonts.length)
+				if(Designer.fonts && Designer.fonts.length)
 				{
 					$('.toolbar .font').empty();
-					for(i in designer.fonts){
-						font = designer.fonts[i];
+					for(i in Designer.fonts){
+						font = Designer.fonts[i];
 						$('.toolbar .font').append('<option value="'+font.font+'">'+font.title+'</option>');
 					}
 				}
 
 				// shapes
-				if(designer.shapes && designer.shapes.length)
+				if(Designer.shapes && Designer.shapes.length)
 				{
 					$('.toolbar.path .shapes').show();
 					$('.listOfShapes').empty();
@@ -1139,9 +1177,9 @@ $.extend( true, designer, {
 					shapeDiv = $('<div class="shapeItem" shapeid="-1"></div>');
 					$('.listOfShapes').append(shapeDiv);
 
-					for(i in designer.shapes)
+					for(i in Designer.shapes)
 					{
-						shape = designer.shapes[i];
+						shape = Designer.shapes[i];
 						shapeDiv = $('<div class="shapeItem" shapeid="'+i+'"></div>');
 						shapeSvg = $('<svg xmlns="http://www.w3.org/2000/svg" viewbox="-15 -15 330 330"><path d="'+shape.data+'" /></svg>');
 						shapeDiv.append(shapeSvg);
@@ -1151,20 +1189,20 @@ $.extend( true, designer, {
 					$('.listOfShapes').append('<div class="clear"></div>');
 					$('.shapeItem').click(function( e ){
 						shapeId = Number( $(e.target).attr('shapeid') );
-						designer.selectedShape = shapeId;
+						Designer.selectedShape = shapeId;
 						$('.listOfShapes').hide();
-						if(shapeId == -1) {designer.selectedShape = null; $('.selectedShape').empty(); return;}
+						if(shapeId == -1) {Designer.selectedShape = null; $('.selectedShape').empty(); return;}
 						$('.selectedShape').empty();
-						$('.selectedShape').append('<svg xmlns="http://www.w3.org/2000/svg" viewbox="-15 -15 330 330"><path d="'+designer.shapes[designer.selectedShape].data+'" /></svg>');
+						$('.selectedShape').append('<svg xmlns="http://www.w3.org/2000/svg" viewbox="-15 -15 330 330"><path d="'+Designer.shapes[Designer.selectedShape].data+'" /></svg>');
 					});
 				}
 
-				$('#selectAndMove').click(function(){ designer.selectAndMove = $(this).prop('checked'); });
-				$('#selectGroup').click(function(){ designer.selectGroup = $(this).prop('checked'); });
+				$('#selectAndMove').click(function(){ Designer.selectAndMove = $(this).prop('checked'); });
+				$('#selectGroup').click(function(){ Designer.selectGroup = $(this).prop('checked'); });
 
 				$('.toolbar .link').unbind('click').bind('click',function(){
 					$(this).toggleClass('unlinked');
-					designer.resizeLinked = !$(this).hasClass('unlinked');
+					Designer.resizeLinked = !$(this).hasClass('unlinked');
 				});
 
 				$('.toolbar input, .toolbar select').unbind('keyup change').bind('keyup change',function( e ){
@@ -1182,13 +1220,13 @@ $.extend( true, designer, {
 					}
 					var val = $(this).val();
 					if( $(this).attr('type') == 'checkbox' ) val = $(this).prop('checked');
-					designer.helpers.updateSelectedObjProp( $(this).attr('class'), val, $(this).attr('data'));
-					designer.render();
+					Designer.helpers.updateSelectedObjProp( $(this).attr('class'), val, $(this).attr('data'));
+					Designer.render();
 				});
 
 				$('.toolbarButton.align').click(function(){
 					var type = $(this).attr('type');
-					designer.functions['align'+type]();
+					Designer.functions['align'+type]();
 				});
 
 				$('#isAnnular').click(function()
@@ -1198,7 +1236,7 @@ $.extend( true, designer, {
 						eDegree   = Number($('.endDegree').val()),
 						thickness = Number($('.thickness').val());
 						
-					designer.functions.makeAnnular( isAnnular, sDegree, eDegree, thickness );
+					Designer.functions.makeAnnular( isAnnular, sDegree, eDegree, thickness );
 					$('.annular').toggle( $(this).prop('checked') );
 				});
 
@@ -1350,13 +1388,13 @@ $.extend( true, designer, {
 				}
 
 				$('.gradientEditor').gradientEditor({
-					gradient   : designer.gradient,
+					gradient   : Designer.gradient,
 					onChange : $.proxy(function( gradient ){
 						if(!gradient) return;
 						var newGrad = $.extend(true,{},gradient);
-						if(designer.selecteds.length && designer.selecteds[0].gradient) designer.selecteds[0].gradient = newGrad;
+						if(Designer.selecteds.length && Designer.selecteds[0].gradient) Designer.selecteds[0].gradient = newGrad;
 						this.parent.gradient = gradient;
-						designer.render();
+						Designer.render();
 					},this)
 				});
 
@@ -1408,6 +1446,67 @@ $.extend( true, designer, {
 							   .addClass('show')
 							   .addClass('animate')
 							   .removeClass('show');
+			}
+
+		},
+
+		colorpickers : {
+
+			items : ['color1','color2','toolbar .fill','toolbar .strokeStyle','toolbar .fillStyle','shadowColor','gradientColor'],
+
+			init : function(){
+
+				this.items.forEach($.proxy(function(i){
+					this.spectrum(i);
+				},this))
+
+			},
+
+			spectrum : function( el ){
+
+				var s = $.proxy(function( color ){
+					if(!this.selecteds.length) return;
+			    	str = color ? color.toRgbString() : ""; 
+			    	el = el.split('.')[el.split('.').length-1];
+			    	this.selecteds[0][el] = str;
+			    	$("."+el).val( str );
+			    	this.render();
+				},this.root);
+
+				var c = $.proxy(function( color ){
+					str = color ? color.toRgbString() : "";
+					el = el.split('.')[el.split('.').length-1];
+					this[el] = str; 
+					$("."+el).val( str );
+					this.render();
+				},this.root);
+
+				if(el == 'color1' || el == 'color2'){
+
+					$("." + el).spectrum({
+					    allowEmpty : true,
+					    showAlpha  : true,
+					    showInput  : true,
+					    move   : function( color ){ c( color ) },
+					    change : function( color ){ c( color ) }
+					}).on("dragstart.spectrum", $.proxy(function(e, color) {
+						this.history.save();
+					},this.root));
+
+				}else{
+
+					$("." + el).spectrum({
+					    allowEmpty : true,
+					    showAlpha  : true,
+					    showInput  : true,
+					    move   : function( color ){ s( color ) },
+					    change : function( color ){ s( color ) }
+					}).on("dragstart.spectrum", $.proxy(function(e, color) {
+						this.history.save();
+					},this.root));
+
+				}		
+
 			}
 
 		}

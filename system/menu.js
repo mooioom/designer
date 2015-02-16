@@ -1,9 +1,12 @@
 
-$.extend( true, designer, {
+$.extend( true, Designer, {
 
 	menu : {
 
 		init : function(){
+
+			$('body>.mainMenu').remove()
+			$('body').prepend('<div class="mainMenu hidden"></div>');
 
 			this.items = [
 
@@ -13,7 +16,7 @@ $.extend( true, designer, {
 						{ id : 'new',       action : this.parent.file.create,  scope : this.parent.file },
 						{ id : 'save',      action : this.parent.file.save,    scope : this.parent.file },
 						{ id : 'load',      action : this.parent.file.load,    scope : this.parent.file },
-						{ id : 'importHtml',action : this.parent.file.load, args : 'html', scope : this.parent.file },
+						{ id : 'importHtml',action : this.parent.file.load,    args : 'html', scope : this.parent.file },
 						{ id : 'exportHtml',action : this.parent.file.html,    scope : this.parent.file },
 						{ id : 'exportSvg', action : this.parent.file.svg,     scope : this.parent.file },
 						{ id : 'exportPng', action : this.parent.file.savePng, scope : this.parent.file },
@@ -31,8 +34,8 @@ $.extend( true, designer, {
 						{ id : 'selectAll'    , action : this.parent.functions.selectAll,    scope : this.parent.functions, shortcut : 'Ctrl + A' },
 						{ id : 'delete'	  	  , action : this.parent.functions['delete'],    scope : this.parent.functions, shortcut : 'Del'      },
 						{ id : 'sep' 														                                                      },
-						{ id : 'group'        , action : this.parent.functions.group,        scope : this.parent.functions, shortcut : 'G'        },
-						{ id : 'ungroup'      , action : this.parent.functions.ungroup,      scope : this.parent.functions, shortcut : 'U'        },
+						//{ id : 'group'        , action : this.parent.functions.group,        scope : this.parent.functions, shortcut : 'G'        },
+						//{ id : 'ungroup'      , action : this.parent.functions.ungroup,      scope : this.parent.functions, shortcut : 'U'        },
 						{ id : 'sep' 														                                                      },
 						{ id : 'flattenImg'   , action : this.parent.functions.flattenImage,     scope : this.parent.functions, shortcut : 'F'    },
 						{ id : 'flattenSel'   , action : this.parent.functions.flattenSelecteds, scope : this.parent.functions, shortcut : 'D'    },
