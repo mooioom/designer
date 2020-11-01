@@ -3,7 +3,7 @@ Browser Designer
 
 An older version but has much more features
 
-##Features
+## Features
 <ul>
   <li>Works entirely on the browser</li>
   <li>Export types : JPEG / PNG / HTML / SVG</li>
@@ -16,7 +16,6 @@ An older version but has much more features
   <li>Grid</li>
   <li>History / Undo / Redo</li>
   <li>Alignment</li>
-  <li>Image Import</li>
   <li>Image Import</li>
   <li>Layers</li>
   <li>Gradient Editor</li>
